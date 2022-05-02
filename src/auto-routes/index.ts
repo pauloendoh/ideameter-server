@@ -3,7 +3,7 @@ import { Resource } from "express-automatic-routes";
 
 export default function testRoute(expressApp: Application) {
   return <Resource>{
-    get: async (request: Request, res: Response) => {
+    get: async (req: Request, res: Response) => {
       return res.status(200).send("Nice");
     },
   };
