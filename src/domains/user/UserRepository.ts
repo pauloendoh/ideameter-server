@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import myPrismaClient from "../../utils/myPrismaClient";
 
 export default class UserRepository {
-  constructor(private readonly prismaClient = new PrismaClient()) {}
+  constructor(private readonly prismaClient = myPrismaClient) {}
 
   public async findById(userId: string) {
     const user = await this.prismaClient.user.findFirst({
@@ -11,5 +11,38 @@ export default class UserRepository {
     });
 
     return user;
+  }
+
+  public async findByText(text: string) {
+    return this.prismaClient.user.findMany({
+      where: {
+        OR: [
+          {
+            email: {
+              contains: text,
+            },
+          },
+          {
+            username: { contains: text },
+          },
+        ],
+
+        // OR: [
+        //   {
+        //     email: {
+        //       contains: text,
+        //     },
+        //     username: {
+        //       contains: text,
+        //     },
+        //   },
+        // ],
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+      },
+    });
   }
 }

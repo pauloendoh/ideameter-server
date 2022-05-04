@@ -8,7 +8,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsnd --respawn src/server.ts",
+    "dev": "ts-node-dev --transpile-only --respawn --inspect=4321 --project tsconfig.json src/server.ts",
+    "dev:no-debug": "tsnd --respawn src/server.ts",
     "build": "tsc && prisma generate",
     "postinstall": "tsc && prisma generate",
     "start": "node build/server.js",

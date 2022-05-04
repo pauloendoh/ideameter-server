@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import myPrismaClient from "../../utils/myPrismaClient";
 
 export default class AuthRepository {
-  constructor(private readonly prismaClient = new PrismaClient()) {}
+  constructor(private readonly prismaClient = myPrismaClient) {}
 
   public async emailExists(email: string): Promise<boolean> {
     const user = await this.prismaClient.user.findFirst({

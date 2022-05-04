@@ -6,4 +6,8 @@ export default class UserService {
   public async findById(userId: string) {
     return this.userRepository.findById(userId);
   }
+
+  public async findByText(text: string) {
+    return this.userRepository.findByText(text);
+  }
 }

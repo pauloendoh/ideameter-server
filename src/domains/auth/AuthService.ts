@@ -64,4 +64,9 @@ export default class AuthService {
     });
     return { token, expiresAt };
   }
+
+  public async getAuthUserWithToken(user: User) {
+    const { token, expiresAt } = this.getSignInToken(user);
+    return new AuthUserGetDto(user, token, expiresAt);
+  }
 }
