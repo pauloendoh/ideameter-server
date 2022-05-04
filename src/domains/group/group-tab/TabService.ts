@@ -36,5 +36,6 @@ export default class TabService {
       );
     const groupTabs = await this.tabRepo.findGroupTabs(groupId);
     return groupTabs;
+    //
   }
 }
