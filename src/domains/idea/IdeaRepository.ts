@@ -23,9 +23,27 @@ export default class IdeaRepository {
 
   async createIdea(idea: Idea, requesterId: string) {
     const createdIdea = await this.prismaClient.idea.create({
-      data: { ...idea, creatorId: requesterId, id: undefined },
+      data: {
+        ...idea,
+        creatorId: requesterId,
+        id: undefined,
+        createdAt: undefined,
+        updatedAt: undefined,
+      },
     });
 
     return createdIdea;
+  }
+
+  async findIdeas(tabId: string) {
+    const ideas = await this.prismaClient.idea.findMany({
+      where: {
+        tabId: {
+          equals: tabId,
+        },
+      },
+    });
+
+    return ideas;
   }
 }

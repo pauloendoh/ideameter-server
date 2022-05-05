@@ -73,7 +73,10 @@ model GroupTab {
 }
 
 model Idea {
-  id String @id @default(cuid())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
 
   creator   User   @relation(fields: [creatorId], references: [id])
   creatorId String
