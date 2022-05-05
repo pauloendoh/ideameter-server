@@ -25,6 +25,7 @@ model User {
   userGroups   UserGroup[]
   createdTabs  GroupTab[]
   createdIdeas Idea[]
+  ideaRatings  IdeaRating[]
 }
 
 model Group {
@@ -86,4 +87,20 @@ model Idea {
 
   name        String
   description String
+
+  ideaRatings IdeaRating[]
+}
+
+model IdeaRating {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  idea   Idea   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  ideaId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rating Int?
 }

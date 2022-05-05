@@ -15,11 +15,9 @@ export default function errorMiddleware(
   console.log(error);
   if (error instanceof InvalidPayloadError400)
     res.status(400).send(error.message || "Invalid payload");
-
-  if (error instanceof UnauthorizedError401)
+  else if (error instanceof UnauthorizedError401)
     res.status(401).send(error.message || "Invalid payload");
-
-  if (error instanceof NotFoundError404)
+  else if (error instanceof NotFoundError404)
     res.status(404).send(error.message || "Not found");
 
   if (error instanceof AlreadyExistsError409)
