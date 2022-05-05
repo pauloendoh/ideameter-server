@@ -1,3 +1,4 @@
+import NotFoundError404 from "../../../utils/errors/NotFoundError404";
 import UnauthorizedError401 from "../../../utils/errors/UnauthorizedError401";
 import GroupRepository from "../../group/GroupRepository";
 import RatingRepository from "./RatingRepository";
@@ -46,5 +47,19 @@ export default class RatingService {
 
     const ratings = await this.ratingRepository.findRatingsByGroupId(groupId);
     return ratings;
+  }
+
+  async deleteIdeaRating(ideaId: string, requesterId: string) {
+    const ratingExists = await this.ratingRepository.ratingExists(
+      ideaId,
+      requesterId
+    );
+    if (!ratingExists) throw new NotFoundError404("Rating not found");
+
+    const deletedRating = await this.ratingRepository.deleteRating(
+      ratingExists.id
+    );
+
+    return deletedRating;
   }
 }

@@ -1,9 +1,9 @@
 import { IdeaRating } from "@prisma/client";
 import { Application, Response } from "express";
 import { Resource } from "express-automatic-routes";
-import RatingService from "../../domains/idea/rating/RatingService";
-import authMiddleware from "../../middleware/authMiddleware";
-import { MyAuthRequest } from "../../types/domain/auth/MyAuthRequest";
+import RatingService from "../../../../domains/idea/rating/RatingService";
+import authMiddleware from "../../../../middleware/authMiddleware";
+import { MyAuthRequest } from "../../../../types/domain/auth/MyAuthRequest";
 
 export default function ideaRoute(expressApp: Application) {
   return <Resource>{
@@ -21,17 +21,18 @@ export default function ideaRoute(expressApp: Application) {
         return res.status(200).json(savedRating);
       },
     },
-    get: {
+
+    delete: {
       middleware: authMiddleware,
       handler: async (req: MyAuthRequest, res: Response) => {
-        const query = req.query as { groupId: string };
+        const { ideaId } = req.params as { ideaId: string };
 
-        const ratingsByGroup = await new RatingService().findRatingsByGroupId(
-          query.groupId,
+        const deletedRating = await new RatingService().deleteIdeaRating(
+          ideaId,
           req.user.id
         );
 
-        return res.status(200).json(ratingsByGroup);
+        return res.status(200).json(deletedRating);
       },
     },
   };

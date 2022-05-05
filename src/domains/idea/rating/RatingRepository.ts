@@ -76,4 +76,13 @@ export default class RatingRepository {
     });
     return updated;
   }
+
+  async deleteRating(ratingId: string) {
+    const deleted = await this.prismaClient.ideaRating.delete({
+      where: {
+        id: ratingId,
+      },
+    });
+    return deleted;
+  }
 }
