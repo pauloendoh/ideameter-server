@@ -21,9 +21,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  groups      Group[]
-  userGroups  UserGroup[]
-  createdTabs GroupTab[]
+  groups       Group[]
+  userGroups   UserGroup[]
+  createdTabs  GroupTab[]
+  createdIdeas Idea[]
 }
 
 model Group {
@@ -68,4 +69,18 @@ model GroupTab {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  ideas Idea[]
+}
+
+model Idea {
+  id String @id @default(cuid())
+
+  creator   User   @relation(fields: [creatorId], references: [id])
+  creatorId String
+
+  tab   GroupTab? @relation(fields: [tabId], references: [id])
+  tabId String?
+
+  name        String
+  description String
 }
