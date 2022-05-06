@@ -11,11 +11,27 @@ export default function testRoute(expressApp: Application) {
       middleware: authMiddleware,
       handler: async (req: MyAuthRequest, res: Response) => {
         const payload = req.body as Idea;
-        const users = await new IdeaService().createIdea(payload, req.user.id);
+        const savedIdea = await new IdeaService().createIdea(
+          payload,
+          req.user.id
+        );
 
-        return res.status(200).json(users);
+        return res.status(200).json(savedIdea);
       },
     },
+    put: {
+      middleware: authMiddleware,
+      handler: async (req: MyAuthRequest, res: Response) => {
+        const payload = req.body as Idea;
+        const savedIdea = await new IdeaService().updateIdea(
+          payload,
+          req.user.id
+        );
+
+        return res.status(200).json(savedIdea);
+      },
+    },
+
     get: {
       middleware: authMiddleware,
       handler: async (req: MyAuthRequest, res: Response) => {

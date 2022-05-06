@@ -46,4 +46,16 @@ export default class IdeaRepository {
 
     return ideas;
   }
+
+  async updateIdea(idea: Idea) {
+    const updatedIdea = await this.prismaClient.idea.update({
+      where: {
+        id: idea.id,
+      },
+      data: {
+        ...idea,
+      },
+    });
+    return updatedIdea;
+  }
 }

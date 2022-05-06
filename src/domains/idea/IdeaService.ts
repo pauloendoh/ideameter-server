@@ -27,4 +27,16 @@ export default class IdeaService {
     const ideas = await this.ideaRepository.findIdeas(tabId);
     return ideas;
   }
+
+  async updateIdea(idea: Idea, requesterId: string) {
+    const isAllowed = await this.ideaRepository.isAllowed(
+      idea.tabId,
+      requesterId
+    );
+    if (!isAllowed)
+      throw new UnauthorizedError401("You're not allowed to update this idea");
+
+    const updatedIdea = await this.ideaRepository.updateIdea(idea);
+    return updatedIdea;
+  }
 }
