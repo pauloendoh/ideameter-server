@@ -41,6 +41,7 @@ model Group {
 
   userGroups UserGroup[]
   tabs       GroupTab[]
+  labels     Label[]
 }
 
 model UserGroup {
@@ -89,6 +90,7 @@ model Idea {
   description String
 
   ideaRatings IdeaRating[]
+  labels      Label[]
 }
 
 model IdeaRating {
@@ -103,4 +105,18 @@ model IdeaRating {
   updatedAt DateTime @updatedAt
 
   rating Int?
+}
+
+model Label {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId String
+
+  name    String
+  bgColor String @default("#db4035")
+
+  ideas Idea[]
 }

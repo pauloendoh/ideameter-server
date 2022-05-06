@@ -1,4 +1,4 @@
-import { Idea } from "@prisma/client";
+import { IdeaWithLabelsType } from "../../types/domain/idea/IdeaWithLabelsType";
 import myPrismaClient from "../../utils/myPrismaClient";
 
 export default class IdeaRepository {
@@ -21,7 +21,7 @@ export default class IdeaRepository {
     return !!userBelongsToGroup;
   }
 
-  async createIdea(idea: Idea, requesterId: string) {
+  async createIdea(idea: IdeaWithLabelsType, requesterId: string) {
     const createdIdea = await this.prismaClient.idea.create({
       data: {
         ...idea,
@@ -29,31 +29,46 @@ export default class IdeaRepository {
         id: undefined,
         createdAt: undefined,
         updatedAt: undefined,
+        labels: {
+          connect: idea.labels.map((label) => ({ id: label.id })),
+        },
+      },
+      include: {
+        labels: true,
       },
     });
 
     return createdIdea;
   }
 
-  async findIdeas(tabId: string) {
+  async findIdeasByTabId(tabId: string) {
     const ideas = await this.prismaClient.idea.findMany({
       where: {
         tabId: {
           equals: tabId,
         },
       },
+      include: {
+        labels: true,
+      },
     });
 
     return ideas;
   }
 
-  async updateIdea(idea: Idea) {
+  async updateIdea(idea: IdeaWithLabelsType): Promise<IdeaWithLabelsType> {
     const updatedIdea = await this.prismaClient.idea.update({
       where: {
         id: idea.id,
       },
       data: {
         ...idea,
+        labels: {
+          set: idea.labels.map((label) => ({ id: label.id })),
+        },
+      },
+      include: {
+        labels: true,
       },
     });
     return updatedIdea;
