@@ -1,3 +1,4 @@
+import { GroupTab } from "@prisma/client";
 import myPrismaClient from "../../../utils/myPrismaClient";
 
 export default class TabRepository {
@@ -13,11 +14,32 @@ export default class TabRepository {
     });
   }
 
+  public async editTab(tab: GroupTab) {
+    return this.prismaClient.groupTab.update({
+      data: {
+        ...tab,
+        updatedAt: undefined,
+      },
+      where: {
+        id: tab.id,
+      },
+    });
+  }
+
   public async findGroupTabs(groupId: string) {
     return this.prismaClient.groupTab.findMany({
       where: {
         groupId,
       },
     });
+  }
+
+  public async deleteGroupTab(tabId: string) {
+    const deleted = this.prismaClient.groupTab.delete({
+      where: {
+        id: tabId,
+      },
+    });
+    return deleted;
   }
 }

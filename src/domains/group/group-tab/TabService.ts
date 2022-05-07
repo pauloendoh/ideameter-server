@@ -1,3 +1,4 @@
+import { GroupTab } from "@prisma/client";
 import UnauthorizedError401 from "../../../utils/errors/UnauthorizedError401";
 import GroupRepository from "../GroupRepository";
 import TabRepository from "./TabRepository";
@@ -28,6 +29,18 @@ export default class TabService {
     return createdTab;
   }
 
+  public async editTab(tab: GroupTab, requesterId: string) {
+    const isAllowed = this.groupRepo.userBelongsToGroup(
+      requesterId,
+      tab.groupId
+    );
+    if (!isAllowed)
+      throw new UnauthorizedError401("You're not allowed to edit this tab");
+
+    const editedTab = await this.tabRepo.editTab(tab);
+    return editedTab;
+  }
+
   public async findGroupTabs(groupId: string, requesterId: string) {
     const isAllowed = this.groupRepo.userBelongsToGroup(requesterId, groupId);
     if (!isAllowed)
@@ -37,5 +50,17 @@ export default class TabService {
     const groupTabs = await this.tabRepo.findGroupTabs(groupId);
     return groupTabs;
     //
+  }
+
+  public async deleteGroupTab(groupTab: GroupTab, requesterId: string) {
+    const isAllowed = this.groupRepo.userBelongsToGroup(
+      groupTab.groupId,
+      requesterId
+    );
+    if (!isAllowed)
+      throw new UnauthorizedError401("You're not allowed to delete this tab");
+
+    const deletedTab = await this.tabRepo.deleteGroupTab(groupTab.id);
+    return deletedTab;
   }
 }

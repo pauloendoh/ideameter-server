@@ -1,3 +1,4 @@
+import { GroupTab } from "@prisma/client";
 import { Application, Response } from "express";
 import { Resource } from "express-automatic-routes";
 import TabService from "../../../../domains/group/group-tab/TabService";
@@ -21,6 +22,29 @@ export default function tabRoute(expressApp: Application) {
         );
 
         return res.status(200).json(createdTab);
+      },
+    },
+    put: {
+      middleware: authMiddleware,
+      handler: async (req: MyAuthRequest, res: Response) => {
+        const payload = req.body as GroupTab;
+
+        const saved = await new TabService().editTab(payload, req.user.id);
+
+        return res.status(200).json(saved);
+      },
+    },
+    delete: {
+      middleware: authMiddleware,
+      handler: async (req: MyAuthRequest, res: Response) => {
+        const payload = req.body as GroupTab;
+
+        const deleted = await new TabService().deleteGroupTab(
+          payload,
+          req.user.id
+        );
+
+        return res.status(200).json(deleted);
       },
     },
 
