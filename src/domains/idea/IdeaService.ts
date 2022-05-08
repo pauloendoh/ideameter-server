@@ -1,10 +1,14 @@
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
 import ForbiddenError403 from "../../utils/errors/ForbiddenError403";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
+import GroupRepository from "../group/GroupRepository";
 import IdeaRepository from "./IdeaRepository";
 
 export default class IdeaService {
-  constructor(private readonly ideaRepository = new IdeaRepository()) {}
+  constructor(
+    private readonly ideaRepository = new IdeaRepository(),
+    private readonly groupRepository = new GroupRepository()
+  ) {}
 
   async createIdea(idea: IdeaWithRelationsType, requesterId: string) {
     const isAllowed = await this.ideaRepository.userCanAccessTab(
@@ -73,6 +77,18 @@ export default class IdeaService {
     if (!isAllowed) throw new ForbiddenError403("Not allowed");
 
     const subideas = await this.ideaRepository.findSubideasByIdeaId(parentId);
+    return subideas;
+  }
+
+  async findSubideasByGroupId(groupId: string, requesterId: string) {
+    const isAllowed = await this.groupRepository.userBelongsToGroup(
+      requesterId,
+      groupId
+    );
+
+    if (!isAllowed) throw new ForbiddenError403("Not allowed");
+
+    const subideas = await this.ideaRepository.findSubideasByGroupId(groupId);
     return subideas;
   }
 }

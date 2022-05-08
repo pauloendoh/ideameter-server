@@ -23,7 +23,16 @@ export default function labelsRoute(expressApp: Application) {
     get: {
       middleware: authMiddleware,
       handler: async (req: MyAuthRequest, res: Response) => {
-        const query = req.query as { parentId: string };
+        const query = req.query as { parentId: string; groupId: string };
+
+        if (query.groupId) {
+          const subideas = await new IdeaService().findSubideasByGroupId(
+            query.groupId,
+            req.user.id
+          );
+
+          return res.status(200).json(subideas);
+        }
 
         const subideas = await new IdeaService().findSubideasByIdeaId(
           query.parentId,

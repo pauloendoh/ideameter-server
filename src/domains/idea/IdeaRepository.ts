@@ -94,4 +94,18 @@ export default class IdeaRepository {
 
     return subideas;
   }
+
+  async findSubideasByGroupId(groupId: string) {
+    const subideas = await this.prismaClient.idea.findMany({
+      where: {
+        parent: {
+          tab: {
+            groupId,
+          },
+        },
+      },
+    });
+
+    return subideas;
+  }
 }
