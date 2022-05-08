@@ -1,6 +1,6 @@
 import { Label } from "@prisma/client";
+import ForbiddenError403 from "../../utils/errors/ForbiddenError403";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
-import UnauthorizedError401 from "../../utils/errors/UnauthorizedError401";
 import GroupRepository from "../group/GroupRepository";
 import LabelRepository from "./LabelRepository";
 
@@ -17,7 +17,7 @@ export default class LabelService {
     );
 
     if (!isAllowed)
-      throw new UnauthorizedError401("You're not allowed to see this group");
+      throw new ForbiddenError403("You're not allowed to see this group");
 
     const labels = await this.labelRepository.findLabelsByGroup(groupId);
     return labels;
@@ -30,7 +30,7 @@ export default class LabelService {
     );
 
     if (!isAllowed)
-      throw new UnauthorizedError401(
+      throw new ForbiddenError403(
         "You're not allowed to add labels to this group"
       );
 
@@ -44,7 +44,7 @@ export default class LabelService {
       label.groupId
     );
     if (!isAllowed)
-      throw new UnauthorizedError401("You're not allowed to edit this label");
+      throw new ForbiddenError403("You're not allowed to edit this label");
 
     const editedLabel = await this.labelRepository.updateLabel(label);
     return editedLabel;
@@ -60,7 +60,7 @@ export default class LabelService {
     );
 
     if (!isAllowed)
-      throw new UnauthorizedError401("You're not allowed to see this group");
+      throw new ForbiddenError403("You're not allowed to see this group");
 
     const deletedLabel = await this.labelRepository.deleteLabel(labelId);
     return deletedLabel;

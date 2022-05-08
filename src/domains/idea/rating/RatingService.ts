@@ -1,5 +1,5 @@
+import ForbiddenError403 from "../../../utils/errors/ForbiddenError403";
 import NotFoundError404 from "../../../utils/errors/NotFoundError404";
-import UnauthorizedError401 from "../../../utils/errors/UnauthorizedError401";
 import GroupRepository from "../../group/GroupRepository";
 import RatingRepository from "./RatingRepository";
 
@@ -15,7 +15,7 @@ export default class RatingService {
       requesterId
     );
     if (!isAllowed)
-      new UnauthorizedError401("You're not allowed to rate this idea");
+      new ForbiddenError403("You're not allowed to rate this idea");
 
     const ratingExists = await this.ratingRepository.ratingExists(
       ideaId,
@@ -43,7 +43,7 @@ export default class RatingService {
       groupId
     );
     if (!isAllowed)
-      throw new UnauthorizedError401("You're not allowed to see this group");
+      throw new ForbiddenError403("You're not allowed to see this group");
 
     const ratings = await this.ratingRepository.findRatingsByGroupId(groupId);
     return ratings;

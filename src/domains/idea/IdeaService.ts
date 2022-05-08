@@ -1,17 +1,18 @@
-import { IdeaWithLabelsType } from "../../types/domain/idea/IdeaWithLabelsType";
-import UnauthorizedError401 from "../../utils/errors/UnauthorizedError401";
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
+import ForbiddenError403 from "../../utils/errors/ForbiddenError403";
+import NotFoundError404 from "../../utils/errors/NotFoundError404";
 import IdeaRepository from "./IdeaRepository";
 
 export default class IdeaService {
   constructor(private readonly ideaRepository = new IdeaRepository()) {}
 
-  async createIdea(idea: IdeaWithLabelsType, requesterId: string) {
-    const isAllowed = await this.ideaRepository.isAllowed(
+  async createIdea(idea: IdeaWithRelationsType, requesterId: string) {
+    const isAllowed = await this.ideaRepository.userCanAccessTab(
       idea.tabId,
       requesterId
     );
     if (!isAllowed)
-      throw new UnauthorizedError401(
+      throw new ForbiddenError403(
         "You're not allowed to add ideas to this tab"
       );
 
@@ -19,24 +20,59 @@ export default class IdeaService {
     return createdIdea;
   }
 
-  async findIdeasByTabId(tabId: string, requesterId: string) {
-    const isAllowed = await this.ideaRepository.isAllowed(tabId, requesterId);
+  async createSubidea(idea: IdeaWithRelationsType, requesterId: string) {
+    const parent = await this.ideaRepository.findById(idea.parentId);
+    if (!parent) throw new ForbiddenError403("Parent idea not found");
+
+    const isAllowed = await this.ideaRepository.userCanAccessTab(
+      parent.tabId,
+      requesterId
+    );
     if (!isAllowed)
-      throw new UnauthorizedError401("You're not allowed to see this tab");
+      throw new ForbiddenError403(
+        "You're not allowed to add ideas to this tab"
+      );
+
+    idea.tabId = undefined;
+    const createdIdea = await this.ideaRepository.createIdea(idea, requesterId);
+    return createdIdea;
+  }
+
+  async findIdeasByTabId(tabId: string, requesterId: string) {
+    const isAllowed = await this.ideaRepository.userCanAccessTab(
+      tabId,
+      requesterId
+    );
+    if (!isAllowed)
+      throw new ForbiddenError403("You're not allowed to see this tab");
 
     const ideas = await this.ideaRepository.findIdeasByTabId(tabId);
     return ideas;
   }
 
-  async updateIdea(idea: IdeaWithLabelsType, requesterId: string) {
-    const isAllowed = await this.ideaRepository.isAllowed(
+  async updateIdea(idea: IdeaWithRelationsType, requesterId: string) {
+    const isAllowed = await this.ideaRepository.userCanAccessTab(
       idea.tabId,
       requesterId
     );
     if (!isAllowed)
-      throw new UnauthorizedError401("You're not allowed to update this idea");
+      throw new ForbiddenError403("You're not allowed to update this idea");
 
     const updatedIdea = await this.ideaRepository.updateIdea(idea);
     return updatedIdea;
+  }
+
+  async findSubideasByIdeaId(parentId: string, requesterId: string) {
+    const parent = await this.ideaRepository.findById(parentId);
+    if (!parent) throw new NotFoundError404("Parent idea not found");
+
+    const isAllowed = await this.ideaRepository.userCanAccessTab(
+      parent.tabId,
+      requesterId
+    );
+    if (!isAllowed) throw new ForbiddenError403("Not allowed");
+
+    const subideas = await this.ideaRepository.findSubideasByIdeaId(parentId);
+    return subideas;
   }
 }

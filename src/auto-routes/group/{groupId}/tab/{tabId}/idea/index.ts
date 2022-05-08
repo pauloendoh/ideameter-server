@@ -3,14 +3,14 @@ import { Resource } from "express-automatic-routes";
 import IdeaService from "../../../../../../domains/idea/IdeaService";
 import authMiddleware from "../../../../../../middleware/authMiddleware";
 import { MyAuthRequest } from "../../../../../../types/domain/auth/MyAuthRequest";
-import { IdeaWithLabelsType } from "../../../../../../types/domain/idea/IdeaWithLabelsType";
+import { IdeaWithRelationsType } from "../../../../../../types/domain/idea/IdeaWithLabelsType";
 
 export default function testRoute(expressApp: Application) {
   return <Resource>{
     post: {
       middleware: authMiddleware,
       handler: async (req: MyAuthRequest, res: Response) => {
-        const payload = req.body as IdeaWithLabelsType;
+        const payload = req.body as IdeaWithRelationsType;
         const savedIdea = await new IdeaService().createIdea(
           payload,
           req.user.id
@@ -22,7 +22,7 @@ export default function testRoute(expressApp: Application) {
     put: {
       middleware: authMiddleware,
       handler: async (req: MyAuthRequest, res: Response) => {
-        const payload = req.body as IdeaWithLabelsType;
+        const payload = req.body as IdeaWithRelationsType;
         const savedIdea = await new IdeaService().updateIdea(
           payload,
           req.user.id

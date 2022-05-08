@@ -1,10 +1,10 @@
-import { IdeaWithLabelsType } from "../../types/domain/idea/IdeaWithLabelsType";
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
 import myPrismaClient from "../../utils/myPrismaClient";
 
 export default class IdeaRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
 
-  async isAllowed(tabId: string, requesterId: string) {
+  async userCanAccessTab(tabId: string, requesterId: string) {
     const userBelongsToGroup = await this.prismaClient.userGroup.findFirst({
       where: {
         userId: requesterId,
@@ -21,7 +21,7 @@ export default class IdeaRepository {
     return !!userBelongsToGroup;
   }
 
-  async createIdea(idea: IdeaWithLabelsType, requesterId: string) {
+  async createIdea(idea: IdeaWithRelationsType, requesterId: string) {
     const createdIdea = await this.prismaClient.idea.create({
       data: {
         ...idea,
@@ -41,6 +41,15 @@ export default class IdeaRepository {
     return createdIdea;
   }
 
+  async findById(ideaId: string) {
+    const idea = await this.prismaClient.idea.findFirst({
+      where: {
+        id: ideaId,
+      },
+    });
+    return idea;
+  }
+
   async findIdeasByTabId(tabId: string) {
     const ideas = await this.prismaClient.idea.findMany({
       where: {
@@ -56,7 +65,9 @@ export default class IdeaRepository {
     return ideas;
   }
 
-  async updateIdea(idea: IdeaWithLabelsType): Promise<IdeaWithLabelsType> {
+  async updateIdea(
+    idea: IdeaWithRelationsType
+  ): Promise<IdeaWithRelationsType> {
     const updatedIdea = await this.prismaClient.idea.update({
       where: {
         id: idea.id,
@@ -72,5 +83,15 @@ export default class IdeaRepository {
       },
     });
     return updatedIdea;
+  }
+
+  async findSubideasByIdeaId(ideaId: string) {
+    const subideas = await this.prismaClient.idea.findMany({
+      where: {
+        parentId: ideaId,
+      },
+    });
+
+    return subideas;
   }
 }

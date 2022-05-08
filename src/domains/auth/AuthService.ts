@@ -7,12 +7,9 @@ import LoginDto from "../../types/domain/auth/LoginDto";
 import RegisterDto, {
   getInvalidRegisterPayloadMessage,
 } from "../../types/domain/auth/RegisterDto";
+import { AlreadyExistsError409 } from "../../utils/errors/AlreadyExistsError409";
+import { InvalidPayloadError400 } from "../../utils/errors/InvalidPayloadError400";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
-import {
-  AlreadyExistsError409,
-  InvalidPayloadError400,
-} from "../../utils/errors/ReponseErrors";
-import UnauthorizedError401 from "../../utils/errors/UnauthorizedError401";
 import AuthRepository from "./AuthRepository";
 config();
 
@@ -49,7 +46,7 @@ export default class AuthService {
     if (!user) throw new NotFoundError404("User not found");
 
     const passwordOk = await compare(payload.password, user.password);
-    if (!passwordOk) throw new UnauthorizedError401("Password not correct");
+    if (!passwordOk) throw new InvalidPayloadError400("Password not correct");
 
     const { token, expiresAt } = this.getSignInToken(user);
     return new AuthUserGetDto(user, token, expiresAt);

@@ -19,9 +19,8 @@ export default function authMiddleware(
 
   validateJwt(authToken, process.env.JWT_SECRET, async (error, decodedObj) => {
     if (error)
-      throw new UnauthorizedError401(
-        "Token is not valid. Sign in and try again."
-      );
+      return res.status(401).send("Token is not valid. Sign in and try again.");
+
     req.user = await new UserService().findById(decodedObj["userId"]);
     next();
   });

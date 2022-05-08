@@ -1,5 +1,5 @@
 import { GroupTab } from "@prisma/client";
-import UnauthorizedError401 from "../../../utils/errors/UnauthorizedError401";
+import ForbiddenError403 from "../../../utils/errors/ForbiddenError403";
 import GroupRepository from "../GroupRepository";
 import TabRepository from "./TabRepository";
 
@@ -16,7 +16,7 @@ export default class TabService {
   ) {
     const isAllowed = this.groupRepo.userBelongsToGroup(requesterId, groupId);
     if (!isAllowed)
-      throw new UnauthorizedError401(
+      throw new ForbiddenError403(
         "You're not allowed to add tabs to this group"
       );
 
@@ -35,7 +35,7 @@ export default class TabService {
       tab.groupId
     );
     if (!isAllowed)
-      throw new UnauthorizedError401("You're not allowed to edit this tab");
+      throw new ForbiddenError403("You're not allowed to edit this tab");
 
     const editedTab = await this.tabRepo.editTab(tab);
     return editedTab;
@@ -44,7 +44,7 @@ export default class TabService {
   public async findGroupTabs(groupId: string, requesterId: string) {
     const isAllowed = this.groupRepo.userBelongsToGroup(requesterId, groupId);
     if (!isAllowed)
-      throw new UnauthorizedError401(
+      throw new ForbiddenError403(
         "You're not allowed to view tabs in this group"
       );
     const groupTabs = await this.tabRepo.findGroupTabs(groupId);
@@ -58,7 +58,7 @@ export default class TabService {
       requesterId
     );
     if (!isAllowed)
-      throw new UnauthorizedError401("You're not allowed to delete this tab");
+      throw new ForbiddenError403("You're not allowed to delete this tab");
 
     const deletedTab = await this.tabRepo.deleteGroupTab(groupTab.id);
     return deletedTab;
