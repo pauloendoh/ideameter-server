@@ -73,9 +73,6 @@ model GroupTab {
   updatedAt DateTime @updatedAt
 
   ideas Idea[]
-
-
-
 }
 
 model Idea {
