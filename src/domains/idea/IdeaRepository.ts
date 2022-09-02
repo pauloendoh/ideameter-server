@@ -95,6 +95,27 @@ export default class IdeaRepository {
     return subideas;
   }
 
+  async findIdeasAndSubIdeasByGroupId(groupId: string) {
+    const ideas = await this.prismaClient.idea.findMany({
+      where: {
+        OR: [
+          {
+            tab: {
+              groupId,
+            },
+          },
+          // {
+          //   parent: {
+          //     tab: { groupId },
+          //   },
+          // },
+        ],
+      },
+    });
+
+    return ideas;
+  }
+
   async findSubideasByGroupId(groupId: string) {
     const subideas = await this.prismaClient.idea.findMany({
       where: {

@@ -26,6 +26,8 @@ model User {
   createdTabs  GroupTab[]
   createdIdeas Idea[]
   ideaRatings  IdeaRating[]
+
+  lastOpenedGroupId String?
 }
 
 model Group {
@@ -83,7 +85,6 @@ model Idea {
   subIdeas Idea[]  @relation("IdeaSubIdea")
   parent   Idea?   @relation("IdeaSubIdea", fields: [parentId], references: [id])
   parentId String?
-
 
   creator   User   @relation(fields: [creatorId], references: [id])
   creatorId String

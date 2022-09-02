@@ -45,4 +45,15 @@ export default class UserRepository {
       },
     });
   }
+
+  public async updateLastOpenedGroupId(userId: string, groupId: string) {
+    return this.prismaClient.user.update({
+      data: {
+        lastOpenedGroupId: groupId,
+      },
+      where: {
+        id: userId,
+      },
+    });
+  }
 }
