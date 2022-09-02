@@ -94,6 +94,7 @@ model Idea {
 
   name        String
   description String
+  isDone      Boolean @default(false)
 
   ideaRatings IdeaRating[]
   labels      Label[]
