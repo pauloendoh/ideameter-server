@@ -1,5 +1,6 @@
-import { Group } from "@prisma/client";
+import { Group, UserGroup } from "@prisma/client";
 import GroupDto from "../../types/domain/group/GroupDto";
+import { SimpleUserDto } from "../../types/domain/idea/IdeaWithLabelsType";
 import myPrismaClient from "../../utils/myPrismaClient";
 
 export default class GroupRepository {
@@ -82,7 +83,13 @@ export default class GroupRepository {
     return !!userGroup;
   }
 
-  public async findGroupMembers(groupId: string) {
+  public async findGroupMembers(
+    groupId: string
+  ): Promise<
+    (UserGroup & {
+      user: SimpleUserDto;
+    })[]
+  > {
     const members = await this.prismaClient.userGroup.findMany({
       where: {
         groupId,
@@ -92,6 +99,7 @@ export default class GroupRepository {
           select: {
             id: true,
             username: true,
+            email: true,
           },
         },
       },

@@ -1,6 +1,12 @@
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
 import myPrismaClient from "../../utils/myPrismaClient";
 
+const selectUserFields = {
+  id: true,
+  username: true,
+  email: true,
+};
+
 export default class IdeaRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
 
@@ -32,9 +38,15 @@ export default class IdeaRepository {
         labels: {
           connect: idea.labels.map((label) => ({ id: label.id })),
         },
+        assignedUsers: {
+          connect: idea.assignedUsers.map((u) => ({ id: u.id })),
+        },
       },
       include: {
         labels: true,
+        assignedUsers: {
+          select: selectUserFields,
+        },
       },
     });
 
@@ -50,7 +62,7 @@ export default class IdeaRepository {
     return idea;
   }
 
-  async findIdeasByTabId(tabId: string) {
+  async findIdeasByTabId(tabId: string): Promise<IdeaWithRelationsType[]> {
     const ideas = await this.prismaClient.idea.findMany({
       where: {
         tabId: {
@@ -59,6 +71,9 @@ export default class IdeaRepository {
       },
       include: {
         labels: true,
+        assignedUsers: {
+          select: selectUserFields,
+        },
       },
     });
 
@@ -77,9 +92,13 @@ export default class IdeaRepository {
         labels: {
           set: idea.labels.map((label) => ({ id: label.id })),
         },
+        assignedUsers: {
+          set: idea.assignedUsers.map((u) => ({ id: u.id })),
+        },
       },
       include: {
         labels: true,
+        assignedUsers: { select: selectUserFields },
       },
     });
     return updatedIdea;
@@ -104,11 +123,6 @@ export default class IdeaRepository {
               groupId,
             },
           },
-          // {
-          //   parent: {
-          //     tab: { groupId },
-          //   },
-          // },
         ],
       },
     });

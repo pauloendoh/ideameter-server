@@ -25,7 +25,9 @@ model User {
   userGroups   UserGroup[]
   createdTabs  GroupTab[]
   createdIdeas Idea[]
-  ideaRatings  IdeaRating[]
+
+  assignedIdeas Idea[]       @relation(name: "assigned")
+  ideaRatings   IdeaRating[]
 
   lastOpenedGroupId String?
 }
@@ -96,8 +98,9 @@ model Idea {
   description String
   isDone      Boolean @default(false)
 
-  ideaRatings IdeaRating[]
-  labels      Label[]
+  ideaRatings   IdeaRating[]
+  labels        Label[]
+  assignedUsers User[]       @relation(name: "assigned")
 }
 
 model IdeaRating {
