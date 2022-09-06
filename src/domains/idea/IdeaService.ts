@@ -20,11 +20,11 @@ export default class IdeaService {
         "You're not allowed to add ideas to this tab"
       );
 
-    const createdIdea = await this.ideaRepository.createIdea(idea, requesterId);
+    const createdIdea = await this.ideaRepository.saveIdea(idea, requesterId);
     return createdIdea;
   }
 
-  async createSubidea(idea: IdeaWithRelationsType, requesterId: string) {
+  async saveSubidea(idea: IdeaWithRelationsType, requesterId: string) {
     const parent = await this.ideaRepository.findById(idea.parentId);
     if (!parent) throw new ForbiddenError403("Parent idea not found");
 
@@ -38,8 +38,44 @@ export default class IdeaService {
       );
 
     idea.tabId = undefined;
-    const createdIdea = await this.ideaRepository.createIdea(idea, requesterId);
+    const createdIdea = await this.ideaRepository.saveIdea(idea, requesterId);
     return createdIdea;
+  }
+
+  async deleteSubidea(subideaId: string, requesterId: string) {
+    const subidea = await this.ideaRepository.findById(subideaId);
+    if (!subidea) throw new ForbiddenError403("Subidea not found");
+
+    const parentIdea = await this.ideaRepository.findById(subidea.parentId);
+
+    const isAllowed = await this.ideaRepository.userCanAccessTab(
+      parentIdea.tabId,
+      requesterId
+    );
+    if (!isAllowed)
+      throw new ForbiddenError403(
+        "You're not allowed to change ideas from this tab"
+      );
+
+    const deletedIdea = await this.ideaRepository.deleteIdea(subidea.id);
+    return deletedIdea;
+  }
+
+  async deleteIdea(ideaId: string, requesterId: string) {
+    const idea = await this.ideaRepository.findById(ideaId);
+    if (!idea) throw new ForbiddenError403("Idea not found");
+
+    const isAllowed = await this.ideaRepository.userCanAccessTab(
+      idea.tabId,
+      requesterId
+    );
+    if (!isAllowed)
+      throw new ForbiddenError403(
+        "You're not allowed to change ideas from this tab"
+      );
+
+    const result = await this.ideaRepository.deleteIdea(idea.id);
+    return result;
   }
 
   async findIdeasByGroupId(groupId: string, requesterId: string) {

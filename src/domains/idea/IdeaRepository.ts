@@ -27,26 +27,36 @@ export default class IdeaRepository {
     return !!userBelongsToGroup;
   }
 
-  async createIdea(idea: IdeaWithRelationsType, requesterId: string) {
-    const createdIdea = await this.prismaClient.idea.create({
-      data: {
-        ...idea,
-        creatorId: requesterId,
+  async saveIdea(idea: IdeaWithRelationsType, requesterId: string) {
+    const dto = {
+      ...idea,
+      creatorId: requesterId,
+      createdAt: undefined,
+      updatedAt: undefined,
+      labels: {
+        connect: idea.labels?.map((l) => ({ id: l.id })),
+      },
+      assignedUsers: {
+        connect: idea.assignedUsers?.map((u) => ({ id: u.id })),
+      },
+    };
+
+    const createdIdea = await this.prismaClient.idea.upsert({
+      create: {
+        ...dto,
         id: undefined,
-        createdAt: undefined,
-        updatedAt: undefined,
-        labels: {
-          connect: idea.labels.map((label) => ({ id: label.id })),
-        },
-        assignedUsers: {
-          connect: idea.assignedUsers.map((u) => ({ id: u.id })),
-        },
+      },
+      update: {
+        ...dto,
       },
       include: {
         labels: true,
         assignedUsers: {
           select: selectUserFields,
         },
+      },
+      where: {
+        id: idea.id,
       },
     });
 
@@ -142,5 +152,13 @@ export default class IdeaRepository {
     });
 
     return subideas;
+  }
+
+  async deleteIdea(ideaId: string) {
+    return this.prismaClient.idea.deleteMany({
+      where: {
+        OR: [{ id: ideaId }, { parentId: ideaId }],
+      },
+    });
   }
 }

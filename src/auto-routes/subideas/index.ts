@@ -5,17 +5,14 @@ import authMiddleware from "../../middleware/authMiddleware";
 import { MyAuthRequest } from "../../types/domain/auth/MyAuthRequest";
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
 
-export default function labelsRoute(expressApp: Application) {
+export default function subideasRoute(expressApp: Application) {
   return <Resource>{
     post: {
       middleware: authMiddleware,
       handler: async (req: MyAuthRequest, res: Response) => {
         const payload = req.body as IdeaWithRelationsType;
 
-        const saved = await new IdeaService().createSubidea(
-          payload,
-          req.user.id
-        );
+        const saved = await new IdeaService().saveSubidea(payload, req.user.id);
 
         return res.status(200).json(saved);
       },
@@ -40,6 +37,16 @@ export default function labelsRoute(expressApp: Application) {
         );
 
         return res.status(200).json(subideas);
+      },
+    },
+    put: {
+      middleware: authMiddleware,
+      handler: async (req: MyAuthRequest, res: Response) => {
+        const payload = req.body as IdeaWithRelationsType;
+
+        const saved = await new IdeaService().saveSubidea(payload, req.user.id);
+
+        return res.status(200).json(saved);
       },
     },
   };
