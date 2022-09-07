@@ -100,10 +100,10 @@ export default class IdeaRepository {
       data: {
         ...idea,
         labels: {
-          set: idea.labels.map((label) => ({ id: label.id })),
+          set: idea.labels?.map((label) => ({ id: label.id })),
         },
         assignedUsers: {
-          set: idea.assignedUsers.map((u) => ({ id: u.id })),
+          set: idea.assignedUsers?.map((u) => ({ id: u.id })),
         },
       },
       include: {
