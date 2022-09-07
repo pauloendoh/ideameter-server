@@ -114,6 +114,17 @@ export default class IdeaRepository {
     return updatedIdea;
   }
 
+  async updateOnFire(ideaId: string, onFireSince: Date | null) {
+    return this.prismaClient.idea.update({
+      data: {
+        onFireSince,
+      },
+      where: {
+        id: ideaId,
+      },
+    });
+  }
+
   async findSubideasByIdeaId(ideaId: string) {
     const subideas = await this.prismaClient.idea.findMany({
       where: {

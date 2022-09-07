@@ -96,7 +96,8 @@ model Idea {
 
   name        String
   description String
-  isDone      Boolean @default(false)
+  isDone      Boolean   @default(false)
+  onFireSince DateTime?
 
   ideaRatings   IdeaRating[]
   labels        Label[]

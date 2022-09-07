@@ -41,6 +41,19 @@ export default class RatingRepository {
     return saved;
   }
 
+  async findAvgRatingFromIdea(ideaId: string) {
+    const aggregation = await this.prismaClient.ideaRating.aggregate({
+      _avg: {
+        rating: true,
+      },
+      where: {
+        ideaId,
+      },
+    });
+
+    return aggregation._avg.rating;
+  }
+
   async findRatingsByGroupId(groupId: string) {
     const ratings = await this.prismaClient.ideaRating.findMany({
       where: {

@@ -1,3 +1,4 @@
+import { IdeaRating } from "@prisma/client";
 import ForbiddenError403 from "../../../utils/errors/ForbiddenError403";
 import NotFoundError404 from "../../../utils/errors/NotFoundError404";
 import GroupRepository from "../../group/GroupRepository";
@@ -19,24 +20,30 @@ export default class RatingService {
     if (!isAllowed)
       new ForbiddenError403("You're not allowed to rate this idea");
 
+    const previousAvgRating = await this.ratingRepository.findAvgRatingFromIdea(
+      ideaId
+    );
     const ratingExists = await this.ratingRepository.ratingExists(
       ideaId,
       requesterId
     );
-    if (ratingExists) {
-      const updatedRating = await this.ratingRepository.updateRating(
+
+    let savedRating: IdeaRating;
+    if (ratingExists)
+      savedRating = await this.ratingRepository.updateRating(
         ratingExists.id,
         rating
       );
-      return updatedRating;
-    }
+    else
+      savedRating = await this.ratingRepository.createRating(
+        ideaId,
+        rating,
+        requesterId
+      );
 
-    const savedRating = await this.ratingRepository.createRating(
-      ideaId,
-      rating,
-      requesterId
-    );
-    return savedRating;
+    const idea = await this.handleOnFire(previousAvgRating, ideaId);
+
+    return { savedRating, idea };
   }
 
   async findRatingsByGroupId(groupId: string, requesterId: string) {
@@ -79,5 +86,19 @@ export default class RatingService {
     );
 
     return deletedRating;
+  }
+
+  private async handleOnFire(previousAvgRating: number, ideaId: string) {
+    const currentAvgRating = await this.ratingRepository.findAvgRatingFromIdea(
+      ideaId
+    );
+
+    if (previousAvgRating < 2.5 && currentAvgRating >= 2.5) {
+      await this.ideaRepository.updateOnFire(ideaId, new Date());
+    } else if (previousAvgRating >= 2.5 && currentAvgRating < 2.5) {
+      await this.ideaRepository.updateOnFire(ideaId, null);
+    }
+
+    return this.ideaRepository.findById(ideaId);
   }
 }
