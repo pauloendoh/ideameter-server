@@ -1,11 +1,6 @@
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
 import myPrismaClient from "../../utils/myPrismaClient";
-
-const selectUserFields = {
-  id: true,
-  username: true,
-  email: true,
-};
+import { ideaIncludeFields } from "../../utils/prisma/fields/idea/ideaIncludeFields";
 
 export default class IdeaRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -49,12 +44,7 @@ export default class IdeaRepository {
       update: {
         ...dto,
       },
-      include: {
-        labels: true,
-        assignedUsers: {
-          select: selectUserFields,
-        },
-      },
+      include: ideaIncludeFields,
       where: {
         id: idea.id,
       },
@@ -68,6 +58,7 @@ export default class IdeaRepository {
       where: {
         id: ideaId,
       },
+      include: ideaIncludeFields,
     });
     return idea;
   }
@@ -79,12 +70,7 @@ export default class IdeaRepository {
           equals: tabId,
         },
       },
-      include: {
-        labels: true,
-        assignedUsers: {
-          select: selectUserFields,
-        },
-      },
+      include: ideaIncludeFields,
     });
 
     return ideas;
@@ -106,10 +92,7 @@ export default class IdeaRepository {
           set: idea.assignedUsers?.map((u) => ({ id: u.id })),
         },
       },
-      include: {
-        labels: true,
-        assignedUsers: { select: selectUserFields },
-      },
+      include: ideaIncludeFields,
     });
     return updatedIdea;
   }
@@ -146,12 +129,7 @@ export default class IdeaRepository {
           },
         ],
       },
-      include: {
-        labels: true,
-        assignedUsers: {
-          select: selectUserFields,
-        },
-      },
+      include: ideaIncludeFields,
     });
 
     return ideas;
