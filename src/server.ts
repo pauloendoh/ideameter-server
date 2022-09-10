@@ -29,6 +29,8 @@ const routingControllersOptions: RoutingControllersOptions = {
 };
 
 const app = createExpressServer(routingControllersOptions);
+app.use("/public", express.static("./public"));
+
 app.use(cors());
 
 app.use(express.json());
