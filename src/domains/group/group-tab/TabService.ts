@@ -1,4 +1,5 @@
 import { GroupTab } from "@prisma/client";
+import { ForbiddenError, NotFoundError } from "routing-controllers";
 import ForbiddenError403 from "../../../utils/errors/ForbiddenError403";
 import GroupRepository from "../GroupRepository";
 import TabRepository from "./TabRepository";
@@ -53,7 +54,7 @@ export default class TabService {
   }
 
   public async deleteGroupTab(groupTab: GroupTab, requesterId: string) {
-    const isAllowed = this.groupRepo.userBelongsToGroup(
+    const isAllowed = await this.groupRepo.userBelongsToGroup(
       groupTab.groupId,
       requesterId
     );
@@ -62,5 +63,19 @@ export default class TabService {
 
     const deletedTab = await this.tabRepo.deleteGroupTab(groupTab.id);
     return deletedTab;
+  }
+
+  public async findTabById(tabId: string, requesterId: string) {
+    const tab = await this.tabRepo.findTabById(tabId);
+    if (!tab) throw new NotFoundError("Tab not found.");
+
+    const isAllowed = await this.groupRepo.userBelongsToGroup(
+      requesterId,
+      tab.groupId
+    );
+    if (!isAllowed)
+      throw new ForbiddenError("You're not allowed to see this tab");
+
+    return tab;
   }
 }

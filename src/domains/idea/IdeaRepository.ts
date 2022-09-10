@@ -146,6 +146,12 @@ export default class IdeaRepository {
           },
         ],
       },
+      include: {
+        labels: true,
+        assignedUsers: {
+          select: selectUserFields,
+        },
+      },
     });
 
     return ideas;

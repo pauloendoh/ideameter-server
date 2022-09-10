@@ -42,4 +42,12 @@ export default class TabRepository {
     });
     return deleted;
   }
+
+  public async findTabById(tabId: string) {
+    return this.prismaClient.groupTab.findFirst({
+      where: {
+        id: tabId,
+      },
+    });
+  }
 }
