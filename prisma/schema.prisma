@@ -29,6 +29,8 @@ model User {
   assignedIdeas Idea[]       @relation(name: "assigned")
   ideaRatings   IdeaRating[]
 
+  highImpactVotes HighImpactVote[]
+
   lastOpenedGroupId String?
 }
 
@@ -99,9 +101,10 @@ model Idea {
   isDone      Boolean   @default(false)
   onFireSince DateTime?
 
-  ideaRatings   IdeaRating[]
-  labels        Label[]
-  assignedUsers User[]       @relation(name: "assigned")
+  ideaRatings     IdeaRating[]
+  labels          Label[]
+  assignedUsers   User[]           @relation(name: "assigned")
+  highImpactVotes HighImpactVote[]
 }
 
 model IdeaRating {
@@ -130,4 +133,14 @@ model Label {
   bgColor String @default("#db4035")
 
   ideas Idea[]
+}
+
+model HighImpactVote {
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  idea   Idea   @relation(fields: [ideaId], references: [id])
+  ideaId String
+
+  @@id([userId, ideaId])
 }

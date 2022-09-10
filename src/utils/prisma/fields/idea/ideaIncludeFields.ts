@@ -6,4 +6,5 @@ export const ideaIncludeFields = {
   assignedUsers: {
     select: userSelectFields,
   },
+  highImpactVotes: true,
 };

@@ -25,6 +25,7 @@ export default class IdeaRepository {
   async saveIdea(idea: IdeaWithRelationsType, requesterId: string) {
     const dto = {
       ...idea,
+
       creatorId: requesterId,
       createdAt: undefined,
       updatedAt: undefined,
@@ -33,6 +34,16 @@ export default class IdeaRepository {
       },
       assignedUsers: {
         connect: idea.assignedUsers?.map((u) => ({ id: u.id })),
+      },
+      highImpactVotes: {
+        connectOrCreate: idea.highImpactVotes?.map((vote) => ({
+          where: {
+            userId_ideaId: vote,
+          },
+          create: {
+            userId: vote.ideaId,
+          },
+        })),
       },
     };
 
@@ -44,6 +55,7 @@ export default class IdeaRepository {
       update: {
         ...dto,
       },
+
       include: ideaIncludeFields,
       where: {
         id: idea.id,
@@ -90,6 +102,26 @@ export default class IdeaRepository {
         },
         assignedUsers: {
           set: idea.assignedUsers?.map((u) => ({ id: u.id })),
+        },
+        highImpactVotes: {
+          connectOrCreate: idea.highImpactVotes?.map((vote) => ({
+            where: {
+              userId_ideaId: vote,
+            },
+            create: {
+              userId: vote.userId,
+            },
+          })),
+          deleteMany: {
+            AND: [
+              { ideaId: idea.id },
+              {
+                userId: {
+                  notIn: idea.highImpactVotes?.map((vote) => vote.userId),
+                },
+              },
+            ],
+          },
         },
       },
       include: ideaIncludeFields,
