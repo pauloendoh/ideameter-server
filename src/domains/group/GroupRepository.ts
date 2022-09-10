@@ -100,6 +100,7 @@ export default class GroupRepository {
             id: true,
             username: true,
             email: true,
+            profile: true,
           },
         },
       },

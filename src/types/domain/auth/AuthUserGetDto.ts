@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Profile, User } from "@prisma/client";
 
 // PE 3/3
 export class AuthUserGetDto {
@@ -8,11 +8,14 @@ export class AuthUserGetDto {
 
   token: string;
   expiresAt: Date;
+  profile: Profile;
 
-  constructor(user: User, token: string, expiresAt: Date) {
+  constructor(user: User, profile: Profile, token: string, expiresAt: Date) {
     this.id = user.id;
     this.username = user.username;
     this.email = user.email;
+
+    this.profile = profile;
 
     this.token = token;
     this.expiresAt = expiresAt;

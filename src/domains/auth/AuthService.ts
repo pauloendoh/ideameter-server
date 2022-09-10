@@ -10,11 +10,15 @@ import RegisterDto, {
 import { AlreadyExistsError409 } from "../../utils/errors/AlreadyExistsError409";
 import { InvalidPayloadError400 } from "../../utils/errors/InvalidPayloadError400";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
+import { ProfileRepository } from "../profile/ProfileRepository";
 import AuthRepository from "./AuthRepository";
 config();
 
 export default class AuthService {
-  constructor(private readonly authRepo = new AuthRepository()) {}
+  constructor(
+    private readonly authRepo = new AuthRepository(),
+    private readonly profileRepository = new ProfileRepository()
+  ) {}
 
   public async register(data: RegisterDto) {
     const invalidPayloadMessage = getInvalidRegisterPayloadMessage(data);
@@ -36,7 +40,7 @@ export default class AuthService {
     );
 
     const { token, expiresAt } = this.getSignInToken(newUser);
-    return new AuthUserGetDto(newUser, token, expiresAt);
+    return new AuthUserGetDto(newUser, newUser.profile, token, expiresAt);
   }
 
   public async login(payload: LoginDto) {
@@ -49,7 +53,7 @@ export default class AuthService {
     if (!passwordOk) throw new InvalidPayloadError400("Password not correct");
 
     const { token, expiresAt } = this.getSignInToken(user);
-    return new AuthUserGetDto(user, token, expiresAt);
+    return new AuthUserGetDto(user, user.profile, token, expiresAt);
   }
 
   private getSignInToken(user: User) {
@@ -64,6 +68,7 @@ export default class AuthService {
 
   public async getAuthUserWithToken(user: User) {
     const { token, expiresAt } = this.getSignInToken(user);
-    return new AuthUserGetDto(user, token, expiresAt);
+    const profile = await this.profileRepository.findProfileByUserId(user.id);
+    return new AuthUserGetDto(user, profile, token, expiresAt);
   }
 }

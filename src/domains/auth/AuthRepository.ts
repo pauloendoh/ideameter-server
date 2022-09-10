@@ -23,6 +23,15 @@ export default class AuthRepository {
         email: email,
         username: username,
         password: hashedPassword,
+        profile: {
+          create: {
+            bio: "",
+            pictureUrl: "",
+          },
+        },
+      },
+      include: {
+        profile: true,
       },
     });
 
@@ -43,6 +52,9 @@ export default class AuthRepository {
     const user = await this.prismaClient.user.findFirst({
       where: {
         OR: [{ email: usernameOrEmail }, { username: usernameOrEmail }],
+      },
+      include: {
+        profile: true,
       },
     });
 
