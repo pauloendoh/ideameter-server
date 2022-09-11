@@ -135,10 +135,10 @@ model Label {
 }
 
 model HighImpactVote {
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  idea   Idea   @relation(fields: [ideaId], references: [id])
+  idea   Idea   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
   ideaId String
 
   @@id([userId, ideaId])

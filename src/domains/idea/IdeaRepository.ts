@@ -41,7 +41,7 @@ export default class IdeaRepository {
             userId_ideaId: vote,
           },
           create: {
-            userId: vote.ideaId,
+            userId: vote.userId,
           },
         })),
       },
