@@ -3,11 +3,13 @@ import ForbiddenError403 from "../../utils/errors/ForbiddenError403";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
 import GroupRepository from "../group/GroupRepository";
 import IdeaRepository from "./IdeaRepository";
+import RatingRepository from "./rating/RatingRepository";
 
 export default class IdeaService {
   constructor(
     private readonly ideaRepository = new IdeaRepository(),
-    private readonly groupRepository = new GroupRepository()
+    private readonly groupRepository = new GroupRepository(),
+    private readonly ratingRepository = new RatingRepository()
   ) {}
 
   async createIdea(idea: IdeaWithRelationsType, requesterId: string) {
@@ -21,6 +23,8 @@ export default class IdeaService {
       );
 
     const createdIdea = await this.ideaRepository.saveIdea(idea, requesterId);
+    await this.ratingRepository.createRating(createdIdea.id, 3, requesterId);
+
     return createdIdea;
   }
 
