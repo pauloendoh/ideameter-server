@@ -25,6 +25,7 @@ model User {
 
   assignedIdeas Idea[]       @relation(name: "assigned")
   ideaRatings   IdeaRating[]
+  rteImages     RteImage[]
 
   highImpactVotes HighImpactVote[]
 
@@ -101,6 +102,7 @@ model Idea {
   onFireSince DateTime?
 
   ideaRatings     IdeaRating[]
+  rteImages       RteImage[]
   labels          Label[]
   assignedUsers   User[]           @relation(name: "assigned")
   highImpactVotes HighImpactVote[]
@@ -154,4 +156,15 @@ model Profile {
   updatedAt DateTime @updatedAt
 
   @@id([userId])
+}
+
+model RteImage {
+  User   User   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String
+
+  Idea   Idea?   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  ideaId String?
+
+  imageUrl  String   @id
+  createdAt DateTime @default(now())
 }

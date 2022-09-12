@@ -5,7 +5,7 @@ import path from "path";
 
 import aws from "aws-sdk";
 
-const UPLOAD_PATH = path.resolve(__dirname, "../../public/uploads");
+const UPLOAD_PATH = path.resolve(__dirname, "../../../public/uploads");
 
 const localDiskStorage = diskStorage({
   destination: (req, file, cb) => {
@@ -48,7 +48,7 @@ const myS3Storage = s3Storage({
   },
 });
 
-export const multerConfig: multer.Options = {
+export const profileImageMulterConfig: multer.Options = {
   storage:
     process.env.IS_S3_STORAGE === "true" ? myS3Storage : localDiskStorage,
   limits: {
