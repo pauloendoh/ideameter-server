@@ -96,10 +96,11 @@ model Idea {
   tab   GroupTab? @relation(fields: [tabId], references: [id])
   tabId String?
 
-  name        String
-  description String
-  isDone      Boolean   @default(false)
-  onFireSince DateTime?
+  name            String
+  description     String
+  isDone          Boolean   @default(false)
+  onFireSince     DateTime?
+  irrelevantSince DateTime?
 
   ideaRatings     IdeaRating[]
   rteImages       RteImage[]

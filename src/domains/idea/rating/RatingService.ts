@@ -41,7 +41,10 @@ export default class RatingService {
         requesterId
       );
 
-    const idea = await this.handleOnFire(previousAvgRating, ideaId);
+    const idea = await this.handleInterestingOrIrrelevantIdea(
+      previousAvgRating,
+      ideaId
+    );
 
     return { savedRating, idea };
   }
@@ -88,7 +91,10 @@ export default class RatingService {
     return deletedRating;
   }
 
-  private async handleOnFire(previousAvgRating: number, ideaId: string) {
+  private async handleInterestingOrIrrelevantIdea(
+    previousAvgRating: number,
+    ideaId: string
+  ) {
     const currentAvgRating = await this.ratingRepository.findAvgRatingFromIdea(
       ideaId
     );
@@ -96,7 +102,7 @@ export default class RatingService {
     if (previousAvgRating < 2.5 && currentAvgRating >= 2.5) {
       await this.ideaRepository.updateOnFire(ideaId, new Date());
     } else if (previousAvgRating >= 2.5 && currentAvgRating < 2.5) {
-      await this.ideaRepository.updateOnFire(ideaId, null);
+      await this.ideaRepository.updateIrrelevantIdea(ideaId, new Date());
     }
 
     return this.ideaRepository.findById(ideaId);
