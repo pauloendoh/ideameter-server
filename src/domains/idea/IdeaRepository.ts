@@ -133,6 +133,19 @@ export default class IdeaRepository {
     return this.prismaClient.idea.update({
       data: {
         onFireSince,
+        irrelevantSince: null,
+      },
+      where: {
+        id: ideaId,
+      },
+    });
+  }
+
+  async updateIrrelevantIdea(ideaId: string, irrelevantSince: Date | null) {
+    return this.prismaClient.idea.update({
+      data: {
+        irrelevantSince,
+        onFireSince: null,
       },
       where: {
         id: ideaId,
