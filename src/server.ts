@@ -9,6 +9,7 @@ import {
   createExpressServer,
   RoutingControllersOptions,
 } from "routing-controllers";
+import { addSocketServer } from "./addSocketServer";
 import errorMiddleware from "./middleware/errorMiddleware";
 import { validateJwt } from "./utils/auth/validateJwt";
 
@@ -20,7 +21,6 @@ config();
 const routingControllersOptions: RoutingControllersOptions = {
   cors: true,
   controllers: [path.join(__dirname + "/**/*Controller{.js,.ts}")],
-
   currentUserChecker: async (action: Action) => {
     const token = action.request.headers["x-auth-token"];
     const user = await validateJwt(token);
@@ -41,3 +41,5 @@ app.use(errorMiddleware);
 
 const port = process.env.PORT || 8081;
 app.listen(port, () => console.log(`server running on port ${port}`));
+
+addSocketServer(app);
