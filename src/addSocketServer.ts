@@ -14,11 +14,15 @@ export const addSocketServer = (app?: any) => {
   });
 
   serverSocket.on("connection", (userSocket) => {
+    console.log("user connected");
+
     userSocket.on("enter-group", (groupId: string) => {
       userSocket.join(`group-${groupId}`);
+      console.log("joined group");
     });
 
     userSocket.on("saveIdea", ({ idea, groupId }) => {
+      console.log("send saveIdea");
       userSocket.to(`group-${groupId}`).emit("saveIdea", { idea, groupId });
     });
   });
