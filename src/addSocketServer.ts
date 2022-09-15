@@ -23,8 +23,5 @@ export const addSocketServer = (app?: any) => {
     });
   });
 
-  const WS_PORT = +process.env.WS_PORT || 8002;
-  httpServer.listen(WS_PORT, () => {
-    console.log(`WS listening on ${WS_PORT}`);
-  });
+  return httpServer;
 };

@@ -39,7 +39,9 @@ autoroutes(app, { dir: "./auto-routes" });
 
 app.use(errorMiddleware);
 
-const port = process.env.PORT || 8081;
-app.listen(port, () => console.log(`server running on port ${port}`));
+const httpServer = addSocketServer(app);
 
-addSocketServer(app);
+const port = +process.env.PORT || 8081;
+httpServer.listen(port, () => {
+  console.log(`server running on port ${port}`);
+});
