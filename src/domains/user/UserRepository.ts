@@ -1,4 +1,5 @@
 import myPrismaClient from "../../utils/myPrismaClient";
+import { userSelectFields } from "../../utils/prisma/fields/user/userSelectFields";
 
 export default class UserRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -11,6 +12,16 @@ export default class UserRepository {
     });
 
     return user;
+  }
+
+  findUsersByIds(userIds: string[]) {
+    return this.prismaClient.user.findMany({
+      select: userSelectFields,
+
+      where: {
+        id: { in: userIds },
+      },
+    });
   }
 
   public async findByText(text: string) {
@@ -38,11 +49,7 @@ export default class UserRepository {
         //   },
         // ],
       },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-      },
+      select: userSelectFields,
     });
   }
 

@@ -27,5 +27,7 @@ export const addSocketServer = (app?: any) => {
     });
   });
 
+  app.set("socketio", serverSocket);
+
   return httpServer;
 };

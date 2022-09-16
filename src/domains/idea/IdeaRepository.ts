@@ -22,7 +22,10 @@ export default class IdeaRepository {
     return !!userBelongsToGroup;
   }
 
-  async saveIdea(idea: IdeaWithRelationsType, requesterId: string) {
+  async saveIdea(
+    idea: IdeaWithRelationsType,
+    requesterId: string
+  ): Promise<IdeaWithRelationsType> {
     const dto = {
       ...idea,
 
@@ -73,6 +76,21 @@ export default class IdeaRepository {
       include: ideaIncludeFields,
     });
     return idea;
+  }
+
+  async findIdeasAndGroupsByIds(ideaIds: string[]) {
+    return this.prismaClient.idea.findMany({
+      where: {
+        id: { in: ideaIds },
+      },
+      include: {
+        tab: {
+          select: {
+            group: true,
+          },
+        },
+      },
+    });
   }
 
   async findIdeasByTabId(tabId: string): Promise<IdeaWithRelationsType[]> {
@@ -163,16 +181,12 @@ export default class IdeaRepository {
     return subideas;
   }
 
-  async findIdeasAndSubIdeasByGroupId(groupId: string) {
+  async findIdeasByGroupId(groupId: string) {
     const ideas = await this.prismaClient.idea.findMany({
       where: {
-        OR: [
-          {
-            tab: {
-              groupId,
-            },
-          },
-        ],
+        tab: {
+          groupId,
+        },
       },
       include: ideaIncludeFields,
     });
@@ -198,6 +212,31 @@ export default class IdeaRepository {
     return this.prismaClient.idea.deleteMany({
       where: {
         OR: [{ id: ideaId }, { parentId: ideaId }],
+      },
+    });
+  }
+
+  async usernamesCanAccessIdea(usernames: string[], ideaId: string) {
+    return this.prismaClient.user.findMany({
+      where: {
+        username: {
+          in: usernames,
+        },
+        userGroups: {
+          some: {
+            group: {
+              tabs: {
+                some: {
+                  ideas: {
+                    some: {
+                      id: ideaId,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
   }

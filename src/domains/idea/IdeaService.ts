@@ -1,7 +1,9 @@
+import { Server } from "socket.io";
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
 import ForbiddenError403 from "../../utils/errors/ForbiddenError403";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
 import GroupRepository from "../group/GroupRepository";
+import { NotificationService } from "../notification/NotificationService";
 import IdeaRepository from "./IdeaRepository";
 import RatingRepository from "./rating/RatingRepository";
 
@@ -9,10 +11,15 @@ export default class IdeaService {
   constructor(
     private readonly ideaRepository = new IdeaRepository(),
     private readonly groupRepository = new GroupRepository(),
-    private readonly ratingRepository = new RatingRepository()
+    private readonly ratingRepository = new RatingRepository(),
+    private readonly notificationService = new NotificationService()
   ) {}
 
-  async createIdea(idea: IdeaWithRelationsType, requesterId: string) {
+  async createIdea(
+    idea: IdeaWithRelationsType,
+    requesterId: string,
+    socketServer: Server
+  ) {
     const isAllowed = await this.ideaRepository.userCanAccessTab(
       idea.tabId,
       requesterId
@@ -24,6 +31,13 @@ export default class IdeaService {
 
     const createdIdea = await this.ideaRepository.saveIdea(idea, requesterId);
     await this.ratingRepository.createRating(createdIdea.id, 3, requesterId);
+
+    // don't need to await this
+    this.notificationService.handleMentionNotificationsCreateIdea(
+      createdIdea,
+      requesterId,
+      socketServer
+    );
 
     return createdIdea;
   }
@@ -90,9 +104,7 @@ export default class IdeaService {
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to see this group");
 
-    const ideas = await this.ideaRepository.findIdeasAndSubIdeasByGroupId(
-      groupId
-    );
+    const ideas = await this.ideaRepository.findIdeasByGroupId(groupId);
     return ideas;
   }
 
@@ -108,7 +120,11 @@ export default class IdeaService {
     return ideas;
   }
 
-  async updateIdea(idea: IdeaWithRelationsType, requesterId: string) {
+  async updateIdea(
+    idea: IdeaWithRelationsType,
+    requesterId: string,
+    socketServer: Server
+  ) {
     const isAllowed = await this.ideaRepository.userCanAccessTab(
       idea.tabId,
       requesterId
@@ -116,7 +132,17 @@ export default class IdeaService {
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to update this idea");
 
+    const previousIdea = await this.ideaRepository.findById(idea.id);
+
     const updatedIdea = await this.ideaRepository.updateIdea(idea);
+
+    this.notificationService.handleMentionNotificationsUpdateIdea(
+      previousIdea,
+      updatedIdea,
+      requesterId,
+      socketServer
+    );
+
     return updatedIdea;
   }
 

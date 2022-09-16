@@ -41,7 +41,8 @@
     "multer-sharp-s3": "^0.2.5",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.9.0",
-    "socket.io": "^4.5.2"
+    "socket.io": "^4.5.2",
+    "socket.io-client": "^4.5.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

@@ -127,4 +127,24 @@ export default class GroupRepository {
 
     return newMember;
   }
+
+  findGroupsByIdeaIds(ideaIds: string[]) {
+    return this.prismaClient.group.findMany({
+      distinct: "id",
+
+      where: {
+        tabs: {
+          some: {
+            ideas: {
+              some: {
+                id: {
+                  in: ideaIds,
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
