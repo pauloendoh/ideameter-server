@@ -11,9 +11,12 @@ export default function testRoute(expressApp: Application) {
       middleware: authMiddleware,
       handler: async (req: MyAuthRequest, res: Response) => {
         const payload = req.body as IdeaWithRelationsType;
+        const socketServer = req.app.get("socketio");
+
         const savedIdea = await new IdeaService().createIdea(
           payload,
-          req.user.id
+          req.user.id,
+          socketServer
         );
 
         return res.status(200).json(savedIdea);
@@ -23,9 +26,12 @@ export default function testRoute(expressApp: Application) {
       middleware: authMiddleware,
       handler: async (req: MyAuthRequest, res: Response) => {
         const payload = req.body as IdeaWithRelationsType;
+        const socketServer = req.app.get("socketio");
+
         const savedIdea = await new IdeaService().updateIdea(
           payload,
-          req.user.id
+          req.user.id,
+          socketServer
         );
 
         return res.status(200).json(savedIdea);
