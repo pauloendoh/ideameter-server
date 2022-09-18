@@ -57,11 +57,24 @@ export default class RatingRepository {
   async findRatingsByGroupId(groupId: string) {
     const ratings = await this.prismaClient.ideaRating.findMany({
       where: {
-        idea: {
-          tab: {
-            groupId,
+        OR: [
+          {
+            idea: {
+              tab: {
+                groupId,
+              },
+            },
           },
-        },
+          {
+            idea: {
+              parent: {
+                tab: {
+                  groupId,
+                },
+              },
+            },
+          },
+        ],
       },
     });
     return ratings;
