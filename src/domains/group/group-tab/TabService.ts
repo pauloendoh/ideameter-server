@@ -55,8 +55,8 @@ export default class TabService {
 
   public async deleteGroupTab(groupTab: GroupTab, requesterId: string) {
     const isAllowed = await this.groupRepo.userBelongsToGroup(
-      groupTab.groupId,
-      requesterId
+      requesterId,
+      groupTab.groupId
     );
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to delete this tab");
