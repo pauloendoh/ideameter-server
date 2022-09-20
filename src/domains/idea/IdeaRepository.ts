@@ -6,6 +6,10 @@ export default class IdeaRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
 
   async userCanAccessTab(tabId: string, requesterId: string) {
+    if (tabId === null) {
+      console.log("we gotta fix this. Parent idea should always have a tabId"); // happening on RatingService.findSubideaRatings
+      return false;
+    }
     const userBelongsToGroup = await this.prismaClient.userGroup.findFirst({
       where: {
         userId: requesterId,

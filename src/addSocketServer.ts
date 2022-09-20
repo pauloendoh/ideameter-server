@@ -2,6 +2,8 @@ import { createServer } from "http";
 
 import { config } from "dotenv";
 import { Server } from "socket.io";
+import { wsEventNames } from "./utils/wsEventNames";
+import { wsRoomNames } from "./utils/wsRoomNames";
 config();
 
 export const addSocketServer = (app?: any) => {
@@ -24,6 +26,12 @@ export const addSocketServer = (app?: any) => {
     userSocket.on("saveIdea", ({ idea, groupId }) => {
       console.log("send saveIdea");
       userSocket.to(`group-${groupId}`).emit("saveIdea", { idea, groupId });
+    });
+
+    userSocket.on(wsEventNames.deleteIdea, ({ idea, groupId }) => {
+      userSocket
+        .to(wsRoomNames.group(groupId))
+        .emit(wsEventNames.deleteIdea, { idea, groupId });
     });
   });
 
