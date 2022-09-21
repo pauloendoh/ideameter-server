@@ -62,4 +62,9 @@ export class IdeaController {
   ) {
     return this.ideaService.findIdeasByGroupId(groupId, user.id);
   }
+
+  @Get("/idea/:ideaId/name")
+  findIdeaNameByIdeaId(@Param("ideaId") ideaId: string) {
+    return this.ideaService.findIdeaNameByIdeaId(ideaId);
+  }
 }

@@ -170,4 +170,11 @@ export default class IdeaService {
     const subideas = await this.ideaRepository.findSubideasByGroupId(groupId);
     return subideas;
   }
+
+  async findIdeaNameByIdeaId(ideaId: string) {
+    const idea = await this.ideaRepository.findById(ideaId);
+    if (!idea) return "";
+
+    return idea.name;
+  }
 }
