@@ -2,12 +2,12 @@ import { User } from "@prisma/client";
 import { compare, genSalt, hash } from "bcrypt";
 import { config } from "dotenv";
 import { sign } from "jsonwebtoken";
+import { HttpError } from "routing-controllers";
 import { AuthUserGetDto } from "../../types/domain/auth/AuthUserGetDto";
 import LoginDto from "../../types/domain/auth/LoginDto";
 import RegisterDto, {
   getInvalidRegisterPayloadMessage,
 } from "../../types/domain/auth/RegisterDto";
-import { AlreadyExistsError409 } from "../../utils/errors/AlreadyExistsError409";
 import { InvalidPayloadError400 } from "../../utils/errors/InvalidPayloadError400";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
 import { ProfileRepository } from "../profile/ProfileRepository";
@@ -26,11 +26,10 @@ export default class AuthService {
       throw new InvalidPayloadError400(invalidPayloadMessage);
 
     const emailExists = await this.authRepo.emailExists(data.email);
-    if (emailExists) throw new AlreadyExistsError409("Email already exists");
+    if (emailExists) throw new HttpError(409, "Email already exists");
 
     const usernameExists = await this.authRepo.usernameExists(data.username);
-    if (usernameExists)
-      throw new AlreadyExistsError409("Username already exists");
+    if (usernameExists) throw new HttpError(409, "Username already exists");
 
     const salt = await genSalt(10);
     const newUser = await this.authRepo.registerNewUser(

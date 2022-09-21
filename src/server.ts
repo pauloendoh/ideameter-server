@@ -2,7 +2,6 @@ import path from "path";
 
 import { config } from "dotenv";
 import express from "express";
-import autoroutes from "express-automatic-routes";
 import "reflect-metadata";
 import {
   Action,
@@ -10,7 +9,6 @@ import {
   RoutingControllersOptions,
 } from "routing-controllers";
 import { addSocketServer } from "./addSocketServer";
-import errorMiddleware from "./middleware/errorMiddleware";
 import { validateJwt } from "./utils/auth/validateJwt";
 
 import cors = require("cors");
@@ -30,14 +28,6 @@ const routingControllersOptions: RoutingControllersOptions = {
 
 const app = createExpressServer(routingControllersOptions);
 app.use("/public", express.static("./public"));
-
-app.use(cors());
-
-app.use(express.json());
-
-autoroutes(app, { dir: "./auto-routes" });
-
-app.use(errorMiddleware);
 
 const httpServer = addSocketServer(app);
 
