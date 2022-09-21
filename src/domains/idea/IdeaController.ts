@@ -64,7 +64,7 @@ export class IdeaController {
   }
 
   @Get("/idea/:ideaId/name")
-  findIdeaNameByIdeaId(@Param("ideaId") ideaId: string) {
-    return this.ideaService.findIdeaNameByIdeaId(ideaId);
+  findIdeaLinkPreviewInfo(@Param("ideaId") ideaId: string) {
+    return this.ideaService.findIdeaLinkPreviewInfo(ideaId);
   }
 }

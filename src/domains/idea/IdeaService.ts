@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
 import ForbiddenError403 from "../../utils/errors/ForbiddenError403";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
+import TabRepository from "../group/group-tab/TabRepository";
 import GroupRepository from "../group/GroupRepository";
 import { NotificationService } from "../notification/NotificationService";
 import RatingRepository from "../rating/RatingRepository";
@@ -13,7 +14,8 @@ export default class IdeaService {
     private readonly ideaRepository = new IdeaRepository(),
     private readonly groupRepository = new GroupRepository(),
     private readonly ratingRepository = new RatingRepository(),
-    private readonly notificationService = new NotificationService()
+    private readonly notificationService = new NotificationService(),
+    private readonly tabRepository = new TabRepository()
   ) {}
 
   async createIdea(
@@ -171,10 +173,19 @@ export default class IdeaService {
     return subideas;
   }
 
-  async findIdeaNameByIdeaId(ideaId: string) {
+  async findIdeaLinkPreviewInfo(ideaId: string) {
     const idea = await this.ideaRepository.findById(ideaId);
-    if (!idea) return "";
+    if (!idea) return null;
 
-    return idea.name;
+    if (idea.tabId)
+      return {
+        description: idea.name,
+        title: (await this.tabRepository.findTabById(idea.tabId)).name,
+      };
+
+    return {
+      description: idea.name,
+      title: (await this.ideaRepository.findById(idea.parentId)).name,
+    };
   }
 }
