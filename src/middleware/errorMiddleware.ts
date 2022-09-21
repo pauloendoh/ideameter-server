@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AlreadyExistsError409 } from "../utils/errors/AlreadyExistsError409";
+import { AlreadyExistsError406 } from "../utils/errors/AlreadyExistsError406";
 import ForbiddenError403 from "../utils/errors/ForbiddenError403";
 import { InvalidPayloadError400 } from "../utils/errors/InvalidPayloadError400";
 import NotFoundError404 from "../utils/errors/NotFoundError404";
@@ -21,7 +21,7 @@ export default function errorMiddleware(
   else if (error instanceof NotFoundError404)
     res.status(404).send(error.message || "Not found");
 
-  if (error instanceof AlreadyExistsError409)
+  if (error instanceof AlreadyExistsError406)
     res.status(409).send(error.message || "Already exists");
   else res.status(500).send("Internal Server Error");
 

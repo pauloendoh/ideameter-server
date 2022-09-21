@@ -26,6 +26,6 @@ export default class UserService {
     if (!isAllowed)
       throw new ForbiddenError403("User does not belong to this group.");
 
-    await this.userRepository.updateLastOpenedGroupId(userId, groupId);
+    return this.userRepository.updateLastOpenedGroupId(userId, groupId);
   }
 }

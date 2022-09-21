@@ -1,4 +1,4 @@
-import myPrismaClient from "../../../utils/myPrismaClient";
+import myPrismaClient from "../../utils/myPrismaClient";
 
 export default class RatingRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}

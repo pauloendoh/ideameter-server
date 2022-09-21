@@ -1,1 +1,3 @@
-export default class ForbiddenError403 extends Error {}
+import { ForbiddenError } from "routing-controllers";
+
+export default class ForbiddenError403 extends ForbiddenError {}

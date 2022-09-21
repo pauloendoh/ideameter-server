@@ -1,11 +1,12 @@
+import { ForbiddenError } from "routing-controllers";
 import { Server } from "socket.io";
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
 import ForbiddenError403 from "../../utils/errors/ForbiddenError403";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
 import GroupRepository from "../group/GroupRepository";
 import { NotificationService } from "../notification/NotificationService";
+import RatingRepository from "../rating/RatingRepository";
 import IdeaRepository from "./IdeaRepository";
-import RatingRepository from "./rating/RatingRepository";
 
 export default class IdeaService {
   constructor(
@@ -25,9 +26,7 @@ export default class IdeaService {
       requesterId
     );
     if (!isAllowed)
-      throw new ForbiddenError403(
-        "You're not allowed to add ideas to this tab"
-      );
+      throw new ForbiddenError("You're not allowed to add ideas to this tab");
 
     const createdIdea = await this.ideaRepository.saveIdea(idea, requesterId);
     await this.ratingRepository.createRating(createdIdea.id, 3, requesterId);

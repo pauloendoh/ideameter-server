@@ -1,1 +1,3 @@
-export class InvalidPayloadError400 extends Error {}
+import { BadRequestError } from "routing-controllers";
+
+export class InvalidPayloadError400 extends BadRequestError {}

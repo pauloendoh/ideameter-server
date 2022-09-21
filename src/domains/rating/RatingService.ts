@@ -1,8 +1,8 @@
 import { IdeaRating } from "@prisma/client";
-import ForbiddenError403 from "../../../utils/errors/ForbiddenError403";
-import NotFoundError404 from "../../../utils/errors/NotFoundError404";
-import GroupRepository from "../../group/GroupRepository";
-import IdeaRepository from "../IdeaRepository";
+import ForbiddenError403 from "../../utils/errors/ForbiddenError403";
+import NotFoundError404 from "../../utils/errors/NotFoundError404";
+import GroupRepository from "../group/GroupRepository";
+import IdeaRepository from "../idea/IdeaRepository";
 import RatingRepository from "./RatingRepository";
 
 export default class RatingService {

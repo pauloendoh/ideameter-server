@@ -1,1 +1,3 @@
-export default class NotFoundError404 extends Error {}
+import { NotFoundError } from "routing-controllers";
+
+export default class NotFoundError404 extends NotFoundError {}
