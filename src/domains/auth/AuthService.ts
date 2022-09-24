@@ -1,6 +1,5 @@
 import { User } from "@prisma/client";
 import { compare, genSalt, hash } from "bcrypt";
-import { config } from "dotenv";
 import { sign } from "jsonwebtoken";
 import { HttpError } from "routing-controllers";
 import { AuthUserGetDto } from "../../types/domain/auth/AuthUserGetDto";
@@ -10,14 +9,15 @@ import RegisterDto, {
 } from "../../types/domain/auth/RegisterDto";
 import { InvalidPayloadError400 } from "../../utils/errors/InvalidPayloadError400";
 import NotFoundError404 from "../../utils/errors/NotFoundError404";
+import { EmailService } from "../email/EmailService";
 import { ProfileRepository } from "../profile/ProfileRepository";
 import AuthRepository from "./AuthRepository";
-config();
 
 export default class AuthService {
   constructor(
     private readonly authRepo = new AuthRepository(),
-    private readonly profileRepository = new ProfileRepository()
+    private readonly profileRepository = new ProfileRepository(),
+    private emailService = new EmailService()
   ) {}
 
   public async register(data: RegisterDto) {
@@ -39,6 +39,9 @@ export default class AuthService {
     );
 
     const { token, expiresAt } = this.getSignInToken(newUser);
+
+    this.emailService.notifyNewUserToDevs(newUser.username);
+
     return new AuthUserGetDto(newUser, newUser.profile, token, expiresAt);
   }
 

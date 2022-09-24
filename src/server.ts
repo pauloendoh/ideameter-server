@@ -11,7 +11,6 @@ import {
 import { addSocketServer } from "./addSocketServer";
 import { validateJwt } from "./utils/auth/validateJwt";
 
-import cors = require("cors");
 require("express-async-errors");
 
 config();
