@@ -11,7 +11,7 @@ import {
   QueryParam,
 } from "routing-controllers";
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
-import IdeaService from "../idea/IdeaService";
+import IdeaService from "../idea/IdeaService/IdeaService";
 
 @JsonController("/subideas")
 export class SubideasController {

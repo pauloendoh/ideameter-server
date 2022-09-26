@@ -1,13 +1,13 @@
 import { ForbiddenError } from "routing-controllers";
 import { Server } from "socket.io";
-import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
-import ForbiddenError403 from "../../utils/errors/ForbiddenError403";
-import NotFoundError404 from "../../utils/errors/NotFoundError404";
-import TabRepository from "../group/group-tab/TabRepository";
-import GroupRepository from "../group/GroupRepository";
-import { NotificationService } from "../notification/NotificationService";
-import RatingRepository from "../rating/RatingRepository";
-import IdeaRepository from "./IdeaRepository";
+import { IdeaWithRelationsType } from "../../../types/domain/idea/IdeaWithLabelsType";
+import ForbiddenError403 from "../../../utils/errors/ForbiddenError403";
+import NotFoundError404 from "../../../utils/errors/NotFoundError404";
+import TabRepository from "../../group/group-tab/TabRepository";
+import GroupRepository from "../../group/GroupRepository";
+import { NotificationService } from "../../notification/NotificationService";
+import RatingRepository from "../../rating/RatingRepository";
+import IdeaRepository from "../IdeaRepository";
 
 export default class IdeaService {
   constructor(
