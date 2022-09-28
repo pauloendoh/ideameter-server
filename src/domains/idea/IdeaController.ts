@@ -67,4 +67,9 @@ export class IdeaController {
   findIdeaLinkPreviewInfo(@Param("ideaId") ideaId: string) {
     return this.ideaService.findIdeaLinkPreviewInfo(ideaId);
   }
+
+  @Get("/ideas/assigned-to-me")
+  findIdeasAssignedToMe(@CurrentUser({ required: true }) user: User) {
+    return this.ideaService.findAssignedIdeasToUser(user.id);
+  }
 }
