@@ -1,14 +1,15 @@
-import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType";
-import myPrismaClient from "../../utils/myPrismaClient";
-import { ideaIncludeFields } from "../../utils/prisma/fields/idea/ideaIncludeFields";
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType"
+import myPrismaClient from "../../utils/myPrismaClient"
+import { ideaIncludeFields } from "../../utils/prisma/fields/idea/ideaIncludeFields"
+import TabRepository from "../group/group-tab/TabRepository"
 
 export default class IdeaRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
 
   async userCanAccessTab(tabId: string, requesterId: string) {
     if (tabId === null) {
-      console.log("we gotta fix this. Parent idea should always have a tabId"); // happening on RatingService.findSubideaRatings
-      return false;
+      console.log("we gotta fix this. Parent idea should always have a tabId") // happening on RatingService.findSubideaRatings
+      return false
     }
     const userBelongsToGroup = await this.prismaClient.userGroup.findFirst({
       where: {
@@ -21,9 +22,9 @@ export default class IdeaRepository {
           },
         },
       },
-    });
+    })
 
-    return !!userBelongsToGroup;
+    return !!userBelongsToGroup
   }
 
   async saveIdea(
@@ -52,7 +53,7 @@ export default class IdeaRepository {
           },
         })),
       },
-    };
+    }
 
     const createdIdea = await this.prismaClient.idea.upsert({
       create: {
@@ -67,9 +68,9 @@ export default class IdeaRepository {
       where: {
         id: idea.id,
       },
-    });
+    })
 
-    return createdIdea;
+    return createdIdea
   }
 
   async findById(ideaId: string) {
@@ -78,8 +79,8 @@ export default class IdeaRepository {
         id: ideaId,
       },
       include: ideaIncludeFields,
-    });
-    return idea;
+    })
+    return idea
   }
 
   async findIdeasAndGroupsByIds(ideaIds: string[]) {
@@ -94,7 +95,7 @@ export default class IdeaRepository {
           },
         },
       },
-    });
+    })
   }
 
   async updateIdea(
@@ -134,8 +135,8 @@ export default class IdeaRepository {
         },
       },
       include: ideaIncludeFields,
-    });
-    return updatedIdea;
+    })
+    return updatedIdea
   }
 
   async updateOnFire(ideaId: string, onFireSince: Date | null) {
@@ -147,7 +148,7 @@ export default class IdeaRepository {
       where: {
         id: ideaId,
       },
-    });
+    })
   }
 
   async updateIrrelevantIdea(ideaId: string, irrelevantSince: Date | null) {
@@ -159,7 +160,7 @@ export default class IdeaRepository {
       where: {
         id: ideaId,
       },
-    });
+    })
   }
 
   async findSubideasByIdeaId(ideaId: string) {
@@ -167,9 +168,9 @@ export default class IdeaRepository {
       where: {
         parentId: ideaId,
       },
-    });
+    })
 
-    return subideas;
+    return subideas
   }
 
   async findIdeasByGroupId(groupId: string) {
@@ -180,9 +181,9 @@ export default class IdeaRepository {
         },
       },
       include: ideaIncludeFields,
-    });
+    })
 
-    return ideas;
+    return ideas
   }
 
   async findSubideasByGroupId(groupId: string) {
@@ -194,9 +195,9 @@ export default class IdeaRepository {
           },
         },
       },
-    });
+    })
 
-    return subideas;
+    return subideas
   }
 
   async deleteIdea(ideaId: string) {
@@ -204,7 +205,7 @@ export default class IdeaRepository {
       where: {
         OR: [{ id: ideaId }, { parentId: ideaId }],
       },
-    });
+    })
   }
 
   async usernamesCanAccessIdea(usernames: string[], ideaId: string) {
@@ -229,7 +230,7 @@ export default class IdeaRepository {
           },
         },
       },
-    });
+    })
   }
 
   async findTabsByIdeaIds(ideaIds: string[]) {
@@ -244,7 +245,7 @@ export default class IdeaRepository {
         },
       },
       distinct: "id",
-    });
+    })
   }
 
   async moveIdeasToTabId(ideaIds: string[], tabId: string) {
@@ -256,6 +257,25 @@ export default class IdeaRepository {
           include: ideaIncludeFields,
         })
       )
-    );
+    )
+  }
+
+  async findAssignedIdeasToUser(userId: string) {
+    return await this.prismaClient.idea.findMany({
+      include: {
+        tab: {
+          include: {
+            group: true,
+          },
+        },
+      },
+      where: {
+        assignedUsers: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+    })
   }
 }
