@@ -1,3 +1,4 @@
+import { Group, GroupTab, Idea } from "@prisma/client"
 import { ForbiddenError } from "routing-controllers"
 import { Server } from "socket.io"
 import { IdeaWithRelationsType } from "../../../types/domain/idea/IdeaWithRelationsType"
@@ -187,7 +188,15 @@ export default class IdeaService {
     }
   }
 
-  async findAssignedIdeasToUser(requesterId: string) {}
+  async findAssignedIdeasToUser(requesterId: string) {
+    const ideas = await this.ideaRepository.findAssignedIdeasToUser(requesterId)
+
+    return ideas.map((idea: IdeasAssignedToUser) => ({
+      title: idea.name,
+      group: idea.tab.group.name,
+      tab: idea.tab.name,
+    }))
+  }
 
   async moveIdeasToTab(
     body: MoveIdeasToTabDto,
