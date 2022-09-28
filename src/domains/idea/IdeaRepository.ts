@@ -1,6 +1,7 @@
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
 import myPrismaClient from "../../utils/myPrismaClient";
 import { ideaIncludeFields } from "../../utils/prisma/fields/idea/ideaIncludeFields";
+import TabRepository from "../group/group-tab/TabRepository";
 
 export default class IdeaRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -239,6 +240,25 @@ export default class IdeaRepository {
                 },
               },
             },
+          },
+        },
+      },
+    });
+  }
+
+  async findAssignedIdeasToUser(userId: string) {
+    return await this.prismaClient.idea.findMany({
+      include: {
+        tab: {
+          include: {
+            group: true,
+          },
+        },
+      },
+      where: {
+        assignedUsers: {
+          some: {
+            id: userId,
           },
         },
       },

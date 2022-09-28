@@ -192,4 +192,6 @@ export default class IdeaService {
       title: (await this.ideaRepository.findById(idea.parentId)).name,
     };
   }
+
+  async findAssignedIdeasToUser(requesterId: string) {}
 }
