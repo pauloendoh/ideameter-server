@@ -57,8 +57,12 @@ export default class IdeaService {
       );
 
     idea.tabId = undefined;
-    const createdIdea = await this.ideaRepository.saveIdea(idea, requesterId);
-    return createdIdea;
+    const savedSubidea = await this.ideaRepository.saveIdea(idea, requesterId);
+
+    if (!idea.id)
+      await this.ratingRepository.createRating(savedSubidea.id, 3, requesterId);
+
+    return savedSubidea;
   }
 
   async deleteSubidea(subideaId: string, requesterId: string) {
