@@ -11,7 +11,7 @@ import {
   Req,
 } from "routing-controllers";
 import { MyAuthRequest } from "../../types/domain/auth/MyAuthRequest";
-import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType";
 import IdeaService from "./IdeaService/IdeaService";
 
 @JsonController()

@@ -1,6 +1,6 @@
 import { Group, UserGroup } from "@prisma/client";
 import GroupDto from "../../types/domain/group/GroupDto";
-import { SimpleUserDto } from "../../types/domain/idea/IdeaWithLabelsType";
+import { SimpleUserDto } from "../../types/domain/idea/IdeaWithRelationsType";
 import myPrismaClient from "../../utils/myPrismaClient";
 
 export default class GroupRepository {

@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType";
 import IdeaRepository from "../idea/IdeaRepository";
 import { NotificationRepository } from "./NotificationRepository";
 

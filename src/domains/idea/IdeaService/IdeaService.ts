@@ -1,6 +1,6 @@
 import { ForbiddenError } from "routing-controllers";
 import { Server } from "socket.io";
-import { IdeaWithRelationsType } from "../../../types/domain/idea/IdeaWithLabelsType";
+import { IdeaWithRelationsType } from "../../../types/domain/idea/IdeaWithRelationsType";
 import ForbiddenError403 from "../../../utils/errors/ForbiddenError403";
 import NotFoundError404 from "../../../utils/errors/NotFoundError404";
 import TabRepository from "../../group/group-tab/TabRepository";
@@ -130,8 +130,12 @@ export default class IdeaService {
     requesterId: string,
     socketServer: Server
   ) {
+    let parentIdea: IdeaWithRelationsType;
+    if (idea.parentId) {
+      parentIdea = await this.ideaRepository.findById(idea.parentId);
+    }
     const isAllowed = await this.ideaRepository.userCanAccessTab(
-      idea.tabId,
+      parentIdea?.tabId || idea.tabId,
       requesterId
     );
     if (!isAllowed)

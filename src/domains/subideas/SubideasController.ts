@@ -10,7 +10,7 @@ import {
   Put,
   QueryParam,
 } from "routing-controllers";
-import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType";
 import IdeaService from "../idea/IdeaService/IdeaService";
 
 @JsonController("/subideas")

@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType";
 import { NotificationDto } from "../../types/domain/notification/NotificationDto";
 import myPrismaClient from "../../utils/myPrismaClient";
 import GroupRepository from "../group/GroupRepository";

@@ -1,4 +1,4 @@
-import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithLabelsType";
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType";
 import myPrismaClient from "../../utils/myPrismaClient";
 import { ideaIncludeFields } from "../../utils/prisma/fields/idea/ideaIncludeFields";
 
