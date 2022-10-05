@@ -2,12 +2,16 @@ import { ForbiddenError } from "routing-controllers";
 import { Server } from "socket.io";
 import { IdeaWithRelationsType } from "../../../types/domain/idea/IdeaWithRelationsType";
 import ForbiddenError403 from "../../../utils/errors/ForbiddenError403";
+import { InvalidPayloadError400 } from "../../../utils/errors/InvalidPayloadError400";
 import NotFoundError404 from "../../../utils/errors/NotFoundError404";
+import { wsEventNames } from "../../../utils/wsEventNames";
+import { wsRoomNames } from "../../../utils/wsRoomNames";
 import TabRepository from "../../group/group-tab/TabRepository";
 import GroupRepository from "../../group/GroupRepository";
 import { NotificationService } from "../../notification/NotificationService";
 import RatingRepository from "../../rating/RatingRepository";
 import IdeaRepository from "../IdeaRepository";
+import { MoveIdeasToTabDto } from "../types/MoveIdeasToTabDto";
 
 export default class IdeaService {
   constructor(
@@ -195,5 +199,40 @@ export default class IdeaService {
       description: idea.name,
       title: (await this.ideaRepository.findById(idea.parentId)).name,
     };
+  }
+
+  async moveIdeasToTab(
+    body: MoveIdeasToTabDto,
+    requesterId: string,
+    socketServer: Server
+  ) {
+    const userCanAccessTabTarget = this.ideaRepository.userCanAccessTab(
+      body.tabId,
+      requesterId
+    );
+    if (!userCanAccessTabTarget)
+      throw new ForbiddenError403("User cannot access target tab.");
+
+    const ideaTabs = await this.ideaRepository.findTabsByIdeaIds(body.ideaIds);
+    if (ideaTabs.length !== 1)
+      throw new InvalidPayloadError400("Ideas should belong to the same tab.");
+
+    const userCanAccessTabOrigin = this.ideaRepository.userCanAccessTab(
+      ideaTabs[0].id,
+      requesterId
+    );
+    if (!userCanAccessTabOrigin)
+      throw new ForbiddenError("User cannot access origin tab.");
+
+    const updatedIdeas = await this.ideaRepository.moveIdeasToTabId(
+      body.ideaIds,
+      body.tabId
+    );
+
+    socketServer
+      .to(wsRoomNames.group(ideaTabs[0].groupId))
+      .emit(wsEventNames.moveIdeasToTab, updatedIdeas);
+
+    return updatedIdeas;
   }
 }

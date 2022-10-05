@@ -244,4 +244,31 @@ export default class IdeaRepository {
       },
     });
   }
+
+  async findTabsByIdeaIds(ideaIds: string[]) {
+    return this.prismaClient.groupTab.findMany({
+      where: {
+        ideas: {
+          some: {
+            id: {
+              in: ideaIds,
+            },
+          },
+        },
+      },
+      distinct: "id",
+    });
+  }
+
+  async moveIdeasToTabId(ideaIds: string[], tabId: string) {
+    return this.prismaClient.$transaction(
+      ideaIds.map((ideaId) =>
+        this.prismaClient.idea.update({
+          where: { id: ideaId },
+          data: { tabId },
+          include: ideaIncludeFields,
+        })
+      )
+    );
+  }
 }

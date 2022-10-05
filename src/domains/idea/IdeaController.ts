@@ -13,6 +13,7 @@ import {
 import { MyAuthRequest } from "../../types/domain/auth/MyAuthRequest";
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType";
 import IdeaService from "./IdeaService/IdeaService";
+import { MoveIdeasToTabDto } from "./types/MoveIdeasToTabDto";
 
 @JsonController()
 export class IdeaController {
@@ -66,5 +67,16 @@ export class IdeaController {
   @Get("/idea/:ideaId/name")
   findIdeaLinkPreviewInfo(@Param("ideaId") ideaId: string) {
     return this.ideaService.findIdeaLinkPreviewInfo(ideaId);
+  }
+
+  @Put("/ideas/move-to-tab")
+  moveIdeasToTab(
+    @CurrentUser({ required: true }) user: User,
+    @Body() body: MoveIdeasToTabDto,
+    @Req() req: MyAuthRequest
+  ) {
+    const socketServer = req.app.get("socketio");
+
+    return this.ideaService.moveIdeasToTab(body, user.id, socketServer);
   }
 }
