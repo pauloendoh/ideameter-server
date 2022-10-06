@@ -97,19 +97,6 @@ export default class IdeaRepository {
     });
   }
 
-  async findIdeasByTabId(tabId: string): Promise<IdeaWithRelationsType[]> {
-    const ideas = await this.prismaClient.idea.findMany({
-      where: {
-        tabId: {
-          equals: tabId,
-        },
-      },
-      include: ideaIncludeFields,
-    });
-
-    return ideas;
-  }
-
   async updateIdea(
     idea: IdeaWithRelationsType
   ): Promise<IdeaWithRelationsType> {

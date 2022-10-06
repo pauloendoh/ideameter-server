@@ -61,22 +61,6 @@ export default class RatingService {
     return ratings;
   }
 
-  async findSubideaRatings(parentId: string, requesterId: string) {
-    const parent = await this.ideaRepository.findById(parentId);
-    if (!parent) throw new NotFoundError404("Parent idea not found");
-
-    const isAllowed = await this.ideaRepository.userCanAccessTab(
-      parent.tabId,
-      requesterId
-    );
-    if (!isAllowed) throw new ForbiddenError403("Not allowed");
-
-    const subideaRatings = await this.ratingRepository.findSubideaRatings(
-      parentId
-    );
-    return subideaRatings;
-  }
-
   async deleteIdeaRating(ideaId: string, requesterId: string) {
     const ratingExists = await this.ratingRepository.ratingExists(
       ideaId,

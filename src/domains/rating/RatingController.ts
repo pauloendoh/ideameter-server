@@ -7,7 +7,6 @@ import {
   JsonController,
   Param,
   Post,
-  QueryParam,
 } from "routing-controllers";
 import RatingService from "./RatingService";
 
@@ -21,14 +20,6 @@ export class RatingController {
     @Param("groupId") groupId: string
   ) {
     return this.ratingService.findRatingsByGroupId(groupId, user.id);
-  }
-
-  @Get("/ratings")
-  findSubideaRatings(
-    @CurrentUser({ required: true }) user: User,
-    @QueryParam("parentId") parentId: string
-  ) {
-    return this.ratingService.findSubideaRatings(parentId, user.id);
   }
 
   @Post("/idea/:ideaId/rating")

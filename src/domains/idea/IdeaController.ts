@@ -47,15 +47,6 @@ export class IdeaController {
     return this.ideaService.updateIdea(body, user.id, socketServer);
   }
 
-  // PE 1/3 - not being used?
-  @Get("/group/:groupId/tab/:tabId/idea")
-  findIdeasByTabId(
-    @CurrentUser({ required: true }) user: User,
-    @Param("tabId") tabId: string
-  ) {
-    return this.ideaService.findIdeasByTabId(tabId, user.id);
-  }
-
   @Get("/group/:groupId/ideas")
   findIdeasByGroupId(
     @CurrentUser({ required: true }) user: User,

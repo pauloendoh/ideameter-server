@@ -88,17 +88,6 @@ export default class RatingRepository {
     return ratings;
   }
 
-  async findSubideaRatings(parentId: string) {
-    const ratings = await this.prismaClient.ideaRating.findMany({
-      where: {
-        idea: {
-          parentId,
-        },
-      },
-    });
-    return ratings;
-  }
-
   async ratingExists(ideaId: string, userId: string) {
     const rating = await this.prismaClient.ideaRating.findFirst({
       where: {

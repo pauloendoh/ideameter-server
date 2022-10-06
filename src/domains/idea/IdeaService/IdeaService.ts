@@ -117,18 +117,6 @@ export default class IdeaService {
     return ideas;
   }
 
-  async findIdeasByTabId(tabId: string, requesterId: string) {
-    const isAllowed = await this.ideaRepository.userCanAccessTab(
-      tabId,
-      requesterId
-    );
-    if (!isAllowed)
-      throw new ForbiddenError403("You're not allowed to see this tab");
-
-    const ideas = await this.ideaRepository.findIdeasByTabId(tabId);
-    return ideas;
-  }
-
   async updateIdea(
     idea: IdeaWithRelationsType,
     requesterId: string,
