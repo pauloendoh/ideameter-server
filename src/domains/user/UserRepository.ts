@@ -1,5 +1,6 @@
-import myPrismaClient from "../../utils/myPrismaClient";
-import { userSelectFields } from "../../utils/prisma/fields/user/userSelectFields";
+import { User } from "@prisma/client"
+import myPrismaClient from "../../utils/myPrismaClient"
+import { userSelectFields } from "../../utils/prisma/fields/user/userSelectFields"
 
 export default class UserRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -9,9 +10,9 @@ export default class UserRepository {
       where: {
         id: userId,
       },
-    });
+    })
 
-    return user;
+    return user
   }
 
   findUsersByIds(userIds: string[]) {
@@ -21,7 +22,7 @@ export default class UserRepository {
       where: {
         id: { in: userIds },
       },
-    });
+    })
   }
 
   public async findByText(text: string) {
@@ -50,7 +51,7 @@ export default class UserRepository {
         // ],
       },
       select: userSelectFields,
-    });
+    })
   }
 
   public async updateLastOpenedGroupId(userId: string, groupId: string) {
@@ -61,6 +62,21 @@ export default class UserRepository {
       where: {
         id: userId,
       },
-    });
+    })
+  }
+
+  async findByEmail(email: string) {
+    return this.prismaClient.user.findFirst({
+      where: { email },
+    })
+  }
+
+  async updateUser(user: User) {
+    return this.prismaClient.user.update({
+      data: user,
+      where: {
+        id: user.id,
+      },
+    })
   }
 }

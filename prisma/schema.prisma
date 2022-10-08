@@ -33,6 +33,7 @@ model User {
 
   profile       Profile?
   notifications Notification[]
+  userTokens    UserToken[]
 }
 
 model Group {
@@ -181,4 +182,22 @@ model Notification {
 
   showDot                Boolean @default(true)
   ideaDescriptionMention Json?
+}
+
+enum TokenType {
+  PASSWORD_RESET
+}
+
+model UserToken {
+  type   TokenType
+  id     String    @id @default(cuid())
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  token String @default(cuid())
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

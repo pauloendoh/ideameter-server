@@ -11,6 +11,7 @@ import LoginDto from "../../types/domain/auth/LoginDto";
 import RegisterDto from "../../types/domain/auth/RegisterDto";
 import UserService from "../user/UserService";
 import AuthService from "./AuthService";
+import { PasswordResetPostDto } from "./types/PasswordResetPostDto";
 
 @JsonController()
 export class AuthController {
@@ -49,5 +50,10 @@ export class AuthController {
   @Post("/auth/login")
   async login(@Body() body: LoginDto) {
     return this.authService.login(body);
+  }
+
+  @Post("/auth/password-reset")
+  async resetPassword(@Body() body: PasswordResetPostDto) {
+    return this.authService.resetPassword(body);
   }
 }
