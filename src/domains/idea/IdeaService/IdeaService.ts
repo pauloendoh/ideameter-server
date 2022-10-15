@@ -14,6 +14,8 @@ import RatingRepository from "../../rating/RatingRepository"
 import IdeaRepository from "../IdeaRepository"
 import { MoveIdeasToTabDto } from "../types/MoveIdeasToTabDto"
 
+type IdeasAssignedToUser = Idea & { tab: GroupTab & { group: Group } }
+
 export default class IdeaService {
   constructor(
     private readonly ideaRepository = new IdeaRepository(),
