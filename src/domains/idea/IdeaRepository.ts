@@ -278,42 +278,4 @@ export default class IdeaRepository {
       },
     })
   }
-
-  async findAssignedIdeasToUser(userId: string) {
-    return await this.prismaClient.idea.findMany({
-      include: {
-        tab: {
-          include: {
-            group: true,
-          },
-        },
-      },
-      where: {
-        assignedUsers: {
-          some: {
-            id: userId,
-          },
-        },
-      },
-    })
-  }
-
-  async findAssignedIdeasToUser(userId: string) {
-    return await this.prismaClient.idea.findMany({
-      include: {
-        tab: {
-          include: {
-            group: true,
-          },
-        },
-      },
-      where: {
-        assignedUsers: {
-          some: {
-            id: userId,
-          },
-        },
-      },
-    })
-  }
 }
