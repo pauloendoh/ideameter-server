@@ -194,9 +194,18 @@ export default class IdeaService {
     const ideas = await this.ideaRepository.findAssignedIdeasToUser(requesterId)
 
     return ideas.map((idea: IdeasAssignedToUser) => ({
-      title: idea.name,
-      group: idea.tab.group.name,
-      tab: idea.tab.name,
+      idea: {
+        id: idea.id,
+        name: idea.name,
+      },
+      group: {
+        groupId: idea.tab.group.id,
+        name: idea.tab.group.name,
+      },
+      tab: {
+        name: idea.tab.name,
+        tabId: idea.tabId,
+      },
     }))
   }
 
