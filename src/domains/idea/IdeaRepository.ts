@@ -58,7 +58,7 @@ export default class IdeaRepository {
       create: {
         ...dto,
         id: undefined,
-        parentId: undefined,
+        parentId: dto.parentId || undefined,
       },
       update: {
         ...dto,

@@ -5,8 +5,9 @@ test("", async () => {})
 
 const clearEverything = async () => {
   const deleteUsers = myPrismaClient.user.deleteMany()
+  const deleteGroup = myPrismaClient.group.deleteMany()
 
-  await myPrismaClient.$transaction([deleteUsers])
+  await myPrismaClient.$transaction([deleteUsers, deleteGroup])
 }
 
 beforeAll(async () => {

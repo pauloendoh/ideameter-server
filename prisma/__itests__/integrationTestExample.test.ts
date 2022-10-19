@@ -8,7 +8,7 @@ import { buildIdeaWithRelations } from "../../src/types/domain/idea/IdeaWithRela
 describe("integration test example", async () => {
   describe("when an idea has high impact votes is deleted", () => {
     it("should not throw error", async () => {
-      const fun = async () => {
+      const fn = async () => {
         const authRepo = new AuthRepository()
         const groupRepo = new GroupRepository()
         const tabRepo = new TabRepository()
@@ -41,11 +41,9 @@ describe("integration test example", async () => {
         )
 
         await ideaRepo.deleteIdea(ideaWithVote.id)
-
-        return true
       }
 
-      await expect(fun()).resolves.toBe(true)
+      await expect(fn()).resolves.toBe(true)
     })
   })
 })
