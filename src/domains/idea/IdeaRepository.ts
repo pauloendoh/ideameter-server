@@ -1,7 +1,6 @@
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType"
 import myPrismaClient from "../../utils/myPrismaClient"
 import { ideaIncludeFields } from "../../utils/prisma/fields/idea/ideaIncludeFields"
-import TabRepository from "../group/group-tab/TabRepository"
 
 export default class IdeaRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -168,6 +167,7 @@ export default class IdeaRepository {
       where: {
         parentId: ideaId,
       },
+      include: ideaIncludeFields,
     })
 
     return subideas
@@ -195,6 +195,7 @@ export default class IdeaRepository {
           },
         },
       },
+      include: ideaIncludeFields,
     })
 
     return subideas

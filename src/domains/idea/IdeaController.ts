@@ -56,8 +56,8 @@ export class IdeaController {
   }
 
   @Get("/idea/:ideaId/name")
-  findIdeaLinkPreviewInfo(@Param("ideaId") ideaId: string) {
-    const data = this.ideaService.findIdeaLinkPreviewInfo(ideaId)
+  async findIdeaLinkPreviewInfo(@Param("ideaId") ideaId: string) {
+    const data = await this.ideaService.findIdeaLinkPreviewInfo(ideaId)
     console.log({ data })
     return data
   }
