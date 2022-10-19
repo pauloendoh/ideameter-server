@@ -1,6 +1,6 @@
-import { User } from "@prisma/client";
-import { CurrentUser, Get, JsonController, Param } from "routing-controllers";
-import { InsightService } from "./InsightService";
+import { User } from "@prisma/client"
+import { CurrentUser, Get, JsonController, Param } from "routing-controllers"
+import { InsightService } from "./InsightService/InsightService"
 
 @JsonController()
 export class InsightController {
@@ -11,6 +11,6 @@ export class InsightController {
     @CurrentUser({ required: true }) user: User,
     @Param("groupId") groupId: string
   ) {
-    return this.insightService.findInterestSimilarity(user.id, groupId);
+    return this.insightService.findInterestSimilarity(user.id, groupId)
   }
 }

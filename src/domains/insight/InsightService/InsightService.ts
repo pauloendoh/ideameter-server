@@ -1,8 +1,8 @@
 import { String } from "aws-sdk/clients/cloudhsm"
-import { InterestSimilarityDto } from "../../types/domain/insights/InterestSimilarityDto"
-import ForbiddenError403 from "../../utils/errors/ForbiddenError403"
-import GroupRepository from "../group/GroupRepository"
-import RatingRepository from "../rating/RatingRepository"
+import { InterestSimilarityDto } from "../../../types/domain/insights/InterestSimilarityDto"
+import ForbiddenError403 from "../../../utils/errors/ForbiddenError403"
+import GroupRepository from "../../group/GroupRepository"
+import RatingRepository from "../../rating/RatingRepository"
 
 export class InsightService {
   constructor(
@@ -88,6 +88,6 @@ export class InsightService {
     const top = 2 - diff // 2 - 1 = 1;; 2 - 0 = 2
     const percentage = top / 2 // 1/2 = 50%;; 2 / 2 = 1 = 100%
 
-    return percentage // therefore, 1 and 3 is 33% similar... I guess?? // https://imageproxy.ifunny.co/crop:x-20,resize:640x,quality:90x75/images/5667ddd56ea8db760e7cd49b2c91de470b4ce8dcc3e7533a3499ae9269898bd9_1.jpg
+    return percentage // therefore, 1 and 3 is 0% similar... I guess?? // https://imageproxy.ifunny.co/crop:x-20,resize:640x,quality:90x75/images/5667ddd56ea8db760e7cd49b2c91de470b4ce8dcc3e7533a3499ae9269898bd9_1.jpg
   }
 }
