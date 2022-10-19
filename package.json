@@ -15,10 +15,9 @@
     "start": "node build/src/server.js",
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
-    "test": "vitest",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "itest": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && npm run test"
+    "test": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && npx vitest"
   },
   "keywords": [],
   "author": "",
