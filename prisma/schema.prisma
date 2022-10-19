@@ -37,9 +37,9 @@ model User {
 }
 
 model Group {
-  id        String @id @default(cuid())
-  creator   User   @relation(fields: [creatorId], references: [id])
-  creatorId String
+  id        String  @id @default(cuid())
+  creator   User?   @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+  creatorId String?
 
   name        String
   description String
@@ -68,9 +68,9 @@ model UserGroup {
 }
 
 model GroupTab {
-  id        String @id @default(cuid())
-  creator   User   @relation(fields: [creatorId], references: [id])
-  creatorId String
+  id        String  @id @default(cuid())
+  creator   User?   @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+  creatorId String?
 
   group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId String
@@ -150,7 +150,7 @@ model HighImpactVote {
 }
 
 model Profile {
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
 
   bio        String

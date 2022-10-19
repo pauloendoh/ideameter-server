@@ -1,7 +1,7 @@
-import { Group, UserGroup } from "@prisma/client";
-import GroupDto from "../../types/domain/group/GroupDto";
-import { SimpleUserDto } from "../../types/domain/idea/IdeaWithRelationsType";
-import myPrismaClient from "../../utils/myPrismaClient";
+import { Group, UserGroup } from "@prisma/client"
+import GroupDto from "../../types/domain/group/GroupDto"
+import { SimpleUserDto } from "../../types/domain/idea/IdeaWithRelationsType"
+import myPrismaClient from "../../utils/myPrismaClient"
 
 export default class GroupRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -11,14 +11,15 @@ export default class GroupRepository {
       data: {
         creatorId,
         ...payload,
+        id: undefined,
       },
-    });
+    })
   }
 
   public async createUserGroup(options: {
-    userId: string;
-    groupId: string;
-    isAdmin: boolean;
+    userId: string
+    groupId: string
+    isAdmin: boolean
   }) {
     return this.prismaClient.userGroup.create({
       data: {
@@ -26,7 +27,7 @@ export default class GroupRepository {
         userId: options.userId,
         isAdmin: options.isAdmin,
       },
-    });
+    })
   }
 
   public async findGroupsByUser(userId: string) {
@@ -40,7 +41,7 @@ export default class GroupRepository {
           },
         },
       },
-    });
+    })
   }
 
   public async isAdmin(userId: string, groupId: string) {
@@ -50,9 +51,9 @@ export default class GroupRepository {
         groupId,
         isAdmin: true,
       },
-    });
+    })
 
-    return !!userGroup;
+    return !!userGroup
   }
 
   public async editGroup(group: Group) {
@@ -61,7 +62,7 @@ export default class GroupRepository {
         id: group.id,
       },
       data: group,
-    });
+    })
   }
 
   public async deleteGroup(groupId: string) {
@@ -69,7 +70,7 @@ export default class GroupRepository {
       where: {
         id: groupId,
       },
-    });
+    })
   }
 
   public async userBelongsToGroup(userId: string, groupId: string) {
@@ -78,16 +79,16 @@ export default class GroupRepository {
         userId,
         groupId,
       },
-    });
+    })
 
-    return !!userGroup;
+    return !!userGroup
   }
 
   public async findGroupMembers(
     groupId: string
   ): Promise<
     (UserGroup & {
-      user: SimpleUserDto;
+      user: SimpleUserDto
     })[]
   > {
     const members = await this.prismaClient.userGroup.findMany({
@@ -104,9 +105,9 @@ export default class GroupRepository {
           },
         },
       },
-    });
+    })
 
-    return members;
+    return members
   }
 
   public async addMember(groupId: string, userId: string) {
@@ -123,9 +124,9 @@ export default class GroupRepository {
           },
         },
       },
-    });
+    })
 
-    return newMember;
+    return newMember
   }
 
   findGroupsByIdeaIds(ideaIds: string[]) {
@@ -145,6 +146,6 @@ export default class GroupRepository {
           },
         },
       },
-    });
+    })
   }
 }
