@@ -57,7 +57,9 @@ export class IdeaController {
 
   @Get("/idea/:ideaId/name")
   findIdeaLinkPreviewInfo(@Param("ideaId") ideaId: string) {
-    return this.ideaService.findIdeaLinkPreviewInfo(ideaId)
+    const data = this.ideaService.findIdeaLinkPreviewInfo(ideaId)
+    console.log({ data })
+    return data
   }
 
   @Put("/ideas/move-to-tab")

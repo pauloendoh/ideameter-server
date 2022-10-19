@@ -95,7 +95,7 @@ model Idea {
   creator   User   @relation(fields: [creatorId], references: [id])
   creatorId String
 
-  tab   GroupTab? @relation(fields: [tabId], references: [id])
+  tab   GroupTab? @relation(fields: [tabId], references: [id], onDelete: Cascade)
   tabId String?
 
   name            String
