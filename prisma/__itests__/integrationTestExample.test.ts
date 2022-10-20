@@ -44,14 +44,20 @@ describe("IdeaRepository.i.test.ts", async () => {
     })
 
     describe("and when user deletes tab", () => {
-      it("should not throw error", async () => {
-        const sut = async () => {
-          await tabRepo.deleteGroupTab(tab.id)
-          return true
-        }
+      it(
+        "should not throw error",
+        async () => {
+          const sut = async () => {
+            await tabRepo.deleteGroupTab(tab.id)
+            return true
+          }
 
-        await expect(sut()).resolves.toBe(true)
-      })
+          await expect(sut()).resolves.toBe(true)
+        },
+        {
+          retry: 3,
+        }
+      )
     })
 
     describe("and when an idea has high impact votes is deleted", () => {
