@@ -56,6 +56,45 @@ export default class GroupRepository {
     return !!userGroup
   }
 
+  async makeGroupAdmin(groupId: string, userId: string) {
+    return this.prismaClient.userGroup.update({
+      where: {
+        groupId_userId: {
+          groupId,
+          userId,
+        },
+      },
+      data: {
+        isAdmin: true,
+      },
+    })
+  }
+
+  async dismissGroupAdmin(groupId: string, userId: string) {
+    return this.prismaClient.userGroup.update({
+      where: {
+        groupId_userId: {
+          groupId,
+          userId,
+        },
+      },
+      data: {
+        isAdmin: false,
+      },
+    })
+  }
+
+  async removeUserFromGroup(userId: string, groupId: string) {
+    return this.prismaClient.userGroup.delete({
+      where: {
+        groupId_userId: {
+          groupId,
+          userId,
+        },
+      },
+    })
+  }
+
   public async editGroup(group: Group) {
     return this.prismaClient.group.update({
       where: {
