@@ -24,6 +24,7 @@ export const buildIdeaWithRelations = (
   name: "",
   description: "",
   isDone: false,
+  completedAt: null,
   onFireSince: new Date(),
   irrelevantSince: new Date(),
 
