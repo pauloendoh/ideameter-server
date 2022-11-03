@@ -101,6 +101,7 @@ model Idea {
   name            String
   description     String
   isDone          Boolean   @default(false)
+  completedAt     DateTime?
   onFireSince     DateTime?
   irrelevantSince DateTime?
 

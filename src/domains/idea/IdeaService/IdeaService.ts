@@ -136,6 +136,8 @@ export default class IdeaService {
 
     const previousIdea = await this.ideaRepository.findById(idea.id)
 
+    if (!previousIdea.isDone && idea.isDone) idea.completedAt = new Date()
+
     const updatedIdea = await this.ideaRepository.updateIdea(idea)
 
     this.notificationService.handleMentionNotificationsUpdateIdea(
