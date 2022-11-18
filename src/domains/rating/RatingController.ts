@@ -1,4 +1,4 @@
-import { IdeaRating, User } from "@prisma/client";
+import { IdeaRating, User } from "@prisma/client"
 import {
   Body,
   CurrentUser,
@@ -7,8 +7,10 @@ import {
   JsonController,
   Param,
   Post,
-} from "routing-controllers";
-import RatingService from "./RatingService";
+  Req,
+} from "routing-controllers"
+import { MyAuthRequest } from "../../types/domain/auth/MyAuthRequest"
+import RatingService from "./RatingService"
 
 @JsonController()
 export class RatingController {
@@ -19,23 +21,34 @@ export class RatingController {
     @CurrentUser({ required: true }) user: User,
     @Param("groupId") groupId: string
   ) {
-    return this.ratingService.findRatingsByGroupId(groupId, user.id);
+    return this.ratingService.findRatingsByGroupId(groupId, user.id)
   }
 
   @Post("/idea/:ideaId/rating")
   saveIdeaRating(
     @CurrentUser({ required: true }) user: User,
     @Param("ideaId") ideaId: string,
-    @Body() body: IdeaRating
+    @Body() body: IdeaRating,
+    @Req() req: MyAuthRequest
   ) {
-    return this.ratingService.saveRating(body.ideaId, body.rating, user.id);
+    const socketServer = req.app.get("socketio")
+
+    return this.ratingService.saveRating(
+      body.ideaId,
+      body.rating,
+      user.id,
+      socketServer
+    )
   }
 
   @Delete("/idea/:ideaId/rating")
   deleteIdeaRating(
     @CurrentUser({ required: true }) user: User,
-    @Param("ideaId") ideaId: string
+    @Param("ideaId") ideaId: string,
+    @Req() req: MyAuthRequest
   ) {
-    return this.ratingService.deleteIdeaRating(ideaId, user.id);
+    const socketServer = req.app.get("socketio")
+
+    return this.ratingService.deleteIdeaRating(ideaId, user.id, socketServer)
   }
 }

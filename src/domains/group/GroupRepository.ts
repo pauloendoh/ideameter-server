@@ -187,4 +187,39 @@ export default class GroupRepository {
       },
     })
   }
+
+  findGroupByIdeaId(ideaId: string) {
+    return this.prismaClient.group.findFirst({
+      where: {
+        OR: [
+          {
+            tabs: {
+              some: {
+                ideas: {
+                  some: {
+                    id: ideaId,
+                  },
+                },
+              },
+            },
+          },
+          {
+            tabs: {
+              some: {
+                ideas: {
+                  some: {
+                    subIdeas: {
+                      some: {
+                        id: ideaId,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    })
+  }
 }
