@@ -4,4 +4,4 @@ export const userSelectFields = {
   username: true,
   email: true,
   profile: true,
-};
+}
