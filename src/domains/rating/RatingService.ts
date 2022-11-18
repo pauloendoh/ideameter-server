@@ -110,7 +110,10 @@ export default class RatingService {
 
     socketServer
       .to(wsRoomNames.group(group.id))
-      .emit(wsEventNames.savedRating, savedRating)
+      .emit(wsEventNames.savedRating, {
+        savedRating,
+        groupId: group.id,
+      })
 
     return true
   }
@@ -126,7 +129,10 @@ export default class RatingService {
 
     socketServer
       .to(wsRoomNames.group(group.id))
-      .emit(wsEventNames.deletedRating, deletedRating)
+      .emit(wsEventNames.deletedRating, {
+        ratingId: deletedRating.id,
+        groupId: group.id,
+      })
 
     return true
   }
