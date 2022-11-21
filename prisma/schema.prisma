@@ -50,6 +50,8 @@ model Group {
   userGroups UserGroup[]
   tabs       GroupTab[]
   labels     Label[]
+
+  imageUrl String?
 }
 
 model UserGroup {

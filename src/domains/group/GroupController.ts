@@ -8,8 +8,13 @@ import {
   Param,
   Post,
   Put,
+  UploadedFile,
 } from "routing-controllers"
 import GroupDto from "../../types/domain/group/GroupDto"
+import { profileImageMulterConfig } from "../../utils/multer/profileImageMulterConfig"
+import { urls } from "../../utils/urls"
+import { AwsFileDto } from "../profile/types/AwsFileDto"
+import { MulterFileDto } from "../profile/types/MulterFileDto"
 import GroupService from "./GroupService"
 import { GroupUserIdDto } from "./types/GroupUserIdDto"
 
@@ -99,5 +104,15 @@ export class GroupController {
       requesterId: user.id,
       userId: userId,
     })
+  }
+
+  @Put("/image")
+  uploadGroupImage(
+    @CurrentUser({ required: true }) user: User,
+    @UploadedFile("file", { options: profileImageMulterConfig })
+    file: AwsFileDto | MulterFileDto
+  ) {
+    if ("Location" in file) return file.Location
+    return urls.publicUploads(file.filename)
   }
 }
