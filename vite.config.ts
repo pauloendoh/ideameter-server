@@ -7,7 +7,7 @@ export default defineConfig({
 
     // PE 1/3 - find some way to use .env.test
     env: {
-      DATABASE_URL_2: "postgresql://prisma:prisma@localhost:5433/tests",
+      DATABASE_URL: "postgresql://prisma:prisma@localhost:5433/tests",
     },
   },
 })
