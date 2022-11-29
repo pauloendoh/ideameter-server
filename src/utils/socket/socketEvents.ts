@@ -1,4 +1,4 @@
-export const wsEventNames = {
+export const socketEvents = {
   updateUserNotifications: (userId: string) =>
     `updateUserNotifications-${userId}`,
   deleteIdea: "deleteIdea",

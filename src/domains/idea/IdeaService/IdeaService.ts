@@ -5,8 +5,9 @@ import { IdeaWithRelationsType } from "../../../types/domain/idea/IdeaWithRelati
 import ForbiddenError403 from "../../../utils/errors/ForbiddenError403"
 import { InvalidPayloadError400 } from "../../../utils/errors/InvalidPayloadError400"
 import NotFoundError404 from "../../../utils/errors/NotFoundError404"
-import { wsEventNames } from "../../../utils/wsEventNames"
-import { wsRoomNames } from "../../../utils/wsRoomNames"
+import { MySocketServer } from "../../../utils/socket/MySocketServer"
+import { socketEvents } from "../../../utils/socket/socketEvents"
+import { socketRooms } from "../../../utils/socket/socketRooms"
 import TabRepository from "../../group/group-tab/TabRepository"
 import GroupRepository from "../../group/GroupRepository"
 import { NotificationService } from "../../notification/NotificationService"
@@ -22,14 +23,11 @@ export default class IdeaService {
     private readonly groupRepository = new GroupRepository(),
     private readonly ratingRepository = new RatingRepository(),
     private readonly notificationService = new NotificationService(),
-    private readonly tabRepository = new TabRepository()
+    private readonly tabRepository = new TabRepository(),
+    private readonly socketServer = MySocketServer.instance
   ) {}
 
-  async createIdea(
-    idea: IdeaWithRelationsType,
-    requesterId: string,
-    socketServer: Server
-  ) {
+  async createIdea(idea: IdeaWithRelationsType, requesterId: string) {
     const isAllowed = await this.ideaRepository.userCanAccessTab(
       idea.tabId,
       requesterId
@@ -43,8 +41,7 @@ export default class IdeaService {
     // don't need to await this
     this.notificationService.handleMentionNotificationsCreateIdea(
       createdIdea,
-      requesterId,
-      socketServer
+      requesterId
     )
 
     return createdIdea
@@ -212,11 +209,7 @@ export default class IdeaService {
     }))
   }
 
-  async moveIdeasToTab(
-    body: MoveIdeasToTabDto,
-    requesterId: string,
-    socketServer: Server
-  ) {
+  async moveIdeasToTab(body: MoveIdeasToTabDto, requesterId: string) {
     const userCanAccessTabTarget = this.ideaRepository.userCanAccessTab(
       body.tabId,
       requesterId
@@ -240,9 +233,9 @@ export default class IdeaService {
       body.tabId
     )
 
-    socketServer
-      .to(wsRoomNames.group(ideaTabs[0].groupId))
-      .emit(wsEventNames.moveIdeasToTab, updatedIdeas)
+    this.socketServer
+      .to(socketRooms.group(ideaTabs[0].groupId))
+      .emit(socketEvents.moveIdeasToTab, updatedIdeas)
 
     return updatedIdeas
   }

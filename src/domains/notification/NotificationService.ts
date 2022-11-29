@@ -1,33 +1,34 @@
-import { Server } from "socket.io";
-import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType";
-import IdeaRepository from "../idea/IdeaRepository";
-import { NotificationRepository } from "./NotificationRepository";
-
+import { Server } from "socket.io"
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType"
+import { MySocketServer } from "../../utils/socket/MySocketServer"
+import { socketEvents } from "../../utils/socket/socketEvents"
+import IdeaRepository from "../idea/IdeaRepository"
+import { NotificationRepository } from "./NotificationRepository"
 export class NotificationService {
   constructor(
     private notificationRepo = new NotificationRepository(),
-    private ideaRepository = new IdeaRepository()
+    private ideaRepository = new IdeaRepository(),
+    private socketServer = MySocketServer.instance
   ) {}
 
   findUserNotifications(userId: string) {
-    return this.notificationRepo.findUserNotifications(userId);
+    return this.notificationRepo.findUserNotifications(userId)
   }
 
   async handleMentionNotificationsCreateIdea(
     idea: IdeaWithRelationsType,
-    requesterId: string,
-    socketServer: Server
+    requesterId: string
   ) {
-    const usernamesMentioned = this.getUsernamesMentionedInDescription(idea);
+    const usernamesMentioned = this.getUsernamesMentionedInDescription(idea)
 
     const groupUsersMentioned = await this.ideaRepository.usernamesCanAccessIdea(
       usernamesMentioned,
       idea.id
-    );
+    )
 
     const otherUsersMentioned = groupUsersMentioned.filter(
       (u) => u.id !== requesterId
-    );
+    )
     if (otherUsersMentioned.length > 0) {
       const notifications = await this.notificationRepo.createIdeaMentionNotification(
         {
@@ -35,13 +36,14 @@ export class NotificationService {
           requesterId,
           users: otherUsersMentioned,
         }
-      );
+      )
 
       for (const notification of notifications) {
-        socketServer.sockets.emit(
-          `updateUserNotifications-${notification.userId}`,
+        const result = this.socketServer.sockets.emit(
+          socketEvents.updateUserNotifications(notification.userId),
           notification
-        );
+        )
+        console.log({ result })
       }
     }
   }
@@ -54,21 +56,21 @@ export class NotificationService {
   ) {
     const previousUsernames = this.getUsernamesMentionedInDescription(
       previousIdea
-    );
-    const afterUsernames = this.getUsernamesMentionedInDescription(updatedIdea);
+    )
+    const afterUsernames = this.getUsernamesMentionedInDescription(updatedIdea)
 
     const newUsernames = afterUsernames.filter(
       (u) => !previousUsernames.includes(u)
-    );
+    )
 
     const groupUsersMentioned = await this.ideaRepository.usernamesCanAccessIdea(
       newUsernames,
       updatedIdea.id
-    );
+    )
 
     const otherUsersMentioned = groupUsersMentioned.filter(
       (u) => u.id !== requesterId
-    );
+    )
     if (otherUsersMentioned.length > 0) {
       const notifications = await this.notificationRepo.createIdeaMentionNotification(
         {
@@ -76,34 +78,34 @@ export class NotificationService {
           requesterId,
           users: otherUsersMentioned,
         }
-      );
+      )
 
       for (const notification of notifications) {
         socketServer.sockets.emit(
           `updateUserNotifications-${notification.userId}`,
           notification
-        );
+        )
       }
     }
   }
 
   getUsernamesMentionedInDescription(idea: IdeaWithRelationsType): string[] {
-    const newIdea = idea;
+    const newIdea = idea
 
     // ex: @</span>test</span>﻿</span>... -> test</span>...
     const splits = newIdea.description
       .split("@</span>")
-      .filter((s) => s.includes("</span>"));
+      .filter((s) => s.includes("</span>"))
 
     // test</span>... -> test
-    const usernames = splits.map((s) => s.split("</span>")[0]);
+    const usernames = splits.map((s) => s.split("</span>")[0])
 
-    return usernames;
+    return usernames
   }
 
   async hideUserNotificationsDots(userId: string) {
-    await this.notificationRepo.hideUserNotificationsDots(userId);
+    await this.notificationRepo.hideUserNotificationsDots(userId)
 
-    return this.findUserNotifications(userId);
+    return this.findUserNotifications(userId)
   }
 }

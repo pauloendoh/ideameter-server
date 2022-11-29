@@ -2,8 +2,8 @@ import { IdeaRating } from "@prisma/client"
 import { Server } from "socket.io"
 import ForbiddenError403 from "../../utils/errors/ForbiddenError403"
 import NotFoundError404 from "../../utils/errors/NotFoundError404"
-import { wsEventNames } from "../../utils/wsEventNames"
-import { wsRoomNames } from "../../utils/wsRoomNames"
+import { socketEvents } from "../../utils/socket/socketEvents"
+import { socketRooms } from "../../utils/socket/socketRooms"
 import GroupRepository from "../group/GroupRepository"
 import IdeaRepository from "../idea/IdeaRepository"
 import RatingRepository from "./RatingRepository"
@@ -109,8 +109,8 @@ export default class RatingService {
     if (!group) throw new NotFoundError404("Group not found.")
 
     socketServer
-      .to(wsRoomNames.group(group.id))
-      .emit(wsEventNames.savedRating, {
+      .to(socketRooms.group(group.id))
+      .emit(socketEvents.savedRating, {
         savedRating,
         groupId: group.id,
       })
@@ -128,8 +128,8 @@ export default class RatingService {
     if (!group) throw new NotFoundError404("Group not found.")
 
     socketServer
-      .to(wsRoomNames.group(group.id))
-      .emit(wsEventNames.deletedRating, {
+      .to(socketRooms.group(group.id))
+      .emit(socketEvents.deletedRating, {
         ratingId: deletedRating.id,
         groupId: group.id,
       })

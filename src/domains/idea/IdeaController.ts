@@ -30,11 +30,9 @@ export class IdeaController {
   @Post("/group/:groupId/tab/:tabId/idea")
   createIdea(
     @CurrentUser({ required: true }) user: User,
-    @Body() body: IdeaWithRelationsType,
-    @Req() req: MyAuthRequest
+    @Body() body: IdeaWithRelationsType
   ) {
-    const socketServer = req.app.get("socketio")
-    return this.ideaService.createIdea(body, user.id, socketServer)
+    return this.ideaService.createIdea(body, user.id)
   }
 
   @Put("/group/:groupId/tab/:tabId/idea")
@@ -70,7 +68,7 @@ export class IdeaController {
   ) {
     const socketServer = req.app.get("socketio")
 
-    return this.ideaService.moveIdeasToTab(body, user.id, socketServer)
+    return this.ideaService.moveIdeasToTab(body, user.id)
   }
 
   @Get("/ideas/assigned-to-me")
