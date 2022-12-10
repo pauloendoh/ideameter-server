@@ -1,13 +1,13 @@
 import { afterAll, beforeAll, test } from "vitest"
-import myPrismaClient from "../../src/utils/myPrismaClient"
+import myPrismaClient from "../../../src/utils/myPrismaClient"
 
 test("", async () => {})
 
 const clearEverything = async () => {
-  const deleteUsers = myPrismaClient.user.deleteMany()
-  const deleteGroup = myPrismaClient.group.deleteMany()
-
-  await myPrismaClient.$transaction([deleteUsers, deleteGroup])
+  await myPrismaClient.idea.deleteMany()
+  await myPrismaClient.groupTab.deleteMany()
+  await myPrismaClient.group.deleteMany()
+  await myPrismaClient.user.deleteMany()
 }
 
 beforeAll(async () => {

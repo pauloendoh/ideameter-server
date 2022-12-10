@@ -17,8 +17,8 @@
     "migrate": "prisma migrate dev",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "test": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && npx vitest",
-    "test:once": "npm run test run",
+    "test": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && npx vitest run",
+    "test:watch": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && npx vitest",
     "prepare": "husky install"
   },
   "keywords": [],

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest"
-import AuthRepository from "../../src/domains/auth/AuthRepository"
-import TabRepository from "../../src/domains/group/group-tab/TabRepository"
-import GroupRepository from "../../src/domains/group/GroupRepository"
-import IdeaRepository from "../../src/domains/idea/IdeaRepository"
-import { buildIdeaWithRelations } from "../../src/types/domain/idea/IdeaWithRelationsType"
+import AuthRepository from "../../../src/domains/auth/AuthRepository"
+import TabRepository from "../../../src/domains/group/group-tab/TabRepository"
+import GroupRepository from "../../../src/domains/group/GroupRepository"
+import IdeaRepository from "../../../src/domains/idea/IdeaRepository"
+import { buildIdeaWithRelations } from "../../../src/types/domain/idea/IdeaWithRelationsType"
 
 describe("IdeaRepository.i.test.ts", async () => {
   describe("when user creates a group, tab and idea", async () => {
