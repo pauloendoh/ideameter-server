@@ -1,5 +1,6 @@
-import { Label } from "@prisma/client";
-import myPrismaClient from "../../utils/myPrismaClient";
+import { Label } from "@prisma/client"
+import myPrismaClient from "../../utils/myPrismaClient"
+import { ImportLabelDto } from "./types/ImportLabelDto"
 
 export default class LabelRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -11,9 +12,9 @@ export default class LabelRepository {
         id: undefined,
         groupId,
       },
-    });
+    })
 
-    return createdLabel;
+    return createdLabel
   }
 
   async updateLabel(label: Label) {
@@ -25,9 +26,9 @@ export default class LabelRepository {
         ...label,
         updatedAt: undefined,
       },
-    });
+    })
 
-    return editedLabel;
+    return editedLabel
   }
 
   async findLabelById(labelId: string) {
@@ -35,8 +36,8 @@ export default class LabelRepository {
       where: {
         id: labelId,
       },
-    });
-    return label;
+    })
+    return label
   }
 
   async findLabelsByGroup(groupId: string) {
@@ -44,9 +45,9 @@ export default class LabelRepository {
       where: {
         groupId,
       },
-    });
+    })
 
-    return labels;
+    return labels
   }
 
   async deleteLabel(labelId: string) {
@@ -54,8 +55,37 @@ export default class LabelRepository {
       where: {
         id: labelId,
       },
-    });
+    })
 
-    return deletedLabel;
+    return deletedLabel
+  }
+
+  async findLabelsByGroupIds(groupIds: string[]) {
+    const labels = await this.prismaClient.label.findMany({
+      where: {
+        groupId: {
+          in: groupIds,
+        },
+      },
+      include: {
+        group: true,
+      },
+    })
+
+    return labels
+  }
+
+  async createManyLabels(groupId: string, labelDtos: ImportLabelDto[]) {
+    const createdLabels = await this.prismaClient.$transaction(
+      labelDtos.map((labelDto) => {
+        return this.prismaClient.label.create({
+          data: {
+            ...labelDto,
+            groupId,
+          },
+        })
+      })
+    )
+    return createdLabels
   }
 }
