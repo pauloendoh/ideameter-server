@@ -88,4 +88,22 @@ export default class LabelRepository {
     )
     return createdLabels
   }
+
+  async updateMany(labels: Label[]) {
+    const editedLabels = await this.prismaClient.$transaction(
+      labels.map((label) => {
+        return this.prismaClient.label.update({
+          where: {
+            id: label.id,
+          },
+          data: {
+            ...label,
+            updatedAt: undefined,
+            createdAt: undefined,
+          },
+        })
+      })
+    )
+    return editedLabels
+  }
 }

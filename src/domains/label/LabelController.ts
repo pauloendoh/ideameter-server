@@ -66,4 +66,12 @@ export class LabelController {
       requesterId: user.id,
     })
   }
+
+  @Put("/labels")
+  updateManyLabels(
+    @CurrentUser({ required: true }) user: User,
+    @Body({ required: true }) body: Label[]
+  ) {
+    return this.labelService.updateMany(body, user.id)
+  }
 }

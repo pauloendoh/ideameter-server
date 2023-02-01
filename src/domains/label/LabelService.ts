@@ -35,6 +35,11 @@ export default class LabelService {
         "You're not allowed to add labels to this group"
       )
 
+    const labelsFromGroup = await this.labelRepository.findLabelsByGroup(
+      groupId
+    )
+    label.position = labelsFromGroup.length + 1
+
     const createdLabel = await this.labelRepository.createLabel(label, groupId)
     return createdLabel
   }
@@ -106,5 +111,24 @@ export default class LabelService {
       labelDtos
     )
     return importedLabels
+  }
+
+  updateMany(labels: Label[], requesterId: string) {
+    const userCanChangeLabels = this.#userCanChangeLabels(requesterId, labels)
+    if (!this.#userCanChangeLabels(requesterId, labels))
+      throw new ForbiddenError403("You're not allowed to edit these labels")
+
+    const updatedLabels = this.labelRepository.updateMany(labels)
+    return updatedLabels
+  }
+
+  #userCanChangeLabels(requesterId: string, labels: Label[]) {
+    const groupIds = labels.map((label) => label.groupId)
+    const uniqueGroupIds = [...new Set(groupIds)]
+    const isAllowed = uniqueGroupIds.every((groupId) => {
+      return this.groupRepository.userBelongsToGroup(requesterId, groupId)
+    })
+
+    return isAllowed
   }
 }

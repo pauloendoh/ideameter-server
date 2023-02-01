@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from "@prisma/client"
 import {
   Body,
   CurrentUser,
@@ -6,12 +6,14 @@ import {
   JsonController,
   Post,
   Put,
-} from "routing-controllers";
-import LoginDto from "../../types/domain/auth/LoginDto";
-import RegisterDto from "../../types/domain/auth/RegisterDto";
-import UserService from "../user/UserService";
-import AuthService from "./AuthService";
-import { PasswordResetPostDto } from "./types/PasswordResetPostDto";
+} from "routing-controllers"
+import LoginDto from "../../types/domain/auth/LoginDto"
+import RegisterDto, {
+  RegisterPostDto,
+} from "../../types/domain/auth/RegisterDto"
+import UserService from "../user/UserService"
+import AuthService from "./AuthService"
+import { PasswordResetPostDto } from "./types/PasswordResetPostDto"
 
 @JsonController()
 export class AuthController {
@@ -22,7 +24,7 @@ export class AuthController {
 
   @Get("/me/lastOpenedGroupId")
   findMyLastOpenedGroupId(@CurrentUser({ required: true }) user: User) {
-    return this.userService.findLastOpenedGroupId(user.id);
+    return this.userService.findLastOpenedGroupId(user.id)
   }
 
   @Put("/me/lastOpenedGroupId")
@@ -33,27 +35,32 @@ export class AuthController {
     const result = await this.userService.updateLastOpenedGroupId(
       user.id,
       body.groupId
-    );
-    return result;
+    )
+    return result
   }
 
   @Get("/auth/me")
   async getMe(@CurrentUser({ required: true }) user: User) {
-    return this.authService.getAuthUserWithToken(user);
+    return this.authService.getAuthUserWithToken(user)
   }
 
   @Post("/auth/register")
   async register(@Body() body: RegisterDto) {
-    return this.authService.register(body);
+    return this.authService.register(body)
   }
 
   @Post("/auth/login")
   async login(@Body() body: LoginDto) {
-    return this.authService.login(body);
+    return this.authService.login(body)
   }
 
   @Post("/auth/password-reset")
   async resetPassword(@Body() body: PasswordResetPostDto) {
-    return this.authService.resetPassword(body);
+    return this.authService.resetPassword(body)
+  }
+
+  @Post("/test")
+  async test(@Body() body: RegisterPostDto) {
+    return body
   }
 }

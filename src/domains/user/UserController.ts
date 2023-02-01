@@ -1,11 +1,11 @@
-import { User } from "@prisma/client";
+import { User } from "@prisma/client"
 import {
   CurrentUser,
   Get,
   JsonController,
   QueryParam,
-} from "routing-controllers";
-import UserService from "./UserService";
+} from "routing-controllers"
+import UserService from "./UserService"
 
 @JsonController("/user")
 export class UserController {
@@ -14,8 +14,8 @@ export class UserController {
   @Get("/search")
   searchUsers(
     @CurrentUser({ required: true }) user: User,
-    @QueryParam("q") q: string
+    @QueryParam("q", { required: true }) q: string
   ) {
-    return this.userService.findByText(q);
+    return this.userService.findByText(q)
   }
 }

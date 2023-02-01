@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -138,6 +137,8 @@ model Label {
 
   name    String
   bgColor String @default("#db4035")
+
+  position Int @default(0)
 
   ideas Idea[]
 }
