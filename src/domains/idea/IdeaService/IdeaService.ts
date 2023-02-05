@@ -197,6 +197,7 @@ export default class IdeaService {
         id: idea.id,
         name: idea.name,
         isDone: idea.isDone,
+        completedAt: idea.completedAt,
       },
       group: {
         groupId: idea.tab.group.id,
