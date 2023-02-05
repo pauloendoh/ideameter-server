@@ -17,7 +17,7 @@
     "migrate": "prisma migrate dev -name ",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "test": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && npx vitest run",
+    "test": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && npx vitest run --coverage",
     "test:watch": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && npx vitest",
     "prepare": "husky install"
   },
@@ -60,10 +60,13 @@
     "@types/jsonwebtoken": "^8.5.8",
     "@types/luxon": "^3.0.1",
     "@types/multer": "^1.4.7",
+    "@vitest/coverage-c8": "^0.28.4",
+    "@vitest/coverage-istanbul": "^0.28.4",
+    "@vitest/ui": "^0.28.4",
     "prisma": "^3.13.0",
     "ts-mockito": "^2.6.1",
     "ts-node-dev": "^1.1.6",
     "typescript": "^4.5.4",
-    "vitest": "^0.23.4"
+    "vitest": "^0.28.4"
   }
 }
