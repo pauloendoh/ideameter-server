@@ -26,6 +26,7 @@ const routingControllersOptions: RoutingControllersOptions = {
 }
 
 const app = createExpressServer(routingControllersOptions)
+
 app.use("/public", express.static("./public"))
 
 const httpServer = addSocketServer(app)
