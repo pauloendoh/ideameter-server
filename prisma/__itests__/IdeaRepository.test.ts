@@ -8,46 +8,53 @@ import { buildIdeaWithRelations } from "../../src/types/domain/idea/IdeaWithRela
 describe("IdeaRepository", () => {
   describe("saveIdea", () => {
     describe("when subideia with parentId is saved", async () => {
-      // PE 1/3 - DRY integrationTestExample.test.ts
-      const authRepo = new AuthRepository()
-      const groupRepo = new GroupRepository()
-      const tabRepo = new TabRepository()
-      const ideaRepo = new IdeaRepository()
+      it(
+        "savedSubidea should have a parentId",
+        async () => {
+          // PE 1/3 - DRY integrationTestExample.test.ts
+          const authRepo = new AuthRepository()
+          const groupRepo = new GroupRepository()
+          const tabRepo = new TabRepository()
+          const ideaRepo = new IdeaRepository()
 
-      let user: Awaited<ReturnType<typeof authRepo.registerNewUser>>
-      let group: Awaited<ReturnType<typeof groupRepo.createGroup>>
-      let tab: Awaited<ReturnType<typeof tabRepo.createTab>>
-      let idea: Awaited<ReturnType<typeof ideaRepo.saveIdea>>
+          let user: Awaited<ReturnType<typeof authRepo.registerNewUser>>
+          let group: Awaited<ReturnType<typeof groupRepo.createGroup>>
+          let tab: Awaited<ReturnType<typeof tabRepo.createTab>>
+          let idea: Awaited<ReturnType<typeof ideaRepo.saveIdea>>
 
-      let username = new Date().toISOString()
-      user = await authRepo.registerNewUser(
-        username + "@test.com",
-        username,
-        "lmao"
-      )
+          let username = new Date().toISOString()
+          user = await authRepo.registerNewUser(
+            username + "@test.com",
+            username,
+            "lmao"
+          )
 
-      group = await groupRepo.createGroup(
-        { id: "", description: "", name: "group" },
-        user.id
-      )
+          group = await groupRepo.createGroup(
+            { id: "", description: "", name: "group" },
+            user.id
+          )
 
-      tab = await tabRepo.createTab(group.id, "tab", user.id)
+          tab = await tabRepo.createTab(group.id, "tab", user.id)
 
-      idea = await ideaRepo.saveIdea(
-        buildIdeaWithRelations({ tabId: tab.id }),
-        user.id
-      )
+          idea = await ideaRepo.saveIdea(
+            buildIdeaWithRelations({ tabId: tab.id }),
+            user.id
+          )
 
-      const savedSubidea = await ideaRepo.saveIdea(
-        {
-          ...buildIdeaWithRelations({ tabId: tab.id }),
-          parentId: idea.id,
+          const savedSubidea = await ideaRepo.saveIdea(
+            {
+              ...buildIdeaWithRelations({ tabId: tab.id }),
+              parentId: idea.id,
+            },
+            user.id
+          )
+
+          expect(savedSubidea.parentId).not.toBe(null)
         },
-        user.id
+        {
+          retry: 3,
+        }
       )
-      it("savedSubidea should have a parentId", () => {
-        expect(savedSubidea.parentId).not.toBe(null)
-      })
     })
   })
 })

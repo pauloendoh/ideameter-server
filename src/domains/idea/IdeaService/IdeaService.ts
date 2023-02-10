@@ -47,8 +47,8 @@ export default class IdeaService {
     return createdIdea
   }
 
-  async saveSubidea(idea: IdeaWithRelationsType, requesterId: string) {
-    const parent = await this.ideaRepository.findById(idea.parentId)
+  async saveSubidea(subidea: IdeaWithRelationsType, requesterId: string) {
+    const parent = await this.ideaRepository.findById(subidea.parentId)
     if (!parent) throw new ForbiddenError403("Parent idea not found")
 
     const isAllowed = await this.ideaRepository.userCanAccessTab(
@@ -58,13 +58,14 @@ export default class IdeaService {
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to add ideas to this tab")
 
-    idea.tabId = undefined
-    const savedSubidea = await this.ideaRepository.saveIdea(idea, requesterId)
+    subidea.tabId = undefined
 
-    if (!idea.id)
-      await this.ratingRepository.createRating(savedSubidea.id, 3, requesterId)
+    const socketServer = MySocketServer.instance
+    if (subidea.id) {
+      return this.updateIdea(subidea, requesterId, socketServer)
+    }
 
-    return savedSubidea
+    return this.createIdea(subidea, requesterId)
   }
 
   async deleteSubidea(subideaId: string, requesterId: string) {
