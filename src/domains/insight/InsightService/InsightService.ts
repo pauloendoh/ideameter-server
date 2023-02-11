@@ -3,11 +3,13 @@ import { InterestSimilarityDto } from "../../../types/domain/insights/InterestSi
 import ForbiddenError403 from "../../../utils/errors/ForbiddenError403"
 import GroupRepository from "../../group/GroupRepository"
 import RatingRepository from "../../rating/RatingRepository"
+import { InsightRepository } from "../InsightRepository"
 
 export class InsightService {
   constructor(
     private groupRepository = new GroupRepository(),
-    private ratingRepository = new RatingRepository()
+    private ratingRepository = new RatingRepository(),
+    private insightRepository = new InsightRepository()
   ) {}
 
   async findInterestSimilarity(
@@ -89,5 +91,10 @@ export class InsightService {
     const percentage = top / 2 // 1/2 = 50%;; 2 / 2 = 1 = 100%
 
     return percentage // therefore, 1 and 3 is 0% similar... I guess?? // https://imageproxy.ifunny.co/crop:x-20,resize:640x,quality:90x75/images/5667ddd56ea8db760e7cd49b2c91de470b4ce8dcc3e7533a3499ae9269898bd9_1.jpg
+  }
+
+  async findMissingRatingsFromGroup(groupId: string, requesterId: string) {
+    await this.groupRepository.userIsAllowedOrThrow(requesterId, groupId)
+    return this.insightRepository.findMissingRatingsFromGroup(groupId)
   }
 }

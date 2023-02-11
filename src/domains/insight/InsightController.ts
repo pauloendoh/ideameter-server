@@ -13,4 +13,12 @@ export class InsightController {
   ) {
     return this.insightService.findInterestSimilarity(user.id, groupId)
   }
+
+  @Get("/groups/:groupId/insights/missing-ratings")
+  findMissingRatingsFromGroup(
+    @CurrentUser({ required: true }) user: User,
+    @Param("groupId") groupId: string
+  ) {
+    return this.insightService.findMissingRatingsFromGroup(groupId, user.id)
+  }
 }

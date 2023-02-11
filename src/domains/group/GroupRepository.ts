@@ -1,6 +1,7 @@
 import { Group, UserGroup } from "@prisma/client"
 import GroupDto from "../../types/domain/group/GroupDto"
 import { SimpleUserDto } from "../../types/domain/idea/IdeaWithRelationsType"
+import ForbiddenError403 from "../../utils/errors/ForbiddenError403"
 import myPrismaClient from "../../utils/myPrismaClient"
 
 export default class GroupRepository {
@@ -123,9 +124,21 @@ export default class GroupRepository {
     return !!userGroup
   }
 
-  public async findGroupMembers(
-    groupId: string
-  ): Promise<
+  public async userIsAllowedOrThrow(userId: string, groupId: string) {
+    const userGroup = await this.prismaClient.userGroup.findFirst({
+      where: {
+        userId,
+        groupId,
+      },
+    })
+
+    if (!userGroup) {
+      throw new ForbiddenError403("User is not allowed to perform this action")
+    }
+    return true
+  }
+
+  public async findGroupMembers(groupId: string): Promise<
     (UserGroup & {
       user: SimpleUserDto
     })[]
