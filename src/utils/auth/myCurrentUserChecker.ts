@@ -1,6 +1,4 @@
 import { Action } from "routing-controllers"
-import myRedisClient from "../redis/myRedisClient"
-import { redisKeys } from "../redis/redisKeys"
 import { validateJwt } from "./validateJwt"
 
 export const myCurrentUserChecker = async (action: Action) => {
@@ -8,10 +6,10 @@ export const myCurrentUserChecker = async (action: Action) => {
   const user = await validateJwt(token)
 
   try {
-    myRedisClient.set(
-      redisKeys.userLastOnline(user.id),
-      new Date().toISOString()
-    )
+    // myRedisClient.set(
+    //   redisKeys.userLastOnline(user.id),
+    //   new Date().toISOString()
+    // )
   } catch (e) {
     console.log(e)
   }

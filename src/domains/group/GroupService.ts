@@ -1,14 +1,13 @@
 import { Group } from "@prisma/client"
 import GroupDto from "../../types/domain/group/GroupDto"
 import ForbiddenError403 from "../../utils/errors/ForbiddenError403"
-import myRedisClient from "../../utils/redis/myRedisClient"
 import GroupRepository from "./GroupRepository"
 
 export default class GroupService {
   constructor(
-    private readonly repo = new GroupRepository(),
-    private readonly redisClient = myRedisClient
-  ) {}
+    private readonly repo = new GroupRepository()
+  ) // private readonly redisClient = myRedisClient
+  {}
 
   public async createGroup(payload: GroupDto, userId: string) {
     const createdGroup = await this.repo.createGroup(payload, userId)
