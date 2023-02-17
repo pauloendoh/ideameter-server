@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from "@prisma/client"
 import {
   Body,
   CurrentUser,
@@ -9,20 +9,24 @@ import {
   Post,
   Put,
   QueryParam,
-} from "routing-controllers";
-import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType";
-import IdeaService from "../idea/IdeaService/IdeaService";
+} from "routing-controllers"
+import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType"
+import IdeaService from "../idea/IdeaService/IdeaService"
+import { SubideaService } from "./SubideaService"
 
 @JsonController("/subideas")
 export class SubideasController {
-  constructor(private ideaService = new IdeaService()) {}
+  constructor(
+    private ideaService = new IdeaService(),
+    private subideaService = new SubideaService()
+  ) {}
 
   @Post()
   createSubidea(
     @CurrentUser({ required: true }) user: User,
     @Body() body: IdeaWithRelationsType
   ) {
-    return this.ideaService.saveSubidea(body, user.id);
+    return this.ideaService.saveSubidea(body, user.id)
   }
 
   @Get()
@@ -31,10 +35,9 @@ export class SubideasController {
     @QueryParam("parentId") parentId: string,
     @QueryParam("groupId") groupId: string
   ) {
-    if (groupId)
-      return this.ideaService.findSubideasByGroupId(groupId, user.id);
+    if (groupId) return this.ideaService.findSubideasByGroupId(groupId, user.id)
 
-    return this.ideaService.findSubideasByIdeaId(parentId, user.id);
+    return this.ideaService.findSubideasByIdeaId(parentId, user.id)
   }
 
   @Put()
@@ -42,7 +45,7 @@ export class SubideasController {
     @CurrentUser({ required: true }) user: User,
     @Body() body: IdeaWithRelationsType
   ) {
-    return this.ideaService.saveSubidea(body, user.id);
+    return this.ideaService.saveSubidea(body, user.id)
   }
 
   @Delete("/:subideaId")
@@ -50,6 +53,20 @@ export class SubideasController {
     @CurrentUser({ required: true }) user: User,
     @Param("subideaId") subideaId: string
   ) {
-    return this.ideaService.deleteSubidea(subideaId, user.id);
+    return this.ideaService.deleteSubidea(subideaId, user.id)
+  }
+
+  @Post("/transform-to-subidea")
+  transformToSubidea(
+    @CurrentUser({ required: true }) user: User,
+    @QueryParam("ideaId", { required: true }) ideaId: string,
+    @QueryParam("newParentIdeaTitle", { required: true })
+    newParentIdeaTitle: string
+  ) {
+    return this.subideaService.transformToSubidea({
+      ideaId,
+      newParentIdeaTitle,
+      requesterId: user.id,
+    })
   }
 }
