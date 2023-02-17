@@ -53,7 +53,7 @@ export class InsightRepository {
       MissingRatingDto[]
     >`SELECT u.id, 
              u.username, 
-             (SELECT count(*) 
+             (SELECT count(*)::INTEGER 
                 FROM all_to_rate atr 
            LEFT JOIN "IdeaRating" ir ON ir."ideaId" = atr.id 
                  AND ir."userId" = u.id

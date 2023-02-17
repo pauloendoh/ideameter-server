@@ -95,6 +95,7 @@ export class InsightService {
 
   async findMissingRatingsFromGroup(groupId: string, requesterId: string) {
     await this.groupRepository.userIsAllowedOrThrow(requesterId, groupId)
-    return this.insightRepository.findMissingRatingsFromGroup(groupId)
+    const x = await this.insightRepository.findMissingRatingsFromGroup(groupId)
+    return x 
   }
 }
