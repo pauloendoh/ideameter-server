@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  QueryParam,
   UploadedFile,
 } from "routing-controllers"
 import GroupDto from "../../types/domain/group/GroupDto"
@@ -114,5 +115,13 @@ export class GroupController {
   ) {
     if ("Location" in file) return file.Location
     return urls.publicUploads(file.filename)
+  }
+
+  @Get("/:groupId/members-last-online")
+  findGroupMembersLastOnline(
+    @Param("groupId") groupId: string,
+    @QueryParam("asUserId") asUserId: string
+  ) {
+    return this.groupService.findGroupMembersLastOnline(asUserId, groupId)
   }
 }
