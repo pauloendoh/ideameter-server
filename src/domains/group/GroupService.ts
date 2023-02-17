@@ -2,7 +2,6 @@ import { Group } from "@prisma/client"
 import GroupDto from "../../types/domain/group/GroupDto"
 import ForbiddenError403 from "../../utils/errors/ForbiddenError403"
 import myRedisClient from "../../utils/redis/myRedisClient"
-import { redisKeys } from "../../utils/redis/redisKeys"
 import GroupRepository from "./GroupRepository"
 
 export default class GroupService {
@@ -123,16 +122,16 @@ export default class GroupService {
   async findGroupMembersLastOnline(userId: string, groupId: string) {
     const members = await this.findGroupMembers(groupId, userId)
 
-    const membersLastOnline = await Promise.all(
-      members.map(async (member) => {
-        const lastOnlineAt = await this.redisClient.get(
-          redisKeys.userLastOnline(member.userId)
-        )
+    // const membersLastOnline = await Promise.all(
+    //   members.map(async (member) => {
+    //     const lastOnlineAt = await this.redisClient.get(
+    //       redisKeys.userLastOnline(member.userId)
+    //     )
 
-        return { userId: member.userId, lastOnlineAt }
-      })
-    )
+    //     return { userId: member.userId, lastOnlineAt }
+    //   })
+    // )
 
-    return membersLastOnline
+    return []
   }
 }
