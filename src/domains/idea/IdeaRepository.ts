@@ -107,6 +107,8 @@ export default class IdeaRepository {
       },
       data: {
         ...idea,
+        createdAt: undefined,
+        updatedAt: undefined,
         labels: {
           set: idea.labels?.map((label) => ({ id: label.id })),
         },
@@ -206,6 +208,31 @@ export default class IdeaRepository {
     return this.prismaClient.idea.deleteMany({
       where: {
         OR: [{ id: ideaId }, { parentId: ideaId }],
+      },
+    })
+  }
+
+  async userIdsCanAccessIdea(userIds: string[], ideaId: string) {
+    return this.prismaClient.user.findMany({
+      where: {
+        id: {
+          in: userIds,
+        },
+        userGroups: {
+          some: {
+            group: {
+              tabs: {
+                some: {
+                  ideas: {
+                    some: {
+                      id: ideaId,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     })
   }

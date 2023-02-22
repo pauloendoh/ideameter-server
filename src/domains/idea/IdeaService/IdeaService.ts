@@ -10,6 +10,7 @@ import { socketEvents } from "../../../utils/socket/socketEvents"
 import { socketRooms } from "../../../utils/socket/socketRooms"
 import TabRepository from "../../group/group-tab/TabRepository"
 import GroupRepository from "../../group/GroupRepository"
+import { IdeaChangeService } from "../../idea-change/IdeaChangeService"
 import { NotificationService } from "../../notification/NotificationService"
 import RatingRepository from "../../rating/RatingRepository"
 import IdeaRepository from "../IdeaRepository"
@@ -24,7 +25,8 @@ export default class IdeaService {
     private readonly ratingRepository = new RatingRepository(),
     private readonly notificationService = new NotificationService(),
     private readonly tabRepository = new TabRepository(),
-    private readonly socketServer = MySocketServer.instance
+    private readonly socketServer = MySocketServer.instance,
+    private readonly ideaChangeService = new IdeaChangeService()
   ) {}
 
   async createIdea(idea: IdeaWithRelationsType, requesterId: string) {
@@ -137,6 +139,12 @@ export default class IdeaService {
     if (!previousIdea.isDone && idea.isDone) idea.completedAt = new Date()
 
     const updatedIdea = await this.ideaRepository.updateIdea(idea)
+
+    await this.ideaChangeService.handleIdeaChange({
+      previousIdea,
+      updatedIdea,
+      requesterId,
+    })
 
     this.notificationService.handleMentionNotificationsUpdateIdea(
       previousIdea,
