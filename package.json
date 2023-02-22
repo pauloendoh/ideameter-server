@@ -14,7 +14,7 @@
     "postinstall": "tsc && prisma generate",
     "start": "node build/src/server.js",
     "generate": "prisma generate",
-    "migrate": "prisma migrate dev -name ",
+    "migrate": "prisma migrate dev --name ",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "test": "npm run docker:up && dotenv -e .env.test -- npx prisma migrate deploy && npx vitest run",

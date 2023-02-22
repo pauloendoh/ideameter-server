@@ -79,4 +79,27 @@ export default class UserRepository {
       },
     })
   }
+
+  async updateLastOnlineAt(userId: string) {
+    return this.prismaClient.user.update({
+      data: {
+        lastOnlineAt: new Date(),
+      },
+      where: {
+        id: userId,
+      },
+    })
+  }
+
+  async findLastOnlineByIds(userIds: string[]) {
+    return this.prismaClient.user.findMany({
+      where: {
+        id: { in: userIds },
+      },
+      select: {
+        id: true,
+        lastOnlineAt: true,
+      },
+    })
+  }
 }

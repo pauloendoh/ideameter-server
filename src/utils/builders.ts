@@ -10,5 +10,6 @@ export const buildUser = (p?: Partial<User>): User => ({
   createdAt: new Date(),
   updatedAt: new Date(),
   lastOpenedGroupId: "",
+  lastOnlineAt: new Date(),
   ...p,
 })

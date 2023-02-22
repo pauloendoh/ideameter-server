@@ -154,6 +154,7 @@ export default class GroupRepository {
             username: true,
             email: true,
             profile: true,
+            lastOnlineAt: true,
           },
         },
       },
