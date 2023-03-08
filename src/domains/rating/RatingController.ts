@@ -33,7 +33,7 @@ export class RatingController {
   ) {
     const socketServer = req.app.get("socketio")
 
-    return this.ratingService.saveRating(
+    return this.ratingService.saveIdeaRating(
       body.ideaId,
       body.rating,
       user.id,

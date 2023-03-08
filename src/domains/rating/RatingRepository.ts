@@ -3,13 +3,7 @@ import myPrismaClient from "../../utils/myPrismaClient"
 export default class RatingRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
 
-  async userCanRateIdea(params: {
-    ideaId: string
-    requesterId: string
-    isSubidea: boolean
-  }) {
-    const { ideaId, requesterId, isSubidea } = params
-
+  async userCanRateIdea(ideaId: string, requesterId: string) {
     const userGroup = await this.prismaClient.userGroup.findFirst({
       where: {
         AND: [
@@ -20,6 +14,34 @@ export default class RatingRepository {
                   ideas: {
                     some: {
                       id: ideaId,
+                      ratingsAreEnabled: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          {
+            userId: requesterId,
+          },
+        ],
+      },
+    })
+
+    return !!userGroup
+  }
+
+  async userCanRateSubidea(parentId: string, requesterId: string) {
+    const userGroup = await this.prismaClient.userGroup.findFirst({
+      where: {
+        AND: [
+          {
+            group: {
+              tabs: {
+                some: {
+                  ideas: {
+                    some: {
+                      id: parentId,
                     },
                   },
                 },

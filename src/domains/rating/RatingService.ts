@@ -15,23 +15,15 @@ export default class RatingService {
     private readonly ideaRepository = new IdeaRepository()
   ) {}
 
-  async saveRating(
+  async saveIdeaRating(
     ideaId: string,
     rating: number | null,
     requesterId: string,
     socketServer: Server
   ) {
-    const idea = await this.ideaRepository.findById(ideaId)
-    if (!idea) {
-      throw new NotFoundError404("Idea not found")
-    }
-    const isAllowed = await this.ratingRepository.userCanRateIdea({
-      ideaId,
-      requesterId,
-      isSubidea: idea.parentId ? true : false,
-    })
+    const isAllowed = await this._userCanSaveIdeaRating(ideaId, requesterId)
     if (!isAllowed)
-      new ForbiddenError403("You're not allowed to rate this idea")
+      throw new ForbiddenError403("You're not allowed to rate this idea")
 
     const previousAvgRating = await this.ratingRepository.findAvgRatingFromIdea(
       ideaId
@@ -53,6 +45,27 @@ export default class RatingService {
     this.handleSavedRatingSocket(savedRating, socketServer)
 
     return { savedRating, idea: updatedIdea }
+  }
+
+  async _userCanSaveIdeaRating(ideaId: string, requesterId: string) {
+    const idea = await this.ideaRepository.findById(ideaId)
+    if (!idea) {
+      throw new NotFoundError404("Idea not found")
+    }
+
+    if (idea.parentId) {
+      const isAllowed = await this.ratingRepository.userCanRateSubidea(
+        idea.parentId,
+        requesterId
+      )
+      return isAllowed
+    }
+
+    const isAllowed = await this.ratingRepository.userCanRateIdea(
+      ideaId,
+      requesterId
+    )
+    return isAllowed
   }
 
   async findRatingsByGroupId(groupId: string, requesterId: string) {
