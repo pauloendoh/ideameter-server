@@ -21,12 +21,17 @@ export default class RatingService {
     requesterId: string,
     socketServer: Server
   ) {
-    const isAllowed = await this.ratingRepository.userCanRateIdea(
+    const idea = await this.ideaRepository.findById(ideaId)
+    if (!idea) {
+      throw new NotFoundError404("Idea not found")
+    }
+    const isAllowed = await this.ratingRepository.userCanRateIdea({
       ideaId,
-      requesterId
-    )
+      requesterId,
+      isSubidea: idea.parentId ? true : false,
+    })
     if (!isAllowed)
-      throw new ForbiddenError403("You're not allowed to rate this idea")
+      new ForbiddenError403("You're not allowed to rate this idea")
 
     const previousAvgRating = await this.ratingRepository.findAvgRatingFromIdea(
       ideaId
@@ -40,14 +45,14 @@ export default class RatingService {
       ? await this.ratingRepository.updateRating(ratingExists.id, rating)
       : await this.ratingRepository.createRating(ideaId, rating, requesterId)
 
-    const idea = await this.handleInterestingOrIrrelevantIdea(
+    const updatedIdea = await this.handleInterestingOrIrrelevantIdea(
       previousAvgRating,
       ideaId
     )
 
     this.handleSavedRatingSocket(savedRating, socketServer)
 
-    return { savedRating, idea }
+    return { savedRating, idea: updatedIdea }
   }
 
   async findRatingsByGroupId(groupId: string, requesterId: string) {
