@@ -27,6 +27,7 @@ export const buildIdeaWithRelations = (
   completedAt: null,
   onFireSince: new Date(),
   irrelevantSince: new Date(),
+  ratingsAreEnabled: true,
 
   labels: [],
   assignedUsers: [],

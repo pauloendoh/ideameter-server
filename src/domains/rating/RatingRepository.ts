@@ -1,4 +1,4 @@
-import myPrismaClient from "../../utils/myPrismaClient";
+import myPrismaClient from "../../utils/myPrismaClient"
 
 export default class RatingRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -14,6 +14,7 @@ export default class RatingRepository {
                   ideas: {
                     some: {
                       id: ideaId,
+                      ratingsAreEnabled: true,
                     },
                   },
                 },
@@ -25,9 +26,9 @@ export default class RatingRepository {
           },
         ],
       },
-    });
+    })
 
-    return !!userGroup;
+    return !!userGroup
   }
 
   async createRating(ideaId: string, rating: number | null, userId: string) {
@@ -37,8 +38,8 @@ export default class RatingRepository {
         rating,
         ideaId,
       },
-    });
-    return saved;
+    })
+    return saved
   }
 
   async findAvgRatingFromIdea(ideaId: string) {
@@ -49,9 +50,9 @@ export default class RatingRepository {
       where: {
         ideaId,
       },
-    });
+    })
 
-    return aggregation._avg.rating;
+    return aggregation._avg.rating
   }
 
   async findRatingsByGroupId(groupId: string) {
@@ -84,8 +85,8 @@ export default class RatingRepository {
           },
         ],
       },
-    });
-    return ratings;
+    })
+    return ratings
   }
 
   async ratingExists(ideaId: string, userId: string) {
@@ -94,9 +95,9 @@ export default class RatingRepository {
         ideaId,
         userId,
       },
-    });
+    })
 
-    return rating;
+    return rating
   }
 
   async updateRating(ratingId: string, rating: number | null) {
@@ -107,8 +108,8 @@ export default class RatingRepository {
       data: {
         rating,
       },
-    });
-    return updated;
+    })
+    return updated
   }
 
   async deleteRating(ratingId: string) {
@@ -116,7 +117,16 @@ export default class RatingRepository {
       where: {
         id: ratingId,
       },
-    });
-    return deleted;
+    })
+    return deleted
+  }
+
+  async deleteAllRatingsFromIdea(ideaId: string) {
+    const deleted = await this.prismaClient.ideaRating.deleteMany({
+      where: {
+        ideaId,
+      },
+    })
+    return deleted
   }
 }

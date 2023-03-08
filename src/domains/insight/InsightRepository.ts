@@ -38,6 +38,7 @@ export class InsightRepository {
 	   left join ideas_with_subideas  iws on iws.id = i.id 
 	       where i."parentId" is null
 	         and i."isDone" = false
+           and i."ratingsAreEnabled" = true
 	         and iws.id is null
 	         and g.id = ${groupId}
 	);`
@@ -62,6 +63,11 @@ export class InsightRepository {
    LEFT JOIN "UserGroup" ug ON ug."groupId" = g.id 
    LEFT JOIN "User" 		u  ON u.id = ug."userId" 
        WHERE g.id  = ${groupId};`
+
+    await this.prismaClient.$queryRaw`DROP TABLE IF EXISTS subideas_to_rate;`
+    await this.prismaClient.$queryRaw`DROP TABLE IF EXISTS ideas_with_subideas;`
+    await this.prismaClient.$queryRaw`DROP TABLE IF EXISTS ideas_to_rate; `
+    await this.prismaClient.$queryRaw`DROP TABLE IF EXISTS all_to_rate; `
 
     return result
   }

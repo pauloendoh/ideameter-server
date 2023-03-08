@@ -31,6 +31,11 @@ export class SubideaService {
       throw new ForbiddenError403("User does not have access.")
     }
 
+    const subideas = await this.ideaRepository.findSubideasByIdeaId(ideaId)
+    if (subideas.length > 0) {
+      throw new ForbiddenError403("Cannot transform idea with subideas")
+    }
+
     const newParentIdea = await this.ideaRepository.saveIdea(
       {
         ...buildIdeaWithRelations(),

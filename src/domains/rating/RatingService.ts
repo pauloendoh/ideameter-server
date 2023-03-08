@@ -26,7 +26,7 @@ export default class RatingService {
       requesterId
     )
     if (!isAllowed)
-      new ForbiddenError403("You're not allowed to rate this idea")
+      throw new ForbiddenError403("You're not allowed to rate this idea")
 
     const previousAvgRating = await this.ratingRepository.findAvgRatingFromIdea(
       ideaId

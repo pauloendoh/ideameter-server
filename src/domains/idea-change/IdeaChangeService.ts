@@ -1,12 +1,14 @@
 import { Idea } from "@prisma/client"
 import ForbiddenError403 from "../../utils/errors/ForbiddenError403"
 import IdeaRepository from "../idea/IdeaRepository"
+import RatingRepository from "../rating/RatingRepository"
 import { IdeaChangeRepository } from "./IdeaChangeRepository"
 
 export class IdeaChangeService {
   constructor(
     private ideaChangeRepo = new IdeaChangeRepository(),
-    private ideaRepo = new IdeaRepository()
+    private ideaRepo = new IdeaRepository(),
+    private ratingRepo = new RatingRepository()
   ) {}
 
   async findManyByIdeaId(ideaId: string, requesterId: string) {
@@ -45,6 +47,13 @@ export class IdeaChangeService {
         newText: updatedIdea.description,
         prevText: previousIdea.description,
       })
+    }
+
+    if (
+      previousIdea.ratingsAreEnabled === true &&
+      updatedIdea.ratingsAreEnabled === false
+    ) {
+      await this.ratingRepo.deleteAllRatingsFromIdea(updatedIdea.id)
     }
   }
 }

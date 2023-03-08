@@ -102,12 +102,13 @@ model Idea {
   tab   GroupTab? @relation(fields: [tabId], references: [id], onDelete: Cascade)
   tabId String?
 
-  name            String
-  description     String
-  isDone          Boolean   @default(false)
-  completedAt     DateTime?
-  onFireSince     DateTime?
-  irrelevantSince DateTime?
+  name              String
+  description       String
+  isDone            Boolean   @default(false)
+  completedAt       DateTime?
+  onFireSince       DateTime?
+  irrelevantSince   DateTime?
+  ratingsAreEnabled Boolean   @default(true)
 
   ideaRatings     IdeaRating[]
   rteImages       RteImage[]
