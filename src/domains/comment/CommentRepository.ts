@@ -32,6 +32,13 @@ export class CommentRepository {
         createdAt: undefined,
         updatedAt: undefined,
       },
+      include: {
+        user: {
+          select: {
+            ...userSelectFields,
+          },
+        },
+      },
     })
   }
 
@@ -46,6 +53,13 @@ export class CommentRepository {
         userId: requesterId,
         createdAt: undefined,
         updatedAt: undefined,
+      },
+      include: {
+        user: {
+          select: {
+            ...userSelectFields,
+          },
+        },
       },
     })
   }
