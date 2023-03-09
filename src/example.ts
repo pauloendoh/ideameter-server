@@ -1,3 +1,3 @@
-import { IdeaChangeController } from "./domains/idea-change/IdeaChangeController"
+import { CommentController } from "./domains/comment/CommentController"
 
-IdeaChangeController
+CommentController
