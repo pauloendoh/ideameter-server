@@ -93,6 +93,8 @@ model Idea {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  isArchived Boolean @default(false)
+
   subIdeas Idea[]  @relation("IdeaSubIdea")
   parent   Idea?   @relation("IdeaSubIdea", fields: [parentId], references: [id])
   parentId String?

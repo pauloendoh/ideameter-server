@@ -212,7 +212,8 @@ export default class IdeaRepository {
     })
   }
 
-  async userIdsCanAccessIdea(userIds: string[], ideaId: string) {
+  async userIdsCanAccessIdea(params: { userIds: string[]; ideaId: string }) {
+    const { userIds, ideaId } = params
     return this.prismaClient.user.findMany({
       where: {
         id: {
@@ -306,5 +307,19 @@ export default class IdeaRepository {
         },
       },
     })
+  }
+
+  async findArchivedIdeasByGroupId(groupId: string) {
+    const ideas = await this.prismaClient.idea.findMany({
+      where: {
+        tab: {
+          groupId,
+        },
+        isArchived: true,
+      },
+      include: ideaIncludeFields,
+    })
+
+    return ideas
   }
 }

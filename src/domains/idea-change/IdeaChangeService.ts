@@ -12,10 +12,10 @@ export class IdeaChangeService {
   ) {}
 
   async findManyByIdeaId(ideaId: string, requesterId: string) {
-    const isAllowed = await this.ideaRepo.userIdsCanAccessIdea(
-      [requesterId],
-      ideaId
-    )
+    const isAllowed = await this.ideaRepo.userIdsCanAccessIdea({
+      userIds: [requesterId],
+      ideaId,
+    })
     if (!isAllowed) {
       throw new ForbiddenError403("You are not allowed to access this idea")
     }

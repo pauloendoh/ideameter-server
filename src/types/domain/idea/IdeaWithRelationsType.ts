@@ -20,6 +20,7 @@ export const buildIdeaWithRelations = (
   updatedAt: new Date(),
   parentId: "",
   creatorId: "",
+  isArchived: false,
   tabId: "",
   name: "",
   description: "",

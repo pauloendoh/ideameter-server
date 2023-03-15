@@ -10,10 +10,10 @@ export class CommentService {
   ) {}
 
   async findManyByIdeaId(ideaId: string, requesterId: string) {
-    const isAllowed = await this.ideaRepo.userIdsCanAccessIdea(
-      [requesterId],
-      ideaId
-    )
+    const isAllowed = await this.ideaRepo.userIdsCanAccessIdea({
+      userIds: [requesterId],
+      ideaId,
+    })
     if (!isAllowed) {
       throw new ForbiddenError("Not allowed")
     }
