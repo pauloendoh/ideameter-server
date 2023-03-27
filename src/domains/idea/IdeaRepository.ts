@@ -305,6 +305,7 @@ export default class IdeaRepository {
             id: userId,
           },
         },
+        isArchived: false,
       },
     })
   }
