@@ -8,7 +8,6 @@ export default defineConfig({
       include: ["**/*Service.ts"],
     },
 
-    // PE 1/3 - find some way to use .env.test
     env: {
       DATABASE_URL: "postgresql://prisma:prisma@localhost:5433/tests",
     },

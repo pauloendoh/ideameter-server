@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest"
-import AuthRepository from "../../src/domains/auth/AuthRepository"
-import TabRepository from "../../src/domains/group/group-tab/TabRepository"
-import GroupRepository from "../../src/domains/group/GroupRepository"
-import IdeaRepository from "../../src/domains/idea/IdeaRepository"
 import { buildIdeaWithRelations } from "../../src/types/domain/idea/IdeaWithRelationsType"
+import { getTestRepositories } from "./utils/getTestRepositories"
 
 describe("IdeaRepository", () => {
   describe("saveIdea", () => {
@@ -12,15 +9,16 @@ describe("IdeaRepository", () => {
         "savedSubidea should have a parentId",
         async () => {
           // PE 1/3 - DRY integrationTestExample.test.ts
-          const authRepo = new AuthRepository()
-          const groupRepo = new GroupRepository()
-          const tabRepo = new TabRepository()
-          const ideaRepo = new IdeaRepository()
-
-          let user: Awaited<ReturnType<typeof authRepo.registerNewUser>>
-          let group: Awaited<ReturnType<typeof groupRepo.createGroup>>
-          let tab: Awaited<ReturnType<typeof tabRepo.createTab>>
-          let idea: Awaited<ReturnType<typeof ideaRepo.saveIdea>>
+          let {
+            authRepo,
+            groupRepo,
+            tabRepo,
+            ideaRepo,
+            user,
+            group,
+            tab,
+            idea,
+          } = await getTestRepositories()
 
           let username = new Date().toISOString()
           user = await authRepo.registerNewUser(
