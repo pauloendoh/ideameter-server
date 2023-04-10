@@ -8,8 +8,8 @@ import NotFoundError404 from "../../../utils/errors/NotFoundError404"
 import { MySocketServer } from "../../../utils/socket/MySocketServer"
 import { socketEvents } from "../../../utils/socket/socketEvents"
 import { socketRooms } from "../../../utils/socket/socketRooms"
-import TabRepository from "../../group/group-tab/TabRepository"
 import GroupRepository from "../../group/GroupRepository"
+import TabRepository from "../../group/group-tab/TabRepository"
 import { IdeaChangeService } from "../../idea-change/IdeaChangeService"
 import { NotificationService } from "../../notification/NotificationService"
 import RatingRepository from "../../rating/RatingRepository"
@@ -219,15 +219,32 @@ export default class IdeaService {
     }))
   }
 
-  async moveIdeasToTab(body: MoveIdeasToTabDto, requesterId: string) {
+  async moveIdeasToTab(dto: MoveIdeasToTabDto, requesterId: string) {
+    const ideaId = dto.ideaIds[0]
+    if (!ideaId) throw new InvalidPayloadError400("No idea id provided.")
+
+    const ideaGroup = await this.groupRepository.findGroupByIdeaId(ideaId)
+    if (!ideaGroup) throw new NotFoundError404("Origin group not found.")
+
+    const targetGroup = await this.groupRepository.findGroupByTabId(dto.tabId)
+    if (!targetGroup) throw new NotFoundError404("Target group not found.")
+
+    if (ideaGroup.id === targetGroup.id) {
+      return this.#moveIdeasToTabSameGroup(dto, requesterId)
+    }
+
+    return this.#moveIdeasToTabDifferentGroup(dto, requesterId)
+  }
+
+  async #moveIdeasToTabSameGroup(dto: MoveIdeasToTabDto, requesterId: string) {
     const userCanAccessTabTarget = this.ideaRepository.userCanAccessTab(
-      body.tabId,
+      dto.tabId,
       requesterId
     )
     if (!userCanAccessTabTarget)
       throw new ForbiddenError403("User cannot access target tab.")
 
-    const ideaTabs = await this.ideaRepository.findTabsByIdeaIds(body.ideaIds)
+    const ideaTabs = await this.ideaRepository.findTabsByIdeaIds(dto.ideaIds)
     if (ideaTabs.length !== 1)
       throw new InvalidPayloadError400("Ideas should belong to the same tab.")
 
@@ -239,8 +256,8 @@ export default class IdeaService {
       throw new ForbiddenError("User cannot access origin tab.")
 
     const updatedIdeas = await this.ideaRepository.moveIdeasToTabId(
-      body.ideaIds,
-      body.tabId
+      dto.ideaIds,
+      dto.tabId
     )
 
     this.socketServer
@@ -248,5 +265,48 @@ export default class IdeaService {
       .emit(socketEvents.moveIdeasToTab, updatedIdeas)
 
     return updatedIdeas
+  }
+
+  async #moveIdeasToTabDifferentGroup(
+    dto: MoveIdeasToTabDto,
+    requesterId: string
+  ) {
+    const userCanAcessTargetTab = this.ideaRepository.userCanAccessTab(
+      dto.tabId,
+      requesterId
+    )
+    if (!userCanAcessTargetTab)
+      throw new ForbiddenError403("User cannot access target tab.")
+
+    const firstIdeaId = dto.ideaIds[0]
+    const [originTab] = await this.ideaRepository.findTabsByIdeaIds([
+      firstIdeaId,
+    ])
+    if (!originTab) throw new NotFoundError404("Origin tab not found.")
+
+    const userCanAccessOriginTab = this.ideaRepository.userCanAccessTab(
+      originTab.id,
+      requesterId
+    )
+
+    if (!userCanAccessOriginTab)
+      throw new ForbiddenError("User cannot access origin tab.")
+
+    const ideas = await this.ideaRepository.findIdeasByIds(dto.ideaIds)
+
+    const createDtos = ideas.map((idea) => ({
+      name: idea.name,
+      description: idea.description,
+    }))
+
+    await this.ideaRepository.createMany(createDtos, dto.tabId, requesterId)
+
+    await this.ideaRepository.deleteManyIdeas(dto.ideaIds)
+
+    this.socketServer
+      .to(socketRooms.group(originTab.groupId))
+      .emit(socketEvents.moveIdeasToTab, dto.ideaIds)
+
+    return true
   }
 }

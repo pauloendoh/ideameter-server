@@ -236,4 +236,16 @@ export default class GroupRepository {
       },
     })
   }
+
+  findGroupByTabId(tabId: string) {
+    return this.prismaClient.group.findFirst({
+      where: {
+        tabs: {
+          some: {
+            id: tabId,
+          },
+        },
+      },
+    })
+  }
 }

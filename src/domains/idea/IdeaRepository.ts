@@ -323,4 +323,45 @@ export default class IdeaRepository {
 
     return ideas
   }
+
+  async findIdeasByIds(ideaIds: string[]) {
+    return this.prismaClient.idea.findMany({
+      where: {
+        id: {
+          in: ideaIds,
+        },
+      },
+      include: ideaIncludeFields,
+    })
+  }
+
+  async createMany(
+    dtos: {
+      name: string
+      description: string
+    }[],
+    tabId: string,
+    requesterId: string
+  ) {
+    const ideas = await this.prismaClient.idea.createMany({
+      data: dtos.map((dto) => ({
+        name: dto.name,
+        description: dto.description,
+        tabId,
+        creatorId: requesterId,
+      })),
+    })
+
+    return ideas
+  }
+
+  async deleteManyIdeas(ideaIds: string[]) {
+    return this.prismaClient.idea.deleteMany({
+      where: {
+        id: {
+          in: ideaIds,
+        },
+      },
+    })
+  }
 }
