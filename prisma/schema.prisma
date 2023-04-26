@@ -32,11 +32,12 @@ model User {
 
   lastOpenedGroupId String?
 
-  profile       Profile?
-  notifications Notification[]
-  userTokens    UserToken[]
-  ideaChanges   IdeaChange[]
-  comments      Comment[]
+  profile          Profile?
+  notifications    Notification[]
+  userTokens       UserToken[]
+  ideaChanges      IdeaChange[]
+  comments         Comment[]
+  highlightedIdeas IdeaHighlight[]
 }
 
 model Group {
@@ -113,13 +114,14 @@ model Idea {
   irrelevantSince   DateTime?
   ratingsAreEnabled Boolean   @default(true)
 
-  ideaRatings     IdeaRating[]
-  rteImages       RteImage[]
-  labels          Label[]
-  assignedUsers   User[]           @relation(name: "assigned")
-  highImpactVotes HighImpactVote[]
-  changes         IdeaChange[]
-  comments        Comment[]
+  ideaRatings      IdeaRating[]
+  rteImages        RteImage[]
+  labels           Label[]
+  assignedUsers    User[]           @relation(name: "assigned")
+  highImpactVotes  HighImpactVote[]
+  changes          IdeaChange[]
+  comments         Comment[]
+  highlightedIdeas IdeaHighlight[]
 }
 
 model IdeaRating {
@@ -251,4 +253,16 @@ model Comment {
   targetCommentId String?
 
   text String
+}
+
+model IdeaHighlight {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  idea   Idea   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  ideaId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -8,7 +8,6 @@ describe("IdeaRepository", () => {
       it(
         "savedSubidea should have a parentId",
         async () => {
-          // PE 1/3 - DRY integrationTestExample.test.ts
           let {
             authRepo,
             groupRepo,
