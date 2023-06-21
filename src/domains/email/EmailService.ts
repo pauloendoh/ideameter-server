@@ -1,8 +1,8 @@
-import { MailService } from "@sendgrid/mail";
-import { isValidEmail } from "../../utils/email/isValidEmail";
-import { InvalidPayloadError400 } from "../../utils/errors/InvalidPayloadError400";
-import { UserTokenRepository } from "../user-token/UserTokenRepository";
-import UserRepository from "../user/UserRepository";
+import { MailService } from "@sendgrid/mail"
+import { isValidEmail } from "../../utils/email/isValidEmail"
+import { InvalidPayloadError400 } from "../../utils/errors/InvalidPayloadError400"
+import { UserTokenRepository } from "../user-token/UserTokenRepository"
+import UserRepository from "../user/UserRepository"
 
 export class EmailService {
   constructor(
@@ -10,54 +10,59 @@ export class EmailService {
     private userRepo = new UserRepository(),
     private tokenRepo = new UserTokenRepository()
   ) {
-    this.sendgridService.setApiKey(process.env.SENDGRID_API_KEY);
+    this.sendgridService.setApiKey(process.env.SENDGRID_API_KEY)
   }
 
   notifyNewUserToDevs(username: string) {
-    const devsEmailsString = process.env.NOTIFY_NEW_USER_TO_DEVS;
+    const devsEmailsString = process.env.NOTIFY_NEW_USER_TO_DEVS
 
-    if (!devsEmailsString?.trim()) return;
+    if (!devsEmailsString?.trim()) return
 
-    const devsEmails = devsEmailsString.split(";").map((s) => s.trim());
+    const devsEmails = devsEmailsString.split(";").map((s) => s.trim())
 
     this.sendgridService
       .send({
         to: devsEmails,
-        from: "endohpa@gmail.com",
+        from: {
+          email: "endohpa@gmail.com",
+          name: "Ideameter",
+        },
         subject: "New user in ideameter - " + username,
         text: "congrats to us :)",
       })
       .then(() => {
-        console.log("Email sent!");
+        console.log("Email sent!")
       })
       .catch((error) => {
-        console.log(error.message);
-      });
+        console.log(error.message)
+      })
   }
 
   async sendPasswordResetEmail(email: string) {
-    if (!isValidEmail(email))
-      throw new InvalidPayloadError400("Invalid email.");
+    if (!isValidEmail(email)) throw new InvalidPayloadError400("Invalid email.")
 
-    const registeredUser = await this.userRepo.findByEmail(email);
-    if (!registeredUser) return true;
+    const registeredUser = await this.userRepo.findByEmail(email)
+    if (!registeredUser) return true
 
-    await this.tokenRepo.deleteAllPasswordResetTokens(registeredUser.id);
+    await this.tokenRepo.deleteAllPasswordResetTokens(registeredUser.id)
 
     const token = await this.tokenRepo.createPasswordResetToken(
       registeredUser.id
-    );
+    )
 
     const url =
       process.env.CLIENT_BASE_URL +
       "/password-reset?token=" +
       token.token +
       "&userId=" +
-      registeredUser.id;
+      registeredUser.id
 
     this.sendgridService
       .send({
-        from: "endohpa@gmail.com",
+        from: {
+          email: "endohpa@gmail.com",
+          name: "Ideameter",
+        },
         to: registeredUser.email,
         subject: "Ideameter - Password reset", // Subject line
         text: "Enter this link to complete your password reset: ",
@@ -66,12 +71,12 @@ export class EmailService {
         `,
       })
       .then(() => {
-        console.log("Email sent!");
+        console.log("Email sent!")
       })
       .catch((error) => {
-        console.log(error.message);
-      });
+        console.log(error.message)
+      })
 
-    return true;
+    return true
   }
 }

@@ -209,8 +209,8 @@ export default class IdeaService {
         completedAt: idea.completedAt,
       },
       group: {
-        groupId: idea.tab.group.id,
-        name: idea.tab.group.name,
+        groupId: idea.tab?.group.id,
+        name: idea.tab?.group.name,
       },
       tab: {
         name: idea.tab.name,
