@@ -213,7 +213,7 @@ export default class IdeaService {
         name: idea.tab?.group.name,
       },
       tab: {
-        name: idea.tab.name,
+        name: idea.tab?.name,
         tabId: idea.tabId,
       },
     }))
