@@ -183,7 +183,9 @@ export default class IdeaRepository {
           groupId,
         },
       },
-      include: ideaIncludeFields,
+      include: {
+        ...ideaIncludeFields,
+      },
     })
 
     return ideas
