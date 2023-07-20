@@ -1,21 +1,35 @@
-import { urls } from "../../utils/urls";
-import { AwsFileDto } from "../profile/types/AwsFileDto";
-import { MulterFileDto } from "../profile/types/MulterFileDto";
-import { RteImageRepository } from "./RteImageRepository";
+import { urls } from "../../utils/urls"
+import { AwsFileDto } from "../profile/types/AwsFileDto"
+import { MulterFileDto } from "../profile/types/MulterFileDto"
+import { RteImageRepository } from "./RteImageRepository"
 
 export default class RteImageService {
-  constructor(private readonly profileRepo = new RteImageRepository()) {}
+  constructor(private readonly rteImageRepository = new RteImageRepository()) {}
 
   createRteImage = async (
     userId: string,
     file: MulterFileDto | AwsFileDto,
     ideaId?: string
   ) => {
-    let imgUrl = "";
+    let imgUrl = ""
 
-    if ("Location" in file) imgUrl = file.Location;
-    else if ("filename" in file) imgUrl = urls.publicUploads(file.filename);
+    if ("Location" in file) imgUrl = file.Location
+    else if ("filename" in file) imgUrl = urls.publicUploads(file.filename)
 
-    return this.profileRepo.createRteImage(userId, imgUrl, ideaId);
-  };
+    return this.rteImageRepository.createRteImage(userId, imgUrl, ideaId)
+  }
+
+  async handleSubideaImageUpload(params: {
+    userId: string
+    file: MulterFileDto | AwsFileDto
+  }) {
+    const { userId, file } = params
+
+    let imageUrl = ""
+
+    if ("Location" in file) imageUrl = file.Location
+    else if ("filename" in file) imageUrl = urls.publicUploads(file.filename)
+
+    return imageUrl
+  }
 }

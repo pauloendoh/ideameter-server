@@ -122,6 +122,8 @@ model Idea {
   changes          IdeaChange[]
   comments         Comment[]
   highlightedIdeas IdeaHighlight[]
+
+  subideaImageUrl String @default("")
 }
 
 model IdeaRating {

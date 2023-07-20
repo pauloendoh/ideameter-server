@@ -29,6 +29,7 @@ export const buildIdeaWithRelations = (
   onFireSince: new Date(),
   irrelevantSince: new Date(),
   ratingsAreEnabled: true,
+  subideaImageUrl: "",
 
   labels: [],
   assignedUsers: [],
