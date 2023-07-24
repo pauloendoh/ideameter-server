@@ -1,4 +1,3 @@
-import { Group, GroupTab, Idea } from "@prisma/client"
 import { ForbiddenError } from "routing-controllers"
 import { Server } from "socket.io"
 import { IdeaWithRelationsType } from "../../../types/domain/idea/IdeaWithRelationsType"
@@ -15,8 +14,6 @@ import { NotificationService } from "../../notification/NotificationService"
 import RatingRepository from "../../rating/RatingRepository"
 import IdeaRepository from "../IdeaRepository"
 import { MoveIdeasToTabDto } from "../types/MoveIdeasToTabDto"
-
-type IdeasAssignedToUser = Idea & { tab: GroupTab & { group: Group } }
 
 export default class IdeaService {
   constructor(
@@ -201,12 +198,13 @@ export default class IdeaService {
   async findAssignedIdeasToUser(requesterId: string) {
     const ideas = await this.ideaRepository.findAssignedIdeasToUser(requesterId)
 
-    return ideas.map((idea: IdeasAssignedToUser) => ({
+    return ideas.map((idea) => ({
       idea: {
         id: idea.id,
         name: idea.name,
         isDone: idea.isDone,
         completedAt: idea.completedAt,
+        highImpactVotes: idea.highImpactVotes,
       },
       group: {
         groupId: idea.tab?.group.id,
