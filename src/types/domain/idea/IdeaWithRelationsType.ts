@@ -30,6 +30,7 @@ export const buildIdeaWithRelations = (
   irrelevantSince: new Date(),
   ratingsAreEnabled: true,
   subideaImageUrl: "",
+  complexity: 1,
 
   labels: [],
   assignedUsers: [],
