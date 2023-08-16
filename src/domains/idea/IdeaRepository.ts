@@ -313,6 +313,30 @@ export default class IdeaRepository {
     })
   }
 
+  async findHighImpactVotedByMe(userId: string) {
+    return await this.prismaClient.idea.findMany({
+      include: {
+        tab: {
+          include: {
+            group: true,
+          },
+        },
+        highImpactVotes: true,
+      },
+      where: {
+        isArchived: false,
+        highImpactVotes: {
+          some: {
+            userId,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+  }
+
   async findArchivedIdeasByGroupId(groupId: string) {
     const ideas = await this.prismaClient.idea.findMany({
       where: {

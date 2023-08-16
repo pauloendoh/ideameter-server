@@ -75,4 +75,9 @@ export class IdeaController {
   findIdeasAssignedToMe(@CurrentUser({ required: true }) user: User) {
     return this.ideaService.findAssignedIdeasToUser(user.id)
   }
+
+  @Get("/ideas/high-impact-voted-by-me")
+  findHighImpactVotedByMe(@CurrentUser({ required: true }) user: User) {
+    return this.ideaService.findHighImpactVotedByMe(user.id)
+  }
 }

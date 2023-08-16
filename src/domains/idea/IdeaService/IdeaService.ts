@@ -204,6 +204,30 @@ export default class IdeaService {
         name: idea.name,
         isDone: idea.isDone,
         completedAt: idea.completedAt,
+        createdAt: idea.createdAt,
+        highImpactVotes: idea.highImpactVotes,
+      },
+      group: {
+        groupId: idea.tab?.group.id,
+        name: idea.tab?.group.name,
+      },
+      tab: {
+        name: idea.tab?.name,
+        tabId: idea.tabId,
+      },
+    }))
+  }
+
+  async findHighImpactVotedByMe(requesterId: string) {
+    const ideas = await this.ideaRepository.findHighImpactVotedByMe(requesterId)
+
+    return ideas.map((idea) => ({
+      idea: {
+        id: idea.id,
+        name: idea.name,
+        isDone: idea.isDone,
+        completedAt: idea.completedAt,
+        createdAt: idea.createdAt,
         highImpactVotes: idea.highImpactVotes,
       },
       group: {
