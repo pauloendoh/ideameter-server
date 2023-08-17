@@ -206,6 +206,7 @@ export default class IdeaService {
         completedAt: idea.completedAt,
         createdAt: idea.createdAt,
         highImpactVotes: idea.highImpactVotes,
+        complexity: idea.complexity,
       },
       group: {
         groupId: idea.tab?.group.id,
