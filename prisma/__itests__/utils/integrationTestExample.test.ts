@@ -60,7 +60,14 @@ describe("IdeaRepository.i.test.ts", async () => {
           const ideaWithVote = await ideaRepo.saveIdea(
             {
               ...idea,
-              highImpactVotes: [{ ideaId: idea.id, userId: user.id }],
+              highImpactVotes: [
+                {
+                  ideaId: idea.id,
+                  userId: user.id,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                },
+              ],
             },
             user.id
           )

@@ -164,6 +164,9 @@ model HighImpactVote {
   idea   Idea   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
   ideaId String
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
   @@id([userId, ideaId])
 }
 
