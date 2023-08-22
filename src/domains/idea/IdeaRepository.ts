@@ -121,7 +121,10 @@ export default class IdeaRepository {
         highImpactVotes: {
           connectOrCreate: idea.highImpactVotes?.map((vote) => ({
             where: {
-              userId_ideaId: vote,
+              userId_ideaId: {
+                userId: vote.userId,
+                ideaId: vote.ideaId,
+              },
             },
             create: {
               userId: vote.userId,
