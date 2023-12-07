@@ -239,6 +239,7 @@ export default class IdeaService {
         name: idea.tab?.name,
         tabId: idea.tabId,
       },
+      iAmAssigned: idea.assignedUsers.some((user) => user.id === requesterId),
     }))
   }
 
@@ -254,7 +255,6 @@ export default class IdeaService {
         createdAt: idea.createdAt,
         highImpactVotes: idea.highImpactVotes,
       },
-      myRating: idea.ideaRatings[0],
       group: {
         groupId: idea.tab?.group.id,
         name: idea.tab?.group.name,
@@ -263,6 +263,8 @@ export default class IdeaService {
         name: idea.tab?.name,
         tabId: idea.tabId,
       },
+      myRating: idea.ideaRatings[0],
+      iAmAssigned: idea.assignedUsers.some((user) => user.id === requesterId),
     }))
   }
 

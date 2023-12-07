@@ -328,6 +328,7 @@ export default class IdeaRepository {
           },
         },
         highImpactVotes: true,
+        assignedUsers: true,
       },
       where: {
         isArchived: false,
@@ -357,6 +358,7 @@ export default class IdeaRepository {
             userId,
           },
         },
+        assignedUsers: true,
       },
       where: {
         isArchived: false,
