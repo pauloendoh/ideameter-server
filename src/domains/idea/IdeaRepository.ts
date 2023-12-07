@@ -343,6 +343,42 @@ export default class IdeaRepository {
     })
   }
 
+  async findHighlyRatedIdeas(userId: string) {
+    return await this.prismaClient.idea.findMany({
+      include: {
+        tab: {
+          include: {
+            group: true,
+          },
+        },
+        highImpactVotes: true,
+      },
+      where: {
+        isArchived: false,
+        ideaRatings: {
+          some: {
+            AND: [
+              {
+                userId,
+                rating: {
+                  gte: 3,
+                },
+                idea: {
+                  tabId: {
+                    not: null,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "asc",
+      },
+    })
+  }
+
   async findArchivedIdeasByGroupId(groupId: string) {
     const ideas = await this.prismaClient.idea.findMany({
       where: {

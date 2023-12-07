@@ -242,6 +242,29 @@ export default class IdeaService {
     }))
   }
 
+  async findHighlyRatedIdeas(requesterId: string) {
+    const ideas = await this.ideaRepository.findHighlyRatedIdeas(requesterId)
+
+    return ideas.map((idea) => ({
+      idea: {
+        id: idea.id,
+        name: idea.name,
+        isDone: idea.isDone,
+        completedAt: idea.completedAt,
+        createdAt: idea.createdAt,
+        highImpactVotes: idea.highImpactVotes,
+      },
+      group: {
+        groupId: idea.tab?.group.id,
+        name: idea.tab?.group.name,
+      },
+      tab: {
+        name: idea.tab?.name,
+        tabId: idea.tabId,
+      },
+    }))
+  }
+
   async moveIdeasToTab(dto: MoveIdeasToTabDto, requesterId: string) {
     const ideaId = dto.ideaIds[0]
     if (!ideaId) throw new InvalidPayloadError400("No idea id provided.")

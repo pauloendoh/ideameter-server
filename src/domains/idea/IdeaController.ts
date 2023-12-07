@@ -80,4 +80,9 @@ export class IdeaController {
   findHighImpactVotedByMe(@CurrentUser({ required: true }) user: User) {
     return this.ideaService.findHighImpactVotedByMe(user.id)
   }
+
+  @Get("/ideas/highly-rated-ideas-by-me")
+  findHighlyRatedIdeasByMe(@CurrentUser({ required: true }) user: User) {
+    return this.ideaService.findHighlyRatedIdeas(user.id)
+  }
 }
