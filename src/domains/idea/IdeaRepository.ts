@@ -352,6 +352,11 @@ export default class IdeaRepository {
           },
         },
         highImpactVotes: true,
+        ideaRatings: {
+          where: {
+            userId,
+          },
+        },
       },
       where: {
         isArchived: false,

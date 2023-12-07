@@ -254,6 +254,7 @@ export default class IdeaService {
         createdAt: idea.createdAt,
         highImpactVotes: idea.highImpactVotes,
       },
+      myRating: idea.ideaRatings[0],
       group: {
         groupId: idea.tab?.group.id,
         name: idea.tab?.group.name,
