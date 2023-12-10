@@ -22,7 +22,7 @@ export default class GroupService {
   }
 
   public async findGroupsByUser(userId: string) {
-    return this.repo.findGroupsByUser(userId)
+    return this.repo.findAllGroupsAndTabs(userId)
   }
 
   public async editGroup(group: Group, userId: string) {

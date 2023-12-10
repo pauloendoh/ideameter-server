@@ -239,6 +239,8 @@ export default class IdeaService {
         name: idea.tab?.name,
         tabId: idea.tabId,
       },
+      myRating: idea.ideaRatings[0],
+
       iAmAssigned: idea.assignedUsers.some((user) => user.id === requesterId),
     }))
   }

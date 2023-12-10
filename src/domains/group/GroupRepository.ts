@@ -248,4 +248,19 @@ export default class GroupRepository {
       },
     })
   }
+
+  findAllGroupsAndTabs(userId: string) {
+    return this.prismaClient.group.findMany({
+      where: {
+        userGroups: {
+          some: {
+            userId,
+          },
+        },
+      },
+      include: {
+        tabs: true,
+      },
+    })
+  }
 }
