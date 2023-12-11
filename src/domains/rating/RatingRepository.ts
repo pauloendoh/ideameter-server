@@ -156,4 +156,28 @@ export default class RatingRepository {
     })
     return deleted
   }
+
+  async isOwner(params: { requesterId: string; ratingId: string }) {
+    const { requesterId, ratingId } = params
+
+    const rating = await this.prismaClient.ideaRating.findFirst({
+      where: {
+        id: ratingId,
+        userId: requesterId,
+      },
+    })
+
+    return !!rating
+  }
+
+  async refreshRating(ratingId: string) {
+    return this.prismaClient.ideaRating.update({
+      where: {
+        id: ratingId,
+      },
+      data: {
+        updatedAt: new Date(),
+      },
+    })
+  }
 }

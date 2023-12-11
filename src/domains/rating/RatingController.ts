@@ -7,6 +7,7 @@ import {
   JsonController,
   Param,
   Post,
+  Put,
   Req,
 } from "routing-controllers"
 import { MyAuthRequest } from "../../types/domain/auth/MyAuthRequest"
@@ -50,5 +51,16 @@ export class RatingController {
     const socketServer = req.app.get("socketio")
 
     return this.ratingService.deleteIdeaRating(ideaId, user.id, socketServer)
+  }
+
+  @Put("/rating/:ratingId/refresh")
+  refreshRating(
+    @CurrentUser({ required: true }) user: User,
+    @Param("ratingId") ratingId: string
+  ) {
+    return this.ratingService.refreshRating({
+      ratingId: ratingId,
+      requesterId: user.id,
+    })
   }
 }

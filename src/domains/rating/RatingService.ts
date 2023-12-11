@@ -154,4 +154,15 @@ export default class RatingService {
 
     return true
   }
+
+  async refreshRating(params: { requesterId: string; ratingId: string }) {
+    const isOwner = await this.ratingRepository.isOwner(params)
+
+    if (!isOwner)
+      throw new ForbiddenError403("You're not allowed to perform this action")
+
+    const rating = await this.ratingRepository.refreshRating(params.ratingId)
+
+    return rating
+  }
 }
