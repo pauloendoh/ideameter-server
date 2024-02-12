@@ -114,7 +114,7 @@ model Idea {
   onFireSince       DateTime?
   irrelevantSince   DateTime?
   ratingsAreEnabled Boolean   @default(true)
-  complexity        Float     @default(1)
+  complexity        Float     @default(0)
 
   ideaRatings      IdeaRating[]
   rteImages        RteImage[]
