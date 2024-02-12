@@ -1,3 +1,4 @@
+import { Idea } from "@prisma/client"
 import { ForbiddenError } from "routing-controllers"
 import { Server } from "socket.io"
 import { IdeaWithRelationsType } from "../../../types/domain/idea/IdeaWithRelationsType"
@@ -256,7 +257,8 @@ export default class IdeaService {
         completedAt: idea.completedAt,
         createdAt: idea.createdAt,
         highImpactVotes: idea.highImpactVotes,
-      },
+        complexity: idea.complexity,
+      } as Partial<Idea>,
       group: {
         groupId: idea.tab?.group.id,
         name: idea.tab?.group.name,
