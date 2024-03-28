@@ -63,4 +63,20 @@ export class RatingController {
       requesterId: user.id,
     })
   }
+
+  @Put("/rating/:ratingId/move-position")
+  moveRatingPosition(
+    @CurrentUser({ required: true }) user: User,
+    @Param("ratingId") ratingId: string,
+    @Body()
+    body: {
+      position: number | "first" | "last"
+    }
+  ) {
+    return this.ratingService.moveRatingPosition({
+      ratingId: ratingId,
+      requesterId: user.id,
+      position: body.position,
+    })
+  }
 }

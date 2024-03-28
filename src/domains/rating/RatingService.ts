@@ -165,4 +165,64 @@ export default class RatingService {
 
     return rating
   }
+
+  async moveRatingPosition(params: {
+    requesterId: string
+    ratingId: string
+    position: number | "first" | "last"
+  }) {
+    const isOwner = await this.ratingRepository.isOwner(params)
+
+    if (!isOwner)
+      throw new ForbiddenError403("You're not allowed to perform this action")
+
+    const ratings = await this.ratingRepository.findOnlyRatingsAndPositions(
+      params.requesterId
+    )
+
+    let target = ratings.find((rating) => rating.id === params.ratingId)
+
+    if (!target) {
+      target = {
+        id: params.ratingId,
+        position: ratings.length,
+      }
+
+      ratings.push(target)
+    }
+
+    if (params.position === "first") {
+      target.position = 0
+
+      ratings.splice(ratings.indexOf(target), 1)
+      ratings.splice(0, 0, target)
+
+      ratings.sort((a, b) => a.position - b.position)
+
+      const ratingsToUpdate = ratings.map((rating, index) => ({
+        id: rating.id,
+        position: index,
+      }))
+
+      await this.ratingRepository.updateManyPositions(ratingsToUpdate)
+    }
+
+    if (params.position === "last") {
+      target.position = ratings.length - 1
+
+      ratings.splice(ratings.indexOf(target), 1)
+      ratings.splice(ratings.length, 0, target)
+
+      ratings.sort((a, b) => a.position - b.position)
+
+      const ratingsToUpdate = ratings.map((rating, index) => ({
+        id: rating.id,
+        position: index,
+      }))
+
+      await this.ratingRepository.updateManyPositions(ratingsToUpdate)
+    }
+
+    return "ok"
+  }
 }

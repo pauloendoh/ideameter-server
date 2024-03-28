@@ -140,6 +140,8 @@ model IdeaRating {
   updatedAt DateTime @updatedAt
 
   rating Int?
+
+  position Int?
 }
 
 model Label {

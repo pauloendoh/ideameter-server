@@ -229,6 +229,7 @@ export default class IdeaService {
         name: idea.name,
         isDone: idea.isDone,
         completedAt: idea.completedAt,
+        isArchived: idea.isArchived,
         createdAt: idea.createdAt,
         highImpactVotes: idea.highImpactVotes,
       },

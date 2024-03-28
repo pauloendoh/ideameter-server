@@ -180,4 +180,37 @@ export default class RatingRepository {
       },
     })
   }
+
+  async findOnlyRatingsAndPositions(userId: string) {
+    return this.prismaClient.ideaRating.findMany({
+      where: {
+        userId,
+        position: {
+          not: null,
+        },
+      },
+      select: {
+        id: true,
+        position: true,
+      },
+      orderBy: {
+        position: "asc",
+      },
+    })
+  }
+
+  async updateManyPositions(ratings: { id: string; position: number }[]) {
+    return this.prismaClient.$transaction(
+      ratings.map((rating) =>
+        this.prismaClient.ideaRating.update({
+          where: {
+            id: rating.id,
+          },
+          data: {
+            position: rating.position,
+          },
+        })
+      )
+    )
+  }
 }
