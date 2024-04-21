@@ -169,37 +169,40 @@ export default class RatingService {
   async moveRatingPosition(params: {
     requesterId: string
     ratingId: string
-    position: number | "first" | "last"
+    position: number | "first" | "last" | null
   }) {
     const isOwner = await this.ratingRepository.isOwner(params)
 
     if (!isOwner)
       throw new ForbiddenError403("You're not allowed to perform this action")
 
-    const ratings = await this.ratingRepository.findOnlyRatingsAndPositions(
-      params.requesterId
+    const ratingsPositions =
+      await this.ratingRepository.findOnlyRatingsAndPositions(
+        params.requesterId
+      )
+
+    let targetRatingPosition = ratingsPositions.find(
+      (rating) => rating.id === params.ratingId
     )
 
-    let target = ratings.find((rating) => rating.id === params.ratingId)
-
-    if (!target) {
-      target = {
+    if (!targetRatingPosition) {
+      targetRatingPosition = {
         id: params.ratingId,
-        position: ratings.length,
+        position: ratingsPositions.length,
       }
 
-      ratings.push(target)
+      ratingsPositions.push(targetRatingPosition)
     }
 
     if (params.position === "first") {
-      target.position = 0
+      targetRatingPosition.position = 0
 
-      ratings.splice(ratings.indexOf(target), 1)
-      ratings.splice(0, 0, target)
+      ratingsPositions.splice(ratingsPositions.indexOf(targetRatingPosition), 1)
+      ratingsPositions.splice(0, 0, targetRatingPosition)
 
-      ratings.sort((a, b) => a.position - b.position)
+      ratingsPositions.sort((a, b) => a.position - b.position)
 
-      const ratingsToUpdate = ratings.map((rating, index) => ({
+      const ratingsToUpdate = ratingsPositions.map((rating, index) => ({
         id: rating.id,
         position: index,
       }))
@@ -208,17 +211,35 @@ export default class RatingService {
     }
 
     if (params.position === "last") {
-      target.position = ratings.length - 1
+      targetRatingPosition.position = ratingsPositions.length - 1
 
-      ratings.splice(ratings.indexOf(target), 1)
-      ratings.splice(ratings.length, 0, target)
+      ratingsPositions.splice(ratingsPositions.indexOf(targetRatingPosition), 1)
+      ratingsPositions.splice(ratingsPositions.length, 0, targetRatingPosition)
 
-      ratings.sort((a, b) => a.position - b.position)
+      ratingsPositions.sort((a, b) => a.position - b.position)
 
-      const ratingsToUpdate = ratings.map((rating, index) => ({
+      const ratingsToUpdate = ratingsPositions.map((rating, index) => ({
         id: rating.id,
         position: index,
       }))
+
+      await this.ratingRepository.updateManyPositions(ratingsToUpdate)
+    }
+
+    if (params.position === null) {
+      targetRatingPosition.position = null
+
+      ratingsPositions.splice(ratingsPositions.indexOf(targetRatingPosition), 1)
+
+      ratingsPositions.sort((a, b) => a.position - b.position)
+
+      const ratingsToUpdate = [
+        ...ratingsPositions.map((rating, index) => ({
+          id: rating.id,
+          position: index,
+        })),
+        targetRatingPosition,
+      ]
 
       await this.ratingRepository.updateManyPositions(ratingsToUpdate)
     }

@@ -70,7 +70,7 @@ export class RatingController {
     @Param("ratingId") ratingId: string,
     @Body()
     body: {
-      position: number | "first" | "last"
+      position: number | "first" | "last" | null
     }
   ) {
     return this.ratingService.moveRatingPosition({
