@@ -232,6 +232,8 @@ export default class IdeaService {
         isArchived: idea.isArchived,
         createdAt: idea.createdAt,
         highImpactVotes: idea.highImpactVotes,
+        frequencyRate: idea.frequencyRate,
+        improvementRate: idea.improvementRate,
       },
       group: {
         groupId: idea.tab?.group.id,
@@ -259,6 +261,8 @@ export default class IdeaService {
         createdAt: idea.createdAt,
         highImpactVotes: idea.highImpactVotes,
         complexity: idea.complexity,
+        frequencyRate: idea.frequencyRate,
+        improvementRate: idea.improvementRate,
       } as Partial<Idea>,
       group: {
         groupId: idea.tab?.group.id,

@@ -115,6 +115,8 @@ model Idea {
   irrelevantSince   DateTime?
   ratingsAreEnabled Boolean   @default(true)
   complexity        Float     @default(0)
+  frequencyRate     Int?
+  improvementRate   Int?
 
   ideaRatings      IdeaRating[]
   rteImages        RteImage[]

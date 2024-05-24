@@ -31,6 +31,8 @@ export const buildIdeaWithRelations = (
   ratingsAreEnabled: true,
   subideaImageUrl: "",
   complexity: 1,
+  frequencyRate: null,
+  improvementRate: null,
 
   labels: [],
   assignedUsers: [],
