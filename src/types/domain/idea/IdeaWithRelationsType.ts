@@ -33,6 +33,7 @@ export const buildIdeaWithRelations = (
   complexity: 1,
   frequencyRate: null,
   improvementRate: null,
+  rewarding: null,
 
   labels: [],
   assignedUsers: [],
