@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Idea" ALTER COLUMN "rewarding" SET DATA TYPE DOUBLE PRECISION;

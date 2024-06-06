@@ -117,7 +117,7 @@ model Idea {
   complexity        Float     @default(0)
   frequencyRate     Int?
   improvementRate   Int?
-  rewarding         Int?
+  rewarding         Float?
 
   ideaRatings      IdeaRating[]
   rteImages        RteImage[]
