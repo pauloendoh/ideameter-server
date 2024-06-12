@@ -31,7 +31,12 @@ export default class GroupRepository {
     })
   }
 
-  public async findGroupsByUser(userId: string) {
+  public async findGroupsByUser(
+    userId: string,
+    options?: {
+      includeTabs?: boolean
+    }
+  ) {
     return this.prismaClient.group.findMany({
       where: {
         userGroups: {
@@ -41,6 +46,9 @@ export default class GroupRepository {
             },
           },
         },
+      },
+      include: {
+        tabs: options?.includeTabs,
       },
     })
   }

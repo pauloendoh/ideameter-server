@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  QueryParam,
 } from "routing-controllers"
 import TabService from "../group/group-tab/TabService"
 
@@ -54,5 +55,13 @@ export class TagController {
     @Param("groupId") groupId: string
   ) {
     return this.tabService.findGroupTabs(groupId, user.id)
+  }
+
+  @Get("/search-group-tabs")
+  searchGroupTabs(
+    @CurrentUser({ required: true }) user: User,
+    @QueryParam("q", { required: true }) q: string
+  ) {
+    return this.tabService.findGroupTabsByText(user.id, q)
   }
 }

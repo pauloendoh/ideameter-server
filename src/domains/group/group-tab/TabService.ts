@@ -1,4 +1,4 @@
-import { GroupTab } from "@prisma/client"
+import { Group, GroupTab } from "@prisma/client"
 import { ForbiddenError, NotFoundError } from "routing-controllers"
 import ForbiddenError403 from "../../../utils/errors/ForbiddenError403"
 import GroupRepository from "../GroupRepository"
@@ -10,11 +10,7 @@ export default class TabService {
     private readonly groupRepo = new GroupRepository()
   ) {}
 
-  public async createTab(
-    groupId: string,
-    tabName: string,
-    requesterId: string
-  ) {
+  async createTab(groupId: string, tabName: string, requesterId: string) {
     const isAllowed = this.groupRepo.userBelongsToGroup(requesterId, groupId)
     if (!isAllowed)
       throw new ForbiddenError403(
@@ -30,7 +26,7 @@ export default class TabService {
     return createdTab
   }
 
-  public async editTab(tab: GroupTab, requesterId: string) {
+  async editTab(tab: GroupTab, requesterId: string) {
     const isAllowed = this.groupRepo.userBelongsToGroup(
       requesterId,
       tab.groupId
@@ -42,7 +38,7 @@ export default class TabService {
     return editedTab
   }
 
-  public async findGroupTabs(groupId: string, requesterId: string) {
+  async findGroupTabs(groupId: string, requesterId: string) {
     const isAllowed = this.groupRepo.userBelongsToGroup(requesterId, groupId)
     if (!isAllowed)
       throw new ForbiddenError403(
@@ -53,7 +49,7 @@ export default class TabService {
     //
   }
 
-  public async deleteGroupTab(groupTab: GroupTab, requesterId: string) {
+  async deleteGroupTab(groupTab: GroupTab, requesterId: string) {
     const isAllowed = await this.groupRepo.userBelongsToGroup(
       requesterId,
       groupTab.groupId
@@ -65,7 +61,7 @@ export default class TabService {
     return deletedTab
   }
 
-  public async findTabById(tabId: string, requesterId: string) {
+  async findTabById(tabId: string, requesterId: string) {
     const tab = await this.tabRepo.findTabById(tabId)
     if (!tab) throw new NotFoundError("Tab not found.")
 
@@ -77,5 +73,33 @@ export default class TabService {
       throw new ForbiddenError("You're not allowed to see this tab")
 
     return tab
+  }
+
+  async findGroupTabsByText(requesterId: string, text: string) {
+    const groupsWithTabs = await this.groupRepo.findGroupsByUser(requesterId, {
+      includeTabs: true,
+    })
+
+    const tabsAndGroup: { tab: GroupTab; group: Group }[] = []
+
+    for (const group of groupsWithTabs) {
+      for (const tab of group.tabs) {
+        tabsAndGroup.push({
+          group: {
+            ...group,
+            // @ts-expect-error
+            tabs: undefined,
+          },
+          tab,
+        })
+      }
+    }
+
+    return tabsAndGroup.filter(({ tab, group }) => {
+      return (
+        tab.name.toLowerCase().includes(text.toLowerCase()) ||
+        group.name.toLowerCase().includes(text.toLowerCase())
+      )
+    })
   }
 }
