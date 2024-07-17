@@ -142,7 +142,8 @@ model IdeaRating {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  rating Int?
+  rating    Int?
+  rewarding Float?
 
   position Int?
 }
