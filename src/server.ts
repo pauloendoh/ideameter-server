@@ -7,6 +7,7 @@ import {
   createExpressServer,
   RoutingControllersOptions,
 } from "routing-controllers"
+import { createRatingBackup } from "./scripts/routines/createRatingBackup"
 import { myCurrentUserChecker } from "./utils/auth/myCurrentUserChecker"
 import { addSocketServer } from "./utils/socket/addSocketServer"
 
@@ -27,6 +28,8 @@ app.use("/public", express.static("./public"))
 const httpServer = addSocketServer(app)
 
 const port = +process.env.PORT || 8081
-httpServer.listen(port, () => {
+httpServer.listen(port, async () => {
   console.log(`server running on port ${port}`)
+
+  createRatingBackup()
 })
