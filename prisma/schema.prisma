@@ -143,7 +143,7 @@ model IdeaRating {
   updatedAt DateTime @updatedAt
 
   rating       Float?
-  ratingBackup Int?
+  ratingBackup Float?
 
   rewarding Float?
 

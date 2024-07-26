@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "IdeaRating" ALTER COLUMN "ratingBackup" SET DATA TYPE DOUBLE PRECISION;
