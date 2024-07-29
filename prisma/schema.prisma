@@ -118,6 +118,7 @@ model Idea {
   frequencyRate     Int?
   improvementRate   Int?
   rewarding         Float?
+  discomfortZone    Float?
 
   ideaRatings      IdeaRating[]
   rteImages        RteImage[]

@@ -34,6 +34,7 @@ export const buildIdeaWithRelations = (
   frequencyRate: null,
   improvementRate: null,
   rewarding: null,
+  discomfortZone: null,
 
   labels: [],
   assignedUsers: [],
