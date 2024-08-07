@@ -250,7 +250,7 @@ export default class IdeaService {
   }
 
   async findHighlyRatedIdeas(requesterId: string) {
-    const ideas = await this.ideaRepository.findHighlyRatedIdeas(requesterId)
+    const ideas = await this.ideaRepository.ratedIdeasByUser(requesterId)
 
     return ideas.map((idea) => ({
       idea: {

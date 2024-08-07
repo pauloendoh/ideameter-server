@@ -349,7 +349,7 @@ export default class IdeaRepository {
     })
   }
 
-  async findHighlyRatedIdeas(userId: string) {
+  async ratedIdeasByUser(userId: string) {
     return await this.prismaClient.idea.findMany({
       include: {
         tab: {
@@ -372,9 +372,6 @@ export default class IdeaRepository {
             AND: [
               {
                 userId,
-                rating: {
-                  gte: 3,
-                },
                 idea: {
                   tabId: {
                     not: null,
