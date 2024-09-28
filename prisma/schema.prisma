@@ -101,6 +101,9 @@ model Idea {
   parent   Idea?   @relation("IdeaSubIdea", fields: [parentId], references: [id])
   parentId String?
 
+  waitingIdeas   Idea[] @relation("IdeaWaitingIdea")
+  beingWaitedFor Idea[] @relation("IdeaWaitingIdea")
+
   creator   User   @relation(fields: [creatorId], references: [id])
   creatorId String
 

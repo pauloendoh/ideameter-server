@@ -55,6 +55,10 @@ export default class IdeaRepository {
           },
         })),
       },
+      waitingIdeas: {
+        connect: idea.waitingIdeas.map((w) => ({ id: w.id })),
+      },
+      beingWaitedFor: undefined,
     }
 
     const createdIdea = await this.prismaClient.idea.upsert({
@@ -62,10 +66,11 @@ export default class IdeaRepository {
         ...dto,
         id: undefined,
         parentId: dto.parentId || undefined,
-      },
+      } as any, // PE 1/3 - fix this as any (difficult; maybe make simpler repositories methods? Separate relationship creation update etc;)
       update: {
+        // do we ever update here?
         ...dto,
-      },
+      } as any,
 
       include: ideaIncludeFields,
       where: {
@@ -73,7 +78,7 @@ export default class IdeaRepository {
       },
     })
 
-    return createdIdea
+    return createdIdea as IdeaWithRelationsType
   }
 
   async findById(ideaId: string) {
@@ -104,6 +109,25 @@ export default class IdeaRepository {
   async updateIdea(
     idea: IdeaWithRelationsType
   ): Promise<IdeaWithRelationsType> {
+    const previous = await this.prismaClient.idea.findFirst({
+      where: {
+        id: idea.id,
+      },
+      include: ideaIncludeFields,
+    })
+
+    if (!previous) {
+      throw new Error("Idea not found")
+    }
+
+    const nextWaitingIdeasIds = idea.waitingIdeas.map((w) => w.id)
+    const previousConnectedWaitingIdeasIds = previous.waitingIdeas.map(
+      (w) => w.id
+    )
+    const disconnectWaitingIdeasIds = previousConnectedWaitingIdeasIds.filter(
+      (id) => !nextWaitingIdeasIds.includes(id)
+    )
+
     const updatedIdea = await this.prismaClient.idea.update({
       where: {
         id: idea.id,
@@ -140,6 +164,10 @@ export default class IdeaRepository {
               },
             ],
           },
+        },
+        waitingIdeas: {
+          connect: nextWaitingIdeasIds.map((id) => ({ id })),
+          disconnect: disconnectWaitingIdeasIds.map((id) => ({ id })),
         },
       },
       include: ideaIncludeFields,

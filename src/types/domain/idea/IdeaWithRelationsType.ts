@@ -4,6 +4,13 @@ export type IdeaWithRelationsType = Idea & {
   labels: Label[]
   assignedUsers: SimpleUserDto[]
   highImpactVotes: HighImpactVote[]
+  waitingIdeas: {
+    id: string
+    tabId: string
+
+    name: string
+    isDone: boolean
+  }[]
 }
 
 export type SimpleUserDto = {
@@ -39,5 +46,6 @@ export const buildIdeaWithRelations = (
   labels: [],
   assignedUsers: [],
   highImpactVotes: [],
+  waitingIdeas: [],
   ...p,
 })
