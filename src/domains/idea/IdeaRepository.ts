@@ -1,6 +1,7 @@
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType"
 import myPrismaClient from "../../utils/myPrismaClient"
 import { ideaIncludeFields } from "../../utils/prisma/fields/idea/ideaIncludeFields"
+import { waitingIdeasSelectFields } from "../../utils/prisma/fields/waitingIdeasSelectFields"
 
 export default class IdeaRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -392,6 +393,12 @@ export default class IdeaRepository {
           },
         },
         assignedUsers: true,
+        waitingIdeas: {
+          select: waitingIdeasSelectFields,
+        },
+        beingWaitedFor: {
+          select: waitingIdeasSelectFields,
+        },
       },
       where: {
         isArchived: false,

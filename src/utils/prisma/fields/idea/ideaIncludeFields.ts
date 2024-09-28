@@ -1,4 +1,5 @@
 import { userSelectFields } from "../user/userSelectFields"
+import { waitingIdeasSelectFields } from "../waitingIdeasSelectFields"
 
 // export const ideaIncludeFields: Prisma.IdeaSelect = {
 export const ideaIncludeFields = {
@@ -8,12 +9,6 @@ export const ideaIncludeFields = {
   },
   highImpactVotes: true,
   waitingIdeas: {
-    select: {
-      id: true,
-      tabId: true,
-
-      name: true,
-      isDone: true,
-    },
+    select: waitingIdeasSelectFields,
   },
 }

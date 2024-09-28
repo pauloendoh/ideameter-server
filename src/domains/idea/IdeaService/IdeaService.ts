@@ -265,6 +265,8 @@ export default class IdeaService {
         improvementRate: idea.improvementRate,
         rewarding: idea.rewarding,
         discomfortZone: idea.discomfortZone,
+        waitingIdeas: idea.waitingIdeas,
+        beingWaitedFor: idea.beingWaitedFor,
       } as Partial<Idea>,
       group: {
         groupId: idea.tab?.group.id,
