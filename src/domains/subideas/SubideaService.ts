@@ -36,7 +36,7 @@ export class SubideaService {
       throw new ForbiddenError403("Cannot transform idea with subideas")
     }
 
-    const newParentIdea = await this.ideaRepository.saveIdea(
+    const newParentIdea = await this.ideaRepository.upsertIdea(
       {
         ...buildIdeaWithRelations(),
         name: newParentIdeaTitle,
@@ -48,7 +48,7 @@ export class SubideaService {
     idea.parentId = newParentIdea.id
     idea.tabId = null
 
-    await this.ideaRepository.saveIdea(idea, requesterId)
+    await this.ideaRepository.upsertIdea(idea, requesterId)
 
     return newParentIdea
   }

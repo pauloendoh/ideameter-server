@@ -33,12 +33,12 @@ describe("IdeaRepository", () => {
 
           tab = await tabRepo.createTab(group.id, "tab", user.id)
 
-          idea = await ideaRepo.saveIdea(
+          idea = await ideaRepo.upsertIdea(
             buildIdeaWithRelations({ tabId: tab.id }),
             user.id
           )
 
-          const savedSubidea = await ideaRepo.saveIdea(
+          const savedSubidea = await ideaRepo.upsertIdea(
             {
               ...buildIdeaWithRelations({ tabId: tab.id }),
               parentId: idea.id,

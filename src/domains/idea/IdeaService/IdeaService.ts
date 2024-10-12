@@ -13,6 +13,8 @@ import TabRepository from "../../group/group-tab/TabRepository"
 import { IdeaChangeService } from "../../idea-change/IdeaChangeService"
 import { NotificationService } from "../../notification/NotificationService"
 import RatingRepository from "../../rating/RatingRepository"
+import { CreateWaitingIdeas_ } from "../../waiting-idea/handlers/CreateWaitingIdeas_"
+import { UpdateWaitingIdeas_ } from "../../waiting-idea/handlers/UpdateWaitingIdeas_"
 import IdeaRepository from "../IdeaRepository"
 import { MoveIdeasToTabDto } from "../types/MoveIdeasToTabDto"
 
@@ -24,7 +26,9 @@ export default class IdeaService {
     private readonly notificationService = new NotificationService(),
     private readonly tabRepository = new TabRepository(),
     private readonly socketServer = MySocketServer.instance,
-    private readonly ideaChangeService = new IdeaChangeService()
+    private readonly ideaChangeService = new IdeaChangeService(),
+    private readonly updateWaitingIdeas_ = new UpdateWaitingIdeas_(),
+    private readonly createWaitingIdeas_ = new CreateWaitingIdeas_()
   ) {}
 
   async createIdea(idea: IdeaWithRelationsType, requesterId: string) {
@@ -35,7 +39,14 @@ export default class IdeaService {
     if (!isAllowed)
       throw new ForbiddenError("You're not allowed to add ideas to this tab")
 
-    const createdIdea = await this.ideaRepository.saveIdea(idea, requesterId)
+    const createdIdea = await this.ideaRepository.upsertIdea(idea, requesterId)
+
+    createdIdea.waitingIdeas = await this.createWaitingIdeas_.exec({
+      userId: requesterId,
+      ideaId: createdIdea.id,
+      waitingIdeas: idea.waitingIdeas,
+    })
+
     await this.ratingRepository.createRating(createdIdea.id, 3, requesterId)
 
     // don't need to await this
@@ -135,6 +146,13 @@ export default class IdeaService {
     const previousIdea = await this.ideaRepository.findById(idea.id)
 
     if (!previousIdea.isDone && idea.isDone) idea.completedAt = new Date()
+
+    await this.updateWaitingIdeas_.exec({
+      ideaId: idea.id,
+      userId: requesterId,
+      previousWaitingIdeas: previousIdea.waitingIdeas,
+      newWaitingIdeas: idea.waitingIdeas,
+    })
 
     const updatedIdea = await this.ideaRepository.updateIdea(idea)
 

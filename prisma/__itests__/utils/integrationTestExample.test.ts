@@ -31,7 +31,7 @@ describe("IdeaRepository.i.test.ts", async () => {
 
       tab = await tabRepo.createTab(group.id, "tab", user.id)
 
-      idea = await ideaRepo.saveIdea(
+      idea = await ideaRepo.upsertIdea(
         buildIdeaWithRelations({ tabId: tab.id }),
         user.id
       )
@@ -57,7 +57,7 @@ describe("IdeaRepository.i.test.ts", async () => {
     describe("and when an idea has high impact votes is deleted", () => {
       it("should not throw error", async () => {
         const asyncFn = async () => {
-          const ideaWithVote = await ideaRepo.saveIdea(
+          const ideaWithVote = await ideaRepo.upsertIdea(
             {
               ...idea,
               highImpactVotes: [

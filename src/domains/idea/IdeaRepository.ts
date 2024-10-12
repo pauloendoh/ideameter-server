@@ -27,7 +27,32 @@ export default class IdeaRepository {
     return !!userBelongsToGroup
   }
 
-  async saveIdea(
+  async userCanAccessTabs(input: { tabIds: string[]; requesterId: string }) {
+    const { tabIds, requesterId } = input
+    const userBelongsToGroup = await this.prismaClient.$transaction(
+      tabIds.map((tabId) =>
+        this.prismaClient.userGroup.findFirst({
+          where: {
+            userId: requesterId,
+            group: {
+              tabs: {
+                some: {
+                  id: tabId,
+                },
+              },
+            },
+          },
+        })
+      )
+    )
+
+    return (
+      userBelongsToGroup.filter((userGroup) => userGroup !== null).length ===
+      tabIds.length
+    )
+  }
+
+  async upsertIdea(
     idea: IdeaWithRelationsType,
     requesterId: string
   ): Promise<IdeaWithRelationsType> {
@@ -56,9 +81,7 @@ export default class IdeaRepository {
           },
         })),
       },
-      waitingIdeas: {
-        connect: idea.waitingIdeas.map((w) => ({ id: w.id })),
-      },
+      waitingIdeas: undefined,
       beingWaitedFor: undefined,
     }
 
@@ -107,6 +130,7 @@ export default class IdeaRepository {
     })
   }
 
+  // PE 1/3 - what's the difference with saveIdea?
   async updateIdea(
     idea: IdeaWithRelationsType
   ): Promise<IdeaWithRelationsType> {
@@ -120,14 +144,6 @@ export default class IdeaRepository {
     if (!previous) {
       throw new Error("Idea not found")
     }
-
-    const nextWaitingIdeasIds = idea.waitingIdeas.map((w) => w.id)
-    const previousConnectedWaitingIdeasIds = previous.waitingIdeas.map(
-      (w) => w.id
-    )
-    const disconnectWaitingIdeasIds = previousConnectedWaitingIdeasIds.filter(
-      (id) => !nextWaitingIdeasIds.includes(id)
-    )
 
     const updatedIdea = await this.prismaClient.idea.update({
       where: {
@@ -166,10 +182,7 @@ export default class IdeaRepository {
             ],
           },
         },
-        waitingIdeas: {
-          connect: nextWaitingIdeasIds.map((id) => ({ id })),
-          disconnect: disconnectWaitingIdeasIds.map((id) => ({ id })),
-        },
+        waitingIdeas: undefined,
       },
       include: ideaIncludeFields,
     })

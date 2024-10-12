@@ -12,7 +12,7 @@ export const getTestRepositories = async () => {
   let user: Awaited<ReturnType<typeof authRepo.registerNewUser>>
   let group: Awaited<ReturnType<typeof groupRepo.createGroup>>
   let tab: Awaited<ReturnType<typeof tabRepo.createTab>>
-  let idea: Awaited<ReturnType<typeof ideaRepo.saveIdea>>
+  let idea: Awaited<ReturnType<typeof ideaRepo.upsertIdea>>
 
   return {
     authRepo,

@@ -1,16 +1,11 @@
 import { HighImpactVote, Idea, Label } from "@prisma/client"
+import { WaitingIdeaDto } from "../../../domains/waiting-idea/types/WaitingIdeaDto"
 
 export type IdeaWithRelationsType = Idea & {
   labels: Label[]
   assignedUsers: SimpleUserDto[]
   highImpactVotes: HighImpactVote[]
-  waitingIdeas: {
-    id: string
-    tabId: string
-
-    name: string
-    isDone: boolean
-  }[]
+  waitingIdeas: WaitingIdeaDto[]
 }
 
 export type SimpleUserDto = {
