@@ -13,8 +13,11 @@ export default class RteImageService {
   ) => {
     let imgUrl = ""
 
-    if ("Location" in file) imgUrl = file.Location
-    else if ("filename" in file) imgUrl = urls.publicUploads(file.filename)
+    if ("Location" in file) {
+      imgUrl = file.Location
+    } else if ("filename" in file) {
+      imgUrl = urls.publicUploads(file.filename)
+    }
 
     return this.rteImageRepository.createRteImage(userId, imgUrl, ideaId)
   }
@@ -23,12 +26,15 @@ export default class RteImageService {
     userId: string
     file: MulterFileDto | AwsFileDto
   }) {
-    const { userId, file } = params
+    const { file } = params
 
     let imageUrl = ""
 
-    if ("Location" in file) imageUrl = file.Location
-    else if ("filename" in file) imageUrl = urls.publicUploads(file.filename)
+    if ("Location" in file) {
+      imageUrl = file.Location
+    } else if ("filename" in file) {
+      imageUrl = urls.publicUploads(file.filename)
+    }
 
     return imageUrl
   }

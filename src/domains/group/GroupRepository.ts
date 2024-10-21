@@ -109,7 +109,11 @@ export default class GroupRepository {
       where: {
         id: group.id,
       },
-      data: group,
+      data: {
+        imageUrl: group.imageUrl,
+        name: group.name,
+        description: group.description,
+      } as Group,
     })
   }
 

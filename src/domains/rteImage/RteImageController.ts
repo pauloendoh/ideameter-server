@@ -12,7 +12,7 @@ import RteImageService from "./RteImageService"
 
 @JsonController("")
 export class ProfileController {
-  constructor(private rteImageService = new RteImageService()) {}
+  constructor(private readonly rteImageService = new RteImageService()) {}
 
   @Post("/rte-images")
   createRteImage(
