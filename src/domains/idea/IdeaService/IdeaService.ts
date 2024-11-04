@@ -73,7 +73,7 @@ export default class IdeaService {
 
     const socketServer = MySocketServer.instance
     if (subidea.id) {
-      return this.updateIdea({ idea: subidea, requesterId, socketServer })
+      return this.updateIdea(subidea, requesterId, socketServer)
     }
 
     return this.createIdea(subidea, requesterId)
@@ -127,14 +127,11 @@ export default class IdeaService {
     return ideas
   }
 
-  async updateIdea(params: {
-    idea: IdeaWithRelationsType
-    requesterId: string
+  async updateIdea(
+    idea: IdeaWithRelationsType,
+    requesterId: string,
     socketServer: Server
-    minutesOffset?: number
-  }) {
-    const { idea, requesterId, socketServer, minutesOffset = 0 } = params
-
+  ) {
     let parentIdea: IdeaWithRelationsType
     if (idea.parentId) {
       parentIdea = await this.ideaRepository.findById(idea.parentId)
@@ -147,12 +144,6 @@ export default class IdeaService {
       throw new ForbiddenError403("You're not allowed to update this idea")
 
     const previousIdea = await this.ideaRepository.findById(idea.id)
-
-    if (!previousIdea.isDone && idea.isDone) {
-      idea.completedAt = new Date()
-
-      idea.completedAt.setMinutes(idea.completedAt.getMinutes() + minutesOffset)
-    }
 
     await this.updateWaitingIdeas_.exec({
       ideaId: idea.id,
