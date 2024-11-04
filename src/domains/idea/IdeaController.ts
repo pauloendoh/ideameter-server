@@ -12,6 +12,7 @@ import {
 } from "routing-controllers"
 import { MyAuthRequest } from "../../types/domain/auth/MyAuthRequest"
 import { IdeaWithRelationsType } from "../../types/domain/idea/IdeaWithRelationsType"
+import { getMinutesOffsetFromHeaders } from "../../utils/time/getMinutesOffsetFromHeaders"
 import IdeaService from "./IdeaService/IdeaService"
 import { MoveIdeasToTabDto } from "./types/MoveIdeasToTabDto"
 
@@ -42,7 +43,15 @@ export class IdeaController {
     @Req() req: MyAuthRequest
   ) {
     const socketServer = req.app.get("socketio")
-    return this.ideaService.updateIdea(body, user.id, socketServer)
+
+    const minutesOffset = getMinutesOffsetFromHeaders(req.headers)
+
+    return this.ideaService.updateIdea({
+      idea: body,
+      requesterId: user.id,
+      socketServer,
+      minutesOffset,
+    })
   }
 
   @Get("/group/:groupId/ideas")
