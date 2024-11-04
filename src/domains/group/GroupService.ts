@@ -3,11 +3,13 @@ import GroupDto from "../../types/domain/group/GroupDto"
 import ForbiddenError403 from "../../utils/errors/ForbiddenError403"
 import UserRepository from "../user/UserRepository"
 import GroupRepository from "./GroupRepository"
+import { $NormalizeGroupRatings } from "./use-cases/$NormalizeGroupRatings"
 
 export default class GroupService {
   constructor(
     private readonly repo = new GroupRepository(),
-    private readonly userRepo = new UserRepository() // private readonly redisClient = myRedisClient
+    private readonly userRepo = new UserRepository(),
+    private readonly $normalizeGroupRatings = new $NormalizeGroupRatings()
   ) {}
 
   public async createGroup(payload: GroupDto, userId: string) {
@@ -27,10 +29,29 @@ export default class GroupService {
 
   public async editGroup(group: Group, userId: string) {
     const isAdmin = await this.repo.isAdmin(userId, group.id)
-    if (!isAdmin)
+    if (!isAdmin) {
       throw new ForbiddenError403("You are not an admin of this group")
+    }
 
-    return this.repo.editGroup(group)
+    const prevGroup = await this.repo.findGroupById(group.id)
+
+    const updatedGroup = await this.repo.editGroup(group)
+
+    if (
+      prevGroup.minRating !== updatedGroup.minRating ||
+      prevGroup.maxRating !== updatedGroup.maxRating
+    ) {
+      await this.$normalizeGroupRatings.normalizeGroupRatings({
+        groupId: group.id,
+        newMinMax: { min: updatedGroup.minRating, max: updatedGroup.maxRating },
+        oldMinMax: {
+          min: prevGroup.minRating,
+          max: prevGroup.maxRating,
+        },
+      })
+    }
+
+    return updatedGroup
   }
 
   public async deleteGroup(groupId: string, userId: string) {

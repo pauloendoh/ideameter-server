@@ -7,7 +7,15 @@ import myPrismaClient from "../../utils/myPrismaClient"
 export default class GroupRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
 
-  public async createGroup(payload: GroupDto, creatorId: string) {
+  async findGroupById(groupId: string) {
+    return this.prismaClient.group.findFirst({
+      where: {
+        id: groupId,
+      },
+    })
+  }
+
+  async createGroup(payload: GroupDto, creatorId: string) {
     return this.prismaClient.group.create({
       data: {
         creatorId,
@@ -17,7 +25,7 @@ export default class GroupRepository {
     })
   }
 
-  public async createUserGroup(options: {
+  async createUserGroup(options: {
     userId: string
     groupId: string
     isAdmin: boolean
@@ -31,7 +39,7 @@ export default class GroupRepository {
     })
   }
 
-  public async findGroupsByUser(
+  async findGroupsByUser(
     userId: string,
     options?: {
       includeTabs?: boolean
@@ -53,7 +61,7 @@ export default class GroupRepository {
     })
   }
 
-  public async isAdmin(userId: string, groupId: string) {
+  async isAdmin(userId: string, groupId: string) {
     const userGroup = await this.prismaClient.userGroup.findFirst({
       where: {
         userId,
@@ -104,7 +112,7 @@ export default class GroupRepository {
     })
   }
 
-  public async editGroup(group: Group) {
+  async editGroup(group: Group) {
     return this.prismaClient.group.update({
       where: {
         id: group.id,
@@ -113,11 +121,15 @@ export default class GroupRepository {
         imageUrl: group.imageUrl,
         name: group.name,
         description: group.description,
+        dropdownValueLabels: group.dropdownValueLabels,
+        minRating: group.minRating,
+        maxRating: group.maxRating,
+        ratingInputType: group.ratingInputType,
       } as Group,
     })
   }
 
-  public async deleteGroup(groupId: string) {
+  async deleteGroup(groupId: string) {
     return this.prismaClient.group.delete({
       where: {
         id: groupId,
@@ -125,7 +137,7 @@ export default class GroupRepository {
     })
   }
 
-  public async userBelongsToGroup(userId: string, groupId: string) {
+  async userBelongsToGroup(userId: string, groupId: string) {
     const userGroup = await this.prismaClient.userGroup.findFirst({
       where: {
         userId,
@@ -136,7 +148,7 @@ export default class GroupRepository {
     return !!userGroup
   }
 
-  public async userIsAllowedOrThrow(userId: string, groupId: string) {
+  async userIsAllowedOrThrow(userId: string, groupId: string) {
     const userGroup = await this.prismaClient.userGroup.findFirst({
       where: {
         userId,
@@ -150,7 +162,7 @@ export default class GroupRepository {
     return true
   }
 
-  public async findGroupMembers(groupId: string): Promise<
+  async findGroupMembers(groupId: string): Promise<
     (UserGroup & {
       user: SimpleUserDto
     })[]
@@ -175,7 +187,7 @@ export default class GroupRepository {
     return members
   }
 
-  public async addMember(groupId: string, userId: string) {
+  async addMember(groupId: string, userId: string) {
     const newMember = await this.prismaClient.userGroup.create({
       data: {
         userId,

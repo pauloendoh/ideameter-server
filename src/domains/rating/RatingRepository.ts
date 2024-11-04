@@ -199,6 +199,21 @@ export default class RatingRepository {
     })
   }
 
+  async updateManyRatings(ratings: { id: string; rating: number }[]) {
+    return this.prismaClient.$transaction(
+      ratings.map((rating) =>
+        this.prismaClient.ideaRating.update({
+          where: {
+            id: rating.id,
+          },
+          data: {
+            rating: rating.rating,
+          },
+        })
+      )
+    )
+  }
+
   async updateManyPositions(ratings: { id: string; position: number }[]) {
     return this.prismaClient.$transaction(
       ratings.map((rating) =>

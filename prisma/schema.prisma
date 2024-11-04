@@ -41,6 +41,11 @@ model User {
   settings         UserSettings?
 }
 
+enum GroupRatingInputType {
+  dropdown
+  numeric
+}
+
 model Group {
   id        String  @id @default(cuid())
   creator   User?   @relation(fields: [creatorId], references: [id], onDelete: SetNull)
@@ -57,6 +62,11 @@ model Group {
   labels     Label[]
 
   imageUrl String?
+
+  minRating           Float                @default(1)
+  maxRating           Float                @default(3)
+  dropdownValueLabels String[]
+  ratingInputType     GroupRatingInputType @default(dropdown)
 }
 
 model UserGroup {
