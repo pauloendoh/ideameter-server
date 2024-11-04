@@ -145,8 +145,6 @@ export default class IdeaService {
 
     const previousIdea = await this.ideaRepository.findById(idea.id)
 
-    if (!previousIdea.isDone && idea.isDone) idea.completedAt = new Date()
-
     await this.updateWaitingIdeas_.exec({
       ideaId: idea.id,
       userId: requesterId,

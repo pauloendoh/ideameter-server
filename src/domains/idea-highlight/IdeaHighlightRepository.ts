@@ -1,9 +1,10 @@
 import myPrismaClient from "../../utils/myPrismaClient"
 
 export class IdeaHighlightRepository {
-  constructor(private prisma = myPrismaClient) {}
+  constructor(private readonly prisma = myPrismaClient) {}
 
   findHighlightableIdeas(requesterId: string) {
+    // PE 1/3 - remove? Since now it's from 1~5
     // ideas that requester id high voted, and rated as 3
     return this.prisma.idea.findMany({
       where: {
