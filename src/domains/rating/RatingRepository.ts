@@ -228,4 +228,59 @@ export default class RatingRepository {
       )
     )
   }
+
+  async findLastRatingsByGroupMembers(params: {
+    groupId: string
+    userIds: string[]
+  }) {
+    const { groupId, userIds } = params
+
+    const results = await this.prismaClient.$transaction(
+      userIds.map((userId) =>
+        this.prismaClient.ideaRating.findMany({
+          where: {
+            OR: [
+              {
+                userId,
+                idea: {
+                  tab: {
+                    groupId,
+                  },
+                },
+              },
+              // { // won't include subideas for now
+              //   userId,
+              //   idea: {
+              //     parent: {
+              //       tab: {
+              //         groupId,
+              //       },
+              //     },
+              //   },
+              // },
+            ],
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+          take: 10,
+          select: {
+            rating: true,
+            updatedAt: true,
+            idea: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        })
+      )
+    )
+
+    return results.map((result, i) => ({
+      userId: userIds[i],
+      ratings: result,
+    }))
+  }
 }

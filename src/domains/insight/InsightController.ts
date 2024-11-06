@@ -1,10 +1,14 @@
 import { User } from "@prisma/client"
 import { CurrentUser, Get, JsonController, Param } from "routing-controllers"
 import { InsightService } from "./InsightService/InsightService"
+import { $FindGroupMembersLastRatings } from "./use-cases/$FindGroupMembersLastRatings"
 
 @JsonController()
 export class InsightController {
-  constructor(private insightService = new InsightService()) {}
+  constructor(
+    private readonly insightService = new InsightService(),
+    private readonly $findGroupMembersLastRatings = new $FindGroupMembersLastRatings()
+  ) {}
 
   @Get("/groups/:groupId/insights/interest-similarity")
   findInterestSimilarity(
@@ -20,5 +24,16 @@ export class InsightController {
     @Param("groupId") groupId: string
   ) {
     return this.insightService.findMissingRatingsFromGroup(groupId, user.id)
+  }
+
+  @Get("/groups/:groupId/last-ratings")
+  findLastRatingsFromGroup(
+    @CurrentUser({ required: true }) user: User,
+    @Param("groupId") groupId: string
+  ) {
+    return this.$findGroupMembersLastRatings.execute({
+      groupId,
+      requesterId: user.id,
+    })
   }
 }

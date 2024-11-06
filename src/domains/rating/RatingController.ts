@@ -15,7 +15,7 @@ import RatingService from "./RatingService"
 
 @JsonController()
 export class RatingController {
-  constructor(private ratingService = new RatingService()) {}
+  constructor(private readonly ratingService = new RatingService()) {}
 
   @Get("/group/:groupId/ratings")
   findRatingsByGroupId(
