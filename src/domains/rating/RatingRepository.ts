@@ -271,6 +271,7 @@ export default class RatingRepository {
               select: {
                 id: true,
                 name: true,
+                tabId: true,
               },
             },
           },
