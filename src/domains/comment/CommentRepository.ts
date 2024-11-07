@@ -3,7 +3,7 @@ import myPrismaClient from "../../utils/myPrismaClient"
 import { userSelectFields } from "../../utils/prisma/fields/user/userSelectFields"
 
 export class CommentRepository {
-  constructor(private prisma = myPrismaClient) {}
+  constructor(private readonly prisma = myPrismaClient) {}
 
   findByIdeaId(ideaId: string) {
     return this.prisma.comment.findMany({
@@ -58,6 +58,45 @@ export class CommentRepository {
         user: {
           select: {
             ...userSelectFields,
+          },
+        },
+      },
+    })
+  }
+
+  findLastCommentsInGroup(groupId: string) {
+    return this.prisma.comment.findMany({
+      where: {
+        targetIdea: {
+          tab: {
+            groupId,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 10,
+      select: {
+        createdAt: true,
+        updatedAt: true,
+        text: true,
+        user: {
+          select: {
+            username: true,
+            id: true,
+            profile: {
+              select: {
+                pictureUrl: true,
+              },
+            },
+          },
+        },
+        targetIdea: {
+          select: {
+            name: true,
+            id: true,
+            tabId: true,
           },
         },
       },

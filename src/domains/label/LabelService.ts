@@ -12,10 +12,10 @@ export default class LabelService {
   ) {}
 
   async findLabelsByGroup(groupId: string, requesterId: string) {
-    const isAllowed = await this.groupRepository.userBelongsToGroup(
-      requesterId,
-      groupId
-    )
+    const isAllowed = await this.groupRepository.userBelongsToGroup({
+      userId: requesterId,
+      groupId,
+    })
 
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to see this group")
@@ -25,10 +25,10 @@ export default class LabelService {
   }
 
   async createLabel(label: Label, groupId: string, requesterId: string) {
-    const isAllowed = await this.groupRepository.userBelongsToGroup(
-      requesterId,
-      groupId
-    )
+    const isAllowed = await this.groupRepository.userBelongsToGroup({
+      userId: requesterId,
+      groupId,
+    })
 
     if (!isAllowed)
       throw new ForbiddenError403(
@@ -45,10 +45,10 @@ export default class LabelService {
   }
 
   async updateLabel(label: Label, requesterId: string) {
-    const isAllowed = await this.groupRepository.userBelongsToGroup(
-      requesterId,
-      label.groupId
-    )
+    const isAllowed = await this.groupRepository.userBelongsToGroup({
+      userId: requesterId,
+      groupId: label.groupId,
+    })
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to edit this label")
 
@@ -60,10 +60,10 @@ export default class LabelService {
     const label = await this.labelRepository.findLabelById(labelId)
     if (!label) throw new NotFoundError404("Label not found")
 
-    const isAllowed = await this.groupRepository.userBelongsToGroup(
-      requesterId,
-      label.groupId
-    )
+    const isAllowed = await this.groupRepository.userBelongsToGroup({
+      userId: requesterId,
+      groupId: label.groupId,
+    })
 
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to see this group")
@@ -73,10 +73,10 @@ export default class LabelService {
   }
 
   async findLabelsToImport(groupId: string, requesterId: string) {
-    const isAllowed = await this.groupRepository.userBelongsToGroup(
-      requesterId,
-      groupId
-    )
+    const isAllowed = await this.groupRepository.userBelongsToGroup({
+      userId: requesterId,
+      groupId,
+    })
 
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to see this group")
@@ -98,10 +98,10 @@ export default class LabelService {
   }) {
     const { groupId, labelDtos, requesterId } = params
 
-    const isAllowed = await this.groupRepository.userBelongsToGroup(
-      requesterId,
-      groupId
-    )
+    const isAllowed = await this.groupRepository.userBelongsToGroup({
+      userId: requesterId,
+      groupId,
+    })
 
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to see this group")
@@ -126,7 +126,10 @@ export default class LabelService {
     const groupIds = labels.map((label) => label.groupId)
     const uniqueGroupIds = [...new Set(groupIds)]
     const isAllowed = uniqueGroupIds.every((groupId) => {
-      return this.groupRepository.userBelongsToGroup(requesterId, groupId)
+      return this.groupRepository.userBelongsToGroup({
+        userId: requesterId,
+        groupId,
+      })
     })
 
     return isAllowed

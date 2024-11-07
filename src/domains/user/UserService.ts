@@ -22,7 +22,10 @@ export default class UserService {
   }
 
   async updateLastOpenedGroupId(userId: string, groupId: string) {
-    const isAllowed = await this.groupRepo.userBelongsToGroup(userId, groupId)
+    const isAllowed = await this.groupRepo.userBelongsToGroup({
+      userId,
+      groupId,
+    })
 
     if (!isAllowed)
       throw new ForbiddenError403("User does not belong to this group.")

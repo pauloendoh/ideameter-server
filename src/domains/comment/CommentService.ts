@@ -5,8 +5,8 @@ import { CommentRepository } from "./CommentRepository"
 
 export class CommentService {
   constructor(
-    private commentRepo = new CommentRepository(),
-    private ideaRepo = new IdeaRepository()
+    private readonly commentRepo = new CommentRepository(),
+    private readonly ideaRepo = new IdeaRepository()
   ) {}
 
   async findManyByIdeaId(ideaId: string, requesterId: string) {

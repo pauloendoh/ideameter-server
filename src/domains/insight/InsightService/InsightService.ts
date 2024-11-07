@@ -16,10 +16,10 @@ export class InsightService {
     requesterId: string,
     groupId: string
   ): Promise<InterestSimilarityDto[]> {
-    const isAllowed = this.groupRepository.userBelongsToGroup(
-      requesterId,
-      groupId
-    )
+    const isAllowed = this.groupRepository.userBelongsToGroup({
+      userId: requesterId,
+      groupId,
+    })
     if (!isAllowed)
       throw new ForbiddenError403("User does not belong to group or group.")
 

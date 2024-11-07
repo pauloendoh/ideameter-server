@@ -64,7 +64,10 @@ export default class GroupService {
   }
 
   public async findGroupMembers(groupId: string, requesterId: string) {
-    const isAllowed = await this.repo.userBelongsToGroup(requesterId, groupId)
+    const isAllowed = await this.repo.userBelongsToGroup({
+      userId: requesterId,
+      groupId,
+    })
 
     if (!isAllowed)
       throw new ForbiddenError403(

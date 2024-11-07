@@ -69,10 +69,10 @@ export default class RatingService {
   }
 
   async findRatingsByGroupId(groupId: string, requesterId: string) {
-    const isAllowed = await this.groupRepository.userBelongsToGroup(
-      requesterId,
-      groupId
-    )
+    const isAllowed = await this.groupRepository.userBelongsToGroup({
+      userId: requesterId,
+      groupId,
+    })
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to see this group")
 

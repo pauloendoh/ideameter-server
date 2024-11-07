@@ -11,7 +11,10 @@ export default class TabService {
   ) {}
 
   async createTab(groupId: string, tabName: string, requesterId: string) {
-    const isAllowed = this.groupRepo.userBelongsToGroup(requesterId, groupId)
+    const isAllowed = this.groupRepo.userBelongsToGroup({
+      userId: requesterId,
+      groupId,
+    })
     if (!isAllowed)
       throw new ForbiddenError403(
         "You're not allowed to add tabs to this group"
@@ -27,10 +30,10 @@ export default class TabService {
   }
 
   async editTab(tab: GroupTab, requesterId: string) {
-    const isAllowed = this.groupRepo.userBelongsToGroup(
-      requesterId,
-      tab.groupId
-    )
+    const isAllowed = this.groupRepo.userBelongsToGroup({
+      userId: requesterId,
+      groupId: tab.groupId,
+    })
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to edit this tab")
 
@@ -39,7 +42,10 @@ export default class TabService {
   }
 
   async findGroupTabs(groupId: string, requesterId: string) {
-    const isAllowed = this.groupRepo.userBelongsToGroup(requesterId, groupId)
+    const isAllowed = this.groupRepo.userBelongsToGroup({
+      userId: requesterId,
+      groupId,
+    })
     if (!isAllowed)
       throw new ForbiddenError403(
         "You're not allowed to view tabs in this group"
@@ -50,10 +56,10 @@ export default class TabService {
   }
 
   async deleteGroupTab(groupTab: GroupTab, requesterId: string) {
-    const isAllowed = await this.groupRepo.userBelongsToGroup(
-      requesterId,
-      groupTab.groupId
-    )
+    const isAllowed = await this.groupRepo.userBelongsToGroup({
+      userId: requesterId,
+      groupId: groupTab.groupId,
+    })
     if (!isAllowed)
       throw new ForbiddenError403("You're not allowed to delete this tab")
 
@@ -65,10 +71,10 @@ export default class TabService {
     const tab = await this.tabRepo.findTabById(tabId)
     if (!tab) throw new NotFoundError("Tab not found.")
 
-    const isAllowed = await this.groupRepo.userBelongsToGroup(
-      requesterId,
-      tab.groupId
-    )
+    const isAllowed = await this.groupRepo.userBelongsToGroup({
+      userId: requesterId,
+      groupId: tab.groupId,
+    })
     if (!isAllowed)
       throw new ForbiddenError("You're not allowed to see this tab")
 

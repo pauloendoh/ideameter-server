@@ -137,7 +137,9 @@ export default class GroupRepository {
     })
   }
 
-  async userBelongsToGroup(userId: string, groupId: string) {
+  async userBelongsToGroup(params: { userId: string; groupId: string }) {
+    const { userId, groupId } = params
+
     const userGroup = await this.prismaClient.userGroup.findFirst({
       where: {
         userId,
