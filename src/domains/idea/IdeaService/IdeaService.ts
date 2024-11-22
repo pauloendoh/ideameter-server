@@ -283,6 +283,7 @@ export default class IdeaService {
         discomfortZone: idea.discomfortZone,
         waitingIdeas: idea.waitingIdeas,
         beingWaitedFor: idea.beingWaitedFor,
+        labels: idea.labels,
       } as Partial<Idea>,
       group: {
         groupId: idea.tab?.group.id,

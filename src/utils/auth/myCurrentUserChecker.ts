@@ -7,7 +7,7 @@ export const myCurrentUserChecker = async (action: Action) => {
   const user = await validateJwt(token)
 
   try {
-    userRepo.updateLastOnlineAt(user.id)
+    await userRepo.updateLastOnlineAt(user.id)
   } catch (e) {
     console.log(e)
   }

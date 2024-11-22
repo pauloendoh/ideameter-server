@@ -412,6 +412,13 @@ export default class IdeaRepository {
         beingWaitedFor: {
           select: waitingIdeasSelectFields,
         },
+        labels: {
+          select: {
+            id: true,
+            name: true,
+            bgColor: true,
+          },
+        },
       },
       where: {
         isArchived: false,
