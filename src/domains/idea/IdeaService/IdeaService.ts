@@ -120,8 +120,9 @@ export default class IdeaService {
       userId: requesterId,
       groupId,
     })
-    if (!isAllowed)
+    if (!isAllowed) {
       throw new ForbiddenError403("You're not allowed to see this group")
+    }
 
     const ideas = await this.ideaRepository.findIdeasByGroupId(groupId)
     return ideas

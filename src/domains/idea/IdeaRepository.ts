@@ -254,6 +254,19 @@ export default class IdeaRepository {
     return subideas
   }
 
+  async isSubidea(ideaIds: string[]) {
+    const found = await this.prismaClient.idea.findMany({
+      where: {
+        id: {
+          in: ideaIds,
+        },
+        parentId: null,
+      },
+    })
+
+    return found.length === 0
+  }
+
   async deleteIdea(ideaId: string) {
     return this.prismaClient.idea.deleteMany({
       where: {
@@ -496,5 +509,23 @@ export default class IdeaRepository {
         },
       },
     })
+  }
+
+  async addLabelsToIdeas(params: { labelIds: string[]; ideaIds: string[] }) {
+    const { labelIds, ideaIds } = params
+    return this.prismaClient.$transaction(
+      ideaIds.map((ideaId) =>
+        this.prismaClient.idea.update({
+          where: {
+            id: ideaId,
+          },
+          data: {
+            labels: {
+              connect: labelIds.map((labelId) => ({ id: labelId })),
+            },
+          },
+        })
+      )
+    )
   }
 }

@@ -61,6 +61,17 @@ export default class GroupRepository {
     })
   }
 
+  async userHasAccessToGroup(input: { userId: string; groupId: string }) {
+    const found = await this.prismaClient.userGroup.findFirst({
+      where: {
+        userId: input.userId,
+        groupId: input.groupId,
+      },
+    })
+
+    return !!found
+  }
+
   async isAdmin(userId: string, groupId: string) {
     const userGroup = await this.prismaClient.userGroup.findFirst({
       where: {
@@ -286,6 +297,31 @@ export default class GroupRepository {
       },
       include: {
         tabs: true,
+      },
+    })
+  }
+
+  findGroupsByIdeasAndLabels(input: { ideaIds: string[]; labelIds: string[] }) {
+    return this.prismaClient.group.findMany({
+      where: {
+        labels: {
+          some: {
+            id: {
+              in: input.labelIds,
+            },
+          },
+        },
+        tabs: {
+          some: {
+            ideas: {
+              some: {
+                id: {
+                  in: input.ideaIds,
+                },
+              },
+            },
+          },
+        },
       },
     })
   }

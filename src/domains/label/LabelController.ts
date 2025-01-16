@@ -11,10 +11,14 @@ import {
 } from "routing-controllers"
 import LabelService from "./LabelService"
 import { ImportLabelDto } from "./types/ImportLabelDto"
+import { $AddLabelsToIdeas } from "./use-cases/$AddLabelsToIdeas"
 
 @JsonController()
 export class LabelController {
-  constructor(private labelService = new LabelService()) {}
+  constructor(
+    private labelService = new LabelService(),
+    private readonly $addLabelsToIdeas = new $AddLabelsToIdeas()
+  ) {}
 
   @Delete("/labels/:labelId")
   deleteLabel(
@@ -73,5 +77,21 @@ export class LabelController {
     @Body({ required: true }) body: Label[]
   ) {
     return this.labelService.updateMany(body, user.id)
+  }
+
+  @Post("/labels-to-ideas")
+  addLabelsToIdeas(
+    @CurrentUser({ required: true }) user: User,
+    @Body({ required: true })
+    body: {
+      labelIds: string[]
+      ideaIds: string[]
+    }
+  ) {
+    return this.$addLabelsToIdeas.exec({
+      labelIds: body.labelIds,
+      ideaIds: body.ideaIds,
+      requesterId: user.id,
+    })
   }
 }
