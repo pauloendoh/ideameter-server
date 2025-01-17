@@ -37,6 +37,7 @@ export const buildIdeaWithRelations = (
   improvementRate: null,
   rewarding: null,
   discomfortZone: null,
+  hasChangedRewardingOrDiscomfort: false,
 
   labels: [],
   assignedUsers: [],

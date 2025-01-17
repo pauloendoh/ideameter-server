@@ -120,18 +120,19 @@ model Idea {
   tab   GroupTab? @relation(fields: [tabId], references: [id], onDelete: Cascade)
   tabId String?
 
-  name              String
-  description       String
-  isDone            Boolean   @default(false)
-  completedAt       DateTime?
-  onFireSince       DateTime?
-  irrelevantSince   DateTime?
-  ratingsAreEnabled Boolean   @default(true)
-  complexity        Float     @default(0)
-  frequencyRate     Int?
-  improvementRate   Int?
-  rewarding         Float?
-  discomfortZone    Float?
+  name                            String
+  description                     String
+  isDone                          Boolean   @default(false)
+  completedAt                     DateTime?
+  onFireSince                     DateTime?
+  irrelevantSince                 DateTime?
+  ratingsAreEnabled               Boolean   @default(true)
+  complexity                      Float     @default(0)
+  frequencyRate                   Int?
+  improvementRate                 Int?
+  rewarding                       Float?
+  discomfortZone                  Float?
+  hasChangedRewardingOrDiscomfort Boolean   @default(false)
 
   ideaRatings      IdeaRating[]
   rteImages        RteImage[]
