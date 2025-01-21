@@ -17,7 +17,7 @@ import { MoveIdeasToTabDto } from "./types/MoveIdeasToTabDto"
 
 @JsonController()
 export class IdeaController {
-  constructor(private ideaService = new IdeaService()) {}
+  constructor(private readonly ideaService = new IdeaService()) {}
 
   @Delete("/idea/:ideaId")
   deleteIdea(

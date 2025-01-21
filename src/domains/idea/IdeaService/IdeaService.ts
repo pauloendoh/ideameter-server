@@ -36,8 +36,9 @@ export default class IdeaService {
       idea.tabId,
       requesterId
     )
-    if (!isAllowed)
+    if (!isAllowed) {
       throw new ForbiddenError("You're not allowed to add ideas to this tab")
+    }
 
     const createdIdea = await this.ideaRepository.upsertIdea(idea, requesterId)
 
@@ -47,7 +48,13 @@ export default class IdeaService {
       waitingIdeas: idea.waitingIdeas,
     })
 
-    await this.ratingRepository.createRating(createdIdea.id, 3, requesterId)
+    const group = await this.groupRepository.findGroupByIdeaId(createdIdea.id)
+
+    await this.ratingRepository.createRating(
+      createdIdea.id,
+      group.maxRating,
+      requesterId
+    )
 
     // don't need to await this
     this.notificationService.handleMentionNotificationsCreateIdea(
