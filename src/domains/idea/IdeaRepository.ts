@@ -130,7 +130,6 @@ export default class IdeaRepository {
     })
   }
 
-  // PE 1/3 - what's the difference with saveIdea?
   async updateIdea(
     idea: IdeaWithRelationsType
   ): Promise<IdeaWithRelationsType> {
@@ -183,6 +182,7 @@ export default class IdeaRepository {
           },
         },
         waitingIdeas: undefined,
+        beingWaitedFor: undefined,
       },
       include: ideaIncludeFields,
     })
