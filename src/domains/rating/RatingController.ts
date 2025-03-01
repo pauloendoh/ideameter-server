@@ -1,4 +1,4 @@
-import { IdeaRating, User } from "@prisma/client"
+import { User } from "@prisma/client"
 import {
   Body,
   CurrentUser,
@@ -29,13 +29,16 @@ export class RatingController {
   saveIdeaRating(
     @CurrentUser({ required: true }) user: User,
     @Param("ideaId") ideaId: string,
-    @Body() body: IdeaRating,
+    @Body()
+    body: {
+      rating: number | null
+    },
     @Req() req: MyAuthRequest
   ) {
     const socketServer = req.app.get("socketio")
 
     return this.ratingService.saveIdeaRating(
-      body.ideaId,
+      ideaId,
       body.rating,
       user.id,
       socketServer
