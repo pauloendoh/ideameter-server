@@ -39,6 +39,7 @@ model User {
   comments         Comment[]
   highlightedIdeas IdeaHighlight[]
   settings         UserSettings?
+  ghostRatings     GhostRating[]
 }
 
 enum GroupRatingInputType {
@@ -143,7 +144,8 @@ model Idea {
   comments         Comment[]
   highlightedIdeas IdeaHighlight[]
 
-  subideaImageUrl String @default("")
+  subideaImageUrl String        @default("")
+  ghostRatings    GhostRating[]
 }
 
 model IdeaRating {
@@ -163,6 +165,20 @@ model IdeaRating {
   rewarding Float?
 
   position Int?
+}
+
+model GhostRating {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  idea   Idea   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  ideaId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rating Float?
 }
 
 model Label {
