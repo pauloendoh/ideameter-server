@@ -69,9 +69,20 @@ export class GhostRatingRepository {
       where: {
         userId: input.userId,
         idea: {
-          tab: {
-            groupId: input.groupId,
-          },
+          OR: [
+            {
+              tab: {
+                groupId: input.groupId,
+              },
+            },
+            {
+              parent: {
+                tab: {
+                  groupId: input.groupId,
+                },
+              },
+            },
+          ],
         },
       },
     })
