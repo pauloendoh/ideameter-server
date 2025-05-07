@@ -10,6 +10,7 @@ export const $ghostRatingSchema = z.object({
   rating: z.number(),
   updatedAt: z.date(),
   userId: z.string(),
+  targetUserId: z.string(),
 } satisfies MyUnsafeZod<$GhostRating>)
 
 export type $GhostRatingSchema = z.infer<typeof $ghostRatingSchema>
@@ -18,18 +19,25 @@ export class $GhostRating implements Prisma.GhostRating {
   id: string
   userId: string
   ideaId: string
+  targetUserId: string
 
   createdAt: Date
   updatedAt: Date
   rating: number
 
-  constructor(required: { userId: string; ideaId: string; rating: number }) {
+  constructor(required: {
+    userId: string
+    ideaId: string
+    rating: number
+    targetUserId: string
+  }) {
     this.id = randomUUID()
     this.userId = required.userId
     this.ideaId = required.ideaId
     this.createdAt = new Date()
     this.updatedAt = new Date()
     this.rating = required.rating
+    this.targetUserId = required.targetUserId
   }
 }
 

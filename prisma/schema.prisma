@@ -39,7 +39,8 @@ model User {
   comments         Comment[]
   highlightedIdeas IdeaHighlight[]
   settings         UserSettings?
-  ghostRatings     GhostRating[]
+  ghostRatings     GhostRating[]   @relation("GhostRatingOwner")
+  ghostRated       GhostRating[]   @relation("GhostRatingTargetUser")
 }
 
 enum GroupRatingInputType {
@@ -169,8 +170,11 @@ model IdeaRating {
 
 model GhostRating {
   id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, name: "GhostRatingOwner")
   userId String
+
+  targetUser   User   @relation(fields: [targetUserId], references: [id], onDelete: Cascade, name: "GhostRatingTargetUser")
+  targetUserId String
 
   idea   Idea   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
   ideaId String

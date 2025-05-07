@@ -33,12 +33,13 @@ export class GhostRatingController {
   saveGhostRating(
     @CurrentUser({ required: true }) requester: User,
     @Param("ideaId") ideaId: string,
-    @Body() body: { rating: number | null }
+    @Body() body: { rating: number | null; targetUserId: string }
   ): Promise<$GhostRating> {
     return this.$saveGhostRating.exec({
       ideaId,
       rating: body.rating,
       requesterId: requester.id,
+      targetUserId: body.targetUserId,
     })
   }
 }

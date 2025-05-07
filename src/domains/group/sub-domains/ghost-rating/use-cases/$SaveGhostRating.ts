@@ -6,15 +6,16 @@ export class $SaveGhostRating {
   constructor(private readonly ghostRatingRepo = new GhostRatingRepository()) {}
 
   async exec(input: {
-    ideaId: string
     requesterId: string
+    targetUserId: string
+    ideaId: string
     rating: number | null
   }): Promise<$GhostRating> {
-    const foundGhostRating =
-      await this.ghostRatingRepo.findGhostRatingByIdeaAndUser({
-        ideaId: input.ideaId,
-        userId: input.requesterId,
-      })
+    const foundGhostRating = await this.ghostRatingRepo.findAlreadyGhostRated({
+      ownerId: input.requesterId,
+      targetUserId: input.targetUserId,
+      ideaId: input.ideaId,
+    })
 
     if (foundGhostRating) {
       if (input.rating === null) {
@@ -23,7 +24,9 @@ export class $SaveGhostRating {
 
       foundGhostRating.rating = input.rating
 
-      return this.ghostRatingRepo.updateGhostRating(foundGhostRating)
+      return this.ghostRatingRepo.updateGhostRating(foundGhostRating.id, {
+        rating: input.rating,
+      })
     }
 
     if (input.rating === null) {
@@ -36,6 +39,7 @@ export class $SaveGhostRating {
       ideaId: input.ideaId,
       rating: input.rating,
       userId: input.requesterId,
+      targetUserId: input.targetUserId,
     })
 
     return this.ghostRatingRepo.createGhostRating(newGhostRating)

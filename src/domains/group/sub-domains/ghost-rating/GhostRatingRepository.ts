@@ -1,6 +1,9 @@
-import { GhostRating, Prisma } from "@prisma/client"
+import { Prisma } from "@prisma/client"
 import myPrismaClient from "../../../../utils/myPrismaClient"
-import { $GhostRating } from "../../../_domain-models/$GhostRating"
+import {
+  $GhostRating,
+  $GhostRatingWithRelations,
+} from "../../../_domain-models/$GhostRating"
 
 export class GhostRatingRepository {
   constructor(private readonly prismaClient = myPrismaClient) {}
@@ -11,16 +14,18 @@ export class GhostRatingRepository {
     ideaId: undefined,
     createdAt: undefined,
     updatedAt: undefined,
-  } satisfies Partial<GhostRating>
+  } satisfies Partial<$GhostRating>
 
-  async findGhostRatingByIdeaAndUser(input: {
+  async findAlreadyGhostRated(input: {
     ideaId: string
-    userId: string
-  }): Promise<GhostRating | null> {
+    ownerId: string
+    targetUserId: string
+  }): Promise<$GhostRatingWithRelations | null> {
     return this.prismaClient.ghostRating.findFirst({
       where: {
         ideaId: input.ideaId,
-        userId: input.userId,
+        userId: input.ownerId,
+        targetUserId: input.targetUserId,
       },
       include: {
         idea: true,
@@ -36,15 +41,15 @@ export class GhostRatingRepository {
     })
   }
 
-  async updateGhostRating(input: GhostRating) {
+  async updateGhostRating(
+    id: string,
+    updateData: Prisma.GhostRatingUpdateArgs["data"]
+  ) {
     return this.prismaClient.ghostRating.update({
       where: {
-        id: input.id,
+        id,
       },
-      data: {
-        ...input,
-        ...this._unchangeableFields,
-      },
+      data: updateData,
     })
   }
 
