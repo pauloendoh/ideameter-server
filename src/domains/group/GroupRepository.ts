@@ -239,8 +239,8 @@ export default class GroupRepository {
     })
   }
 
-  findGroupByIdeaId(ideaId: string) {
-    return this.prismaClient.group.findFirst({
+  async findGroupByIdeaId(ideaId: string) {
+    const found = await this.prismaClient.group.findFirst({
       where: {
         OR: [
           {
@@ -272,6 +272,8 @@ export default class GroupRepository {
         ],
       },
     })
+
+    return found ?? null
   }
 
   findGroupByTabId(tabId: string) {
