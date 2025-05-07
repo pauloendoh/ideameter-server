@@ -48,13 +48,13 @@ export default class IdeaService {
       waitingIdeas: idea.waitingIdeas,
     })
 
-    const group = await this.groupRepository.findGroupByIdeaId(createdIdea.id)
+    // const group = await this.groupRepository.findGroupByIdeaId(createdIdea.id)
 
-    await this.ratingRepository.createRating(
-      createdIdea.id,
-      group.maxRating,
-      requesterId
-    )
+    // await this.ratingRepository.createRating(
+    //   createdIdea.id,
+    //   group.maxRating,
+    //   requesterId
+    // )
 
     // don't need to await this
     this.notificationService.handleMentionNotificationsCreateIdea(
