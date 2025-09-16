@@ -12,7 +12,7 @@ export default class GroupService {
     private readonly $normalizeGroupRatings = new $NormalizeGroupRatings()
   ) {}
 
-  public async createGroup(payload: GroupDto, userId: string) {
+  async createGroup(payload: GroupDto, userId: string) {
     const createdGroup = await this.repo.createGroup(payload, userId)
     await this.repo.createUserGroup({
       userId,
@@ -23,11 +23,11 @@ export default class GroupService {
     return createdGroup
   }
 
-  public async findGroupsByUser(userId: string) {
+  async findGroupsByUser(userId: string) {
     return this.repo.findAllGroupsAndTabs(userId)
   }
 
-  public async editGroup(group: Group, userId: string) {
+  async editGroup(group: Group, userId: string) {
     const isAdmin = await this.repo.isAdmin(userId, group.id)
     if (!isAdmin) {
       throw new ForbiddenError403("You are not an admin of this group")
@@ -35,15 +35,15 @@ export default class GroupService {
 
     const prevGroup = await this.repo.findGroupById(group.id)
 
-    const updatedGroup = await this.repo.editGroup(group)
+    const newGroup = await this.repo.editGroup(group)
 
     if (
-      prevGroup.minRating !== updatedGroup.minRating ||
-      prevGroup.maxRating !== updatedGroup.maxRating
+      prevGroup.minRating !== newGroup.minRating ||
+      prevGroup.maxRating !== newGroup.maxRating
     ) {
-      await this.$normalizeGroupRatings.normalizeGroupRatings({
+      await this.$normalizeGroupRatings.exec({
         groupId: group.id,
-        newMinMax: { min: updatedGroup.minRating, max: updatedGroup.maxRating },
+        newMinMax: { min: newGroup.minRating, max: newGroup.maxRating },
         oldMinMax: {
           min: prevGroup.minRating,
           max: prevGroup.maxRating,
@@ -51,10 +51,10 @@ export default class GroupService {
       })
     }
 
-    return updatedGroup
+    return newGroup
   }
 
-  public async deleteGroup(groupId: string, userId: string) {
+  async deleteGroup(groupId: string, userId: string) {
     const isAdmin = await this.repo.isAdmin(userId, groupId)
     if (!isAdmin)
       throw new ForbiddenError403("You are not an admin of this group")
@@ -63,7 +63,7 @@ export default class GroupService {
     return deletedGroup
   }
 
-  public async findGroupMembers(groupId: string, requesterId: string) {
+  async findGroupMembers(groupId: string, requesterId: string) {
     const isAllowed = await this.repo.userBelongsToGroup({
       userId: requesterId,
       groupId,
@@ -79,11 +79,7 @@ export default class GroupService {
     return members
   }
 
-  public async addMember(
-    groupId: string,
-    requesterId: string,
-    newMemberId: string
-  ) {
+  async addMember(groupId: string, requesterId: string, newMemberId: string) {
     const isAllowed = await this.repo.isAdmin(requesterId, groupId)
     if (!isAllowed)
       throw new ForbiddenError403(

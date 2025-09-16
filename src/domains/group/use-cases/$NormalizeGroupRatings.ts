@@ -3,7 +3,7 @@ import RatingRepository from "../../rating/RatingRepository"
 export class $NormalizeGroupRatings {
   constructor(private readonly ratingRepository = new RatingRepository()) {}
 
-  async normalizeGroupRatings(params: {
+  async exec(params: {
     groupId: string
     oldMinMax: { min: number; max: number }
     newMinMax: { min: number; max: number }
@@ -14,7 +14,9 @@ export class $NormalizeGroupRatings {
       groupId
     )
 
-    if (!prevIdeaRatings.length) return
+    if (!prevIdeaRatings.length) {
+      return
+    }
 
     const newRatings = prevIdeaRatings.map((ir) => {
       const normalizedRating = this.#normalizeRating(
@@ -29,6 +31,7 @@ export class $NormalizeGroupRatings {
       }
     })
 
+    // TODO: maybe save in bulks, and emit web socket messages to front? Also, block new group changes while this is happening?
     const updatedRatings = await this.ratingRepository.updateManyRatings(
       newRatings
     )
@@ -37,18 +40,17 @@ export class $NormalizeGroupRatings {
   }
 
   #normalizeRating(
-    currentRating: number,
+    oldRating: number,
     oldMinMax: { min: number; max: number },
     newMinMax: { min: number; max: number }
   ) {
-    // example: value 2, min 1, max 3 -> value 3, min 1, max 5
-    const oldRange = oldMinMax.max - oldMinMax.min // 3 - 1 = 2
-    const newRange = newMinMax.max - newMinMax.min // 5 - 1 = 4
+    // example: value 4 when min 1 max 5 -> value 2.5 when min 1 max 3
+    const oldRange = oldMinMax.max - oldMinMax.min // 5 - 1 = 4
+    const newRange = newMinMax.max - newMinMax.min // 3 - 1 = 2
 
     return (
-      ((currentRating - oldMinMax.min) * newRange) / oldRange + newMinMax.min
-      // (2 - 1) * 4 / 2 + 1
-      // (4 / 2) + 1 = 3
+      ((oldRating - oldMinMax.min) * newRange) / oldRange + newMinMax.min
+      // ((4 - 1) * 2) / 4 + 1 = 2.5
     )
   }
 }
