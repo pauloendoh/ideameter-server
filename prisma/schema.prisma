@@ -32,15 +32,17 @@ model User {
 
   lastOpenedGroupId String?
 
-  profile          Profile?
-  notifications    Notification[]
-  userTokens       UserToken[]
-  ideaChanges      IdeaChange[]
-  comments         Comment[]
-  highlightedIdeas IdeaHighlight[]
-  settings         UserSettings?
-  ghostRatings     GhostRating[]   @relation("GhostRatingOwner")
-  ghostRated       GhostRating[]   @relation("GhostRatingTargetUser")
+  profile            Profile?
+  notifications      Notification[]
+  userTokens         UserToken[]
+  ideaChanges        IdeaChange[]
+  comments           Comment[]
+  highlightedIdeas   IdeaHighlight[]
+  settings           UserSettings?
+  ghostRatings       GhostRating[]   @relation("GhostRatingOwner")
+  ghostRated         GhostRating[]   @relation("GhostRatingTargetUser")
+  allowedToRateForMe CanRateForMe[]  @relation("allowedToRateForMe")
+  iAmAllowedToRate   CanRateForMe[]  @relation("iAmAllowedToRate")
 }
 
 enum GroupRatingInputType {
@@ -69,6 +71,7 @@ model Group {
   maxRating           Float                @default(3)
   dropdownValueLabels String[]
   ratingInputType     GroupRatingInputType @default(dropdown)
+  CanRateForMe        CanRateForMe[]
 }
 
 model UserGroup {
@@ -325,4 +328,20 @@ model UserSettings {
   updatedAt DateTime @updatedAt
 
   hiddenTabsIds String[]
+}
+
+model CanRateForMe {
+  id String @id @default(cuid())
+
+  ratingFinalOwnerId String
+  ratingFinalOwner   User   @relation(fields: [ratingFinalOwnerId], references: [id], onDelete: Cascade, name: "allowedToRateForMe")
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  allowedMemberId String
+  allowedMember   User   @relation(fields: [allowedMemberId], references: [id], onDelete: Cascade, name: "iAmAllowedToRate")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
